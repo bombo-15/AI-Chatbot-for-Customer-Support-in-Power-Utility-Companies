@@ -18,6 +18,7 @@ Admin-only endpoints (Bearer token required):
   POST /admin/scrape
   GET  /admin/scrape-log
   GET  /admin/ecg-outages
+  POST /admin/seed-demo-outages
 
   POST /chat-rating         submit star rating for a session
   POST /message-feedback    submit helpful/unhelpful on a message
@@ -42,6 +43,7 @@ from slowapi.errors import RateLimitExceeded
 import database as db
 import chatbot
 import ecg_scraper
+import seed_demo_outages
 
 # ─── Rate limiter ─────────────────────────────────────────────────────────────
 
@@ -281,6 +283,22 @@ def get_scrape_log():
 @app.get("/admin/ecg-outages", dependencies=[Depends(require_admin)])
 def get_ecg_outages():
     return db.get_ecg_outages()
+
+
+@app.post("/admin/seed-demo-outages", dependencies=[Depends(require_admin)])
+def seed_demo_outages_endpoint():
+    """
+    Populate ecg_outages with a hand-built, current-dated demo dataset —
+    for use while ECG's site keeps blocking the real scraper (see
+    seed_demo_outages.py for the full rationale). Safe to call repeatedly.
+    """
+    demo_outages = seed_demo_outages.build_demo_outages()
+    count = db.sync_ecg_outages(
+        demo_outages,
+        error_detail="Demo dataset (ECG site blocked by WAF — seeded via /admin/seed-demo-outages)",
+    )
+    regions = list({o["area"] for o in demo_outages})
+    return {"status": "ok", "outages_synced": count, "regions_found": regions}
 
 
 # ─── WebSocket ────────────────────────────────────────────────────────────────
