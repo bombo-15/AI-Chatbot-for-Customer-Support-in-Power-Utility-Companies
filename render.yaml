@@ -20,6 +20,8 @@ services:
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.6   # pin below 3.14 default — pydantic-core 2.23.4 has no prebuilt wheel for 3.14 yet, so pip falls back to a Rust source build that fails on Render's image
       - key: GROQ_API_KEY
         sync: false   # set the real value in the Render dashboard, not here
       - key: ADMIN_PASSWORD
