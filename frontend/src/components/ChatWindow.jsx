@@ -24,6 +24,14 @@ function sanitize(text) {
 
 const SESSION_STORAGE_KEY = 'kanea_session_id'
 
+// Quick-reply labels that should jump straight to a real app tab instead of
+// round-tripping through the LLM — e.g. "Submit fault form" opens the actual
+// working Report a Fault form rather than the bot talking about it.
+const NAV_QUICK_REPLIES = {
+  'Submit fault form': { tab: 'fault', note: 'Opening the fault report form for you →' },
+  'Report a fault':    { tab: 'fault', note: 'Opening the fault report form for you →' },
+}
+
 function genSessionId() {
   const existing = localStorage.getItem(SESSION_STORAGE_KEY)
   if (existing) return existing
@@ -157,7 +165,7 @@ function Message({ msg, sessionId, onFeedback }) {
           <div className="mt-2 flex items-center gap-2 bg-yellow-50 border border-yellow-300 rounded-lg px-3 py-2">
             <span className="text-yellow-600 text-sm">🧑‍💼</span>
             <span className="text-xs text-ecg-navy font-medium">
-              Connecting you to a human agent — or call <strong>0800-POWER</strong> now
+              Connecting you to a human agent — or call <strong>0302 611 611</strong> now
             </span>
           </div>
         )}
@@ -167,7 +175,7 @@ function Message({ msg, sessionId, onFeedback }) {
 }
 
 // ── Main ChatWindow ───────────────────────────────────────────────────────────
-export default function ChatWindow() {
+export default function ChatWindow({ onNavigate }) {
   const [messages, setMessages]         = useState([])
   const [input, setInput]               = useState('')
   const [connected, setConnected]       = useState(false)
@@ -257,6 +265,18 @@ export default function ChatWindow() {
     setIsTyping(true)
   }
 
+  function handleQuickReply(qr) {
+    const nav = NAV_QUICK_REPLIES[qr]
+    if (nav && onNavigate) {
+      addMessage({ type: 'user', text: qr })
+      addMessage({ type: 'bot', text: nav.note })
+      setQuickReplies([])
+      onNavigate(nav.tab)
+      return
+    }
+    send(qr)
+  }
+
   return (
     <div className="flex flex-col h-[620px] bg-white rounded-2xl shadow-md border border-yellow-200 overflow-hidden">
       {/* Header */}
@@ -313,7 +333,7 @@ export default function ChatWindow() {
           {quickReplies.map((qr) => (
             <button
               key={qr}
-              onClick={() => send(qr)}
+              onClick={() => handleQuickReply(qr)}
               className="text-xs bg-yellow-50 text-ecg-navy border border-yellow-300 rounded-full px-3 py-1 hover:bg-yellow-100 hover:text-ecg-red hover:border-ecg-red transition-colors font-medium"
             >
               {qr}

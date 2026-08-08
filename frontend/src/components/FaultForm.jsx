@@ -64,7 +64,7 @@ export default function FaultForm() {
       setReference(data.reference)
       setSubmitted(true)
     } catch {
-      setError('Failed to submit. Please try again or call 0800-POWER.')
+      setError('Failed to submit. Please try again or call 0302 611 611.')
     } finally {
       setLoading(false)
     }
@@ -92,7 +92,7 @@ export default function FaultForm() {
           Our team has been notified. You will receive updates on <strong>{form.phone}</strong>.
           {['critical', 'high'].includes(form.urgency) && (
             <span className="block mt-1 text-red-600 font-medium">
-              ⚠️ For immediate danger, call <strong>0800-POWER</strong> now.
+              ⚠️ For immediate danger, call <strong>0302 611 611</strong> now.
             </span>
           )}
         </p>
@@ -250,7 +250,7 @@ export default function FaultForm() {
             {['critical', 'high'].includes(form.urgency) && (
               <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
                 <strong>⚠️ Danger notice:</strong> If there is immediate risk to life or property,
-                call <strong>0800-POWER</strong> immediately — do not wait for a field team.
+                call <strong>0302 611 611</strong> immediately — do not wait for a field team.
               </div>
             )}
 
