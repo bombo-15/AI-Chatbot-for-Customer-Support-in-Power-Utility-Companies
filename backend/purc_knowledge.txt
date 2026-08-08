@@ -1,0 +1,54 @@
+--- PURC_SECTION: overview
+Public Utilities Regulatory Commission (PURC) - Overview
+PURC is the independent regulator of electricity and water utility services in Ghana, established in October 1997 under the Public Utilities Regulatory Commission Act, 1997 (Act 538). Under the Energy Commission Act, 1997 (Act 541), PURC also regulates the transportation of natural gas. PURC is not ECG - it is the independent government body that sets and approves the rates ECG and other utilities are allowed to charge, and it handles complaints if a utility does not resolve a customer's issue.
+PURC is an independent body under Section 4 of Act 538, not subject to control by any authority in performing its functions, though it reports annually to Parliament. It is made up of nine Commissioners, including a Chairman, an Executive Secretary, representatives for labour, industry and domestic consumers, and four sector experts, appointed by the President for renewable five-year terms.
+Mission: To build a credible and sustainable utility regulatory regime that protects stakeholders' interests.
+Companies regulated by PURC include: Ghana Grid Company (GRIDCo), Ghana National Gas Company (GNGC), Electricity Company of Ghana (ECG), Northern Electricity Distribution Company (NEDCo), Enclave Power Company (EPCL), and Ghana Water Company Limited (GWCL).
+Contact: PURC head office is in Accra, Ghana. Main line: 0302 218 300 / 0302 244 181. Website: purc.com.gh.
+
+--- PURC_SECTION: functions
+What PURC Does For Customers
+PURC's key functions are to: set guidelines for utility rates; examine and approve the tariffs utilities like ECG can charge; protect the interests of both consumers and utility providers; monitor and enforce standards of service; promote fair competition among utilities; and receive, investigate and settle complaints relating to utility services.
+If a customer has reported a billing dispute, overcharge, or service complaint to ECG and it has not been resolved at the District level, the next step is to escalate the complaint to PURC, which has the statutory power to investigate and settle disputes between customers and utility companies. Complaints can be raised through purc.com.gh or by calling PURC's Accra office on 0302 218 300.
+
+--- PURC_SECTION: how_tariffs_are_set
+How Electricity Tariffs Are Set and Reviewed
+Electricity tariffs in Ghana are approved by PURC, not by ECG itself. There are two ways tariffs change: a periodic Major Tariff Review (a full review of the cost structure, done every few years), and a routine Automatic Adjustment (Indexation) Formula, published in Gazette No. 15 of 25th February 2011, which allows PURC to adjust tariffs quarterly to reflect changes in exchange rates, inflation, and fuel costs, without a full review.
+Because of this, electricity, water, natural gas and net metering tariffs are typically revised every quarter (roughly every 3 months). The figures given below were the rates most recently published by PURC and are correct as of their effective date, but customers should always confirm the current rate via the ECG PowerApp (powerapp.ecg.com.gh) or purc.com.gh, since a newer quarterly gazette may have since replaced them.
+
+--- PURC_SECTION: residential_electricity_tariffs
+Residential Electricity Tariffs (Effective 1st July 2026)
+These are the End-User Tariffs (EUT) PURC approved for ECG and other distribution companies, published 16 June 2026, replacing the previous rates from Gazette No. 134 (14 April 2026). All rates are in Ghana Pesewas per kilowatt-hour (GHp/kWh); 100 GHp = GHS 1.
+Residential Lifeline band (0-30 kWh per month, for low-consumption households, exclusive band): 89.9315 GHp/kWh, with a separate lower Lifeline service charge of 213.0000 GHp/month. The Lifeline band exists to keep electricity affordable for the smallest residential consumers.
+Residential 0-300 kWh per month: 203.7509 GHp/kWh.
+Residential 301 kWh and above per month: 269.2235 GHp/kWh.
+Service charge for other (non-Lifeline) residential consumers: 1073.0886 GHp/month, billed in addition to the energy charge regardless of consumption.
+These figures explain why a residential bill increases sharply once monthly usage passes 300 kWh - the rate per unit jumps from the 0-300 band to the higher 301+ band.
+
+--- PURC_SECTION: non_residential_electricity_tariffs
+Non-Residential and Business Electricity Tariffs (Effective 1st July 2026)
+Non-Residential (shops, offices, small businesses) 0-300 kWh per month: 183.9549 GHp/kWh.
+Non-Residential 301 kWh and above per month: 224.0395 GHp/kWh.
+Non-Residential service charge: 1242.8245 GHp/month.
+Larger businesses and industrial customers with higher power demand are billed under a Special Load Tariff (SLT) category instead of the standard non-residential band - see the Special Load Tariff section.
+
+--- PURC_SECTION: special_load_tariffs
+Special Load Tariffs (SLT) for Large Business and Industrial Customers (Effective 1st July 2026)
+Customers with larger electricity demand (typically factories, large commercial premises, or those connected at medium/high voltage) are billed under Special Load Tariff (SLT) categories rather than the standard residential or non-residential bands.
+SLT-LV (Low Voltage, larger low-voltage customers): energy charge 240.2104 GHp/kWh, service charge 50,000.0000 GHp/month (GHS 500/month).
+SLT-MV (Medium Voltage): energy charge 208.6329 GHp/kWh, service charge 50,000.0000 GHp/month.
+SLT-MV2: energy charge 136.6512 GHp/kWh, service charge 50,000.0000 GHp/month.
+SLT-HV (High Voltage): energy charge 188.4762 GHp/kWh, service charge 50,000.0000 GHp/month.
+SLT-EV Charging (for commercial electric-vehicle charging point operators): energy charge 208.6329 GHp/kWh, service charge 50,000.0000 GHp/month.
+
+--- PURC_SECTION: net_metering_tariffs
+Net Metering Tariffs for Rooftop Solar / Customer-Generators (Effective 1st July 2026)
+Customers who generate their own electricity (for example, rooftop solar) and are connected to ECG's network under a net metering arrangement are billed differently depending on whether they use more power than they generate (Import > Export), generate more than they use (Import < Export, earning an export credit), or balance exactly (Import = Export).
+For residential net-metering customers in the 0-30 kWh Lifeline band: Import Tariff 53.9589 GHp/kWh, Export Tariff (credit for power sent back to the grid) 35.9726 GHp/kWh.
+For residential net-metering customers in the 31-300 kWh band: Import Tariff 122.2505 GHp/kWh, Export Tariff 81.5004 GHp/kWh.
+For residential net-metering customers using 301+ kWh: Import Tariff 161.5341 GHp/kWh, Export Tariff 107.6894 GHp/kWh.
+In short: a solar customer pays the Import Tariff on power drawn from ECG, and receives a credit at the (lower) Export Tariff for surplus power sent back to the grid - the Export Tariff is intentionally lower than the Import Tariff.
+
+--- PURC_SECTION: tariff_regulatory_context
+Tariff Publication and Legal Basis
+PURC publishes tariffs under its statutory duty in Section 19 of the Public Utilities Regulatory Commission Act, 1997 (Act 538). Each quarterly publication explicitly states which earlier gazette it revokes and replaces - for example, the 1st July 2026 tariffs (published 16 June 2026) revoked and replaced the rates published in Gazette No. 134 of 14th April 2026. This is why quoting an exact tariff figure without a date is unreliable - customers should be told the rate that applies "as of" a specific effective date, and directed to confirm the current rate for their exact billing period via ECG or purc.com.gh if precision matters (e.g. a billing dispute).

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kanea Chatbot — How to Run It &amp; Make Changes</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #fff;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+  h1 { font-size: 20pt; color: #050d9e; margin-bottom: 6px; }
+  .subtitle { color: #555; font-size: 10.5pt; margin-bottom: 28px; }
+  h2 {
+    font-size: 13.5pt; color: #050d9e; margin: 26px 0 10px;
+    border-bottom: 2px solid #faf208; padding-bottom: 4px;
+  }
+  p { margin-bottom: 10px; }
+  ul { padding-left: 20px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  strong { color: #050d9e; }
+  code {
+    background: #f0f2f8; border: 1px solid #d8ddf0; border-radius: 3px; padding: 1px 5px;
+    font-family: Consolas, 'Courier New', monospace; font-size: 9.5pt; color: #050d9e;
+  }
+  pre {
+    background: #10182b; color: #d7e0ff; border-radius: 8px; padding: 12px 16px;
+    font-family: Consolas, 'Courier New', monospace; font-size: 9.5pt; line-height: 1.5;
+    overflow-x: auto; margin: 8px 0 14px;
+  }
+  pre code { background: none; border: none; padding: 0; color: inherit; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 9.8pt; }
+  thead { background: #050d9e; color: #fff; }
+  thead th { padding: 7px 9px; text-align: left; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f5f7ff; }
+  tbody td { padding: 6px 9px; border-bottom: 1px solid #e0e4f0; vertical-align: top; }
+  .note {
+    background: #fff9e6; border-left: 4px solid #faf208; border-radius: 6px;
+    padding: 10px 14px; margin: 12px 0; font-size: 10.2pt;
+  }
+  .link-line { font-size: 13pt; font-weight: 600; color: #e10303; margin: 10px 0; }
+  hr { border: none; border-top: 1px solid #e0e4f0; margin: 22px 0; }
+  @media print { h2 { page-break-after: avoid; } table, pre, .note { page-break-inside: avoid; } }
+</style>
+</head>
+<body>
+
+<h1>Kanea Chatbot</h1>
+<p class="subtitle">How to run it, open it, and make changes — a simple guide</p>
+
+<h2>1. What you need installed</h2>
+<ul>
+  <li><strong>Python 3.10+</strong> (for the backend)</li>
+  <li><strong>Node.js 18+</strong> (for the frontend)</li>
+  <li>A free <strong>Groq API key</strong> from console.groq.com — this powers the chatbot's replies. It already goes in <code>backend/.env</code> as <code>GROQ_API_KEY</code>.</li>
+</ul>
+<p>If this is your first time running the project, install the dependencies once:</p>
+<pre>cd backend
+pip install -r requirements.txt
+
+cd ../frontend
+npm install</pre>
+
+<h2>2. Start the backend</h2>
+<p>The backend is the "brain" — it classifies messages, talks to the AI model, and stores everything in the database.</p>
+<p>Open a terminal and run:</p>
+<pre>cd backend
+python -m uvicorn main:app --reload --port 8000</pre>
+<p>Leave this terminal open. You'll know it worked when you see:</p>
+<pre>Uvicorn running on http://127.0.0.1:8000</pre>
+
+<h2>3. Start the frontend</h2>
+<p>The frontend is the actual chat screen the customer sees.</p>
+<p>Open a <strong>second, separate</strong> terminal (keep the backend one running) and run:</p>
+<pre>cd frontend
+npm run dev</pre>
+<p>You'll see a message with a local URL, usually:</p>
+<pre>Local:   http://localhost:5173/</pre>
+<div class="note"><strong>Important:</strong> the frontend needs the backend running first, otherwise the chat won't connect.</div>
+
+<h2>4. Open the chatbot</h2>
+<p>Open your browser and go to:</p>
+<p class="link-line">http://localhost:5173</p>
+<p>You'll see three tabs:</p>
+<ul>
+  <li><strong>Chat Support</strong> — talk to Kanea, the AI assistant</li>
+  <li><strong>Outage Status</strong> — see live power outages</li>
+  <li><strong>Report a Fault</strong> — submit a fault report</li>
+</ul>
+
+<h2>5. Stopping everything</h2>
+<p>In each terminal, press <code>Ctrl + C</code>.</p>
+<p>If a port is still stuck ("in use") afterward, on Windows you can free it with:</p>
+<pre>netstat -ano | findstr :8000
+taskkill /PID &lt;the number you see&gt; /F</pre>
+<p>(Same for port <code>5173</code> if the frontend gets stuck.)</p>
+
+<h2>6. Admin dashboard (optional)</h2>
+<p>There's a separate admin site for viewing analytics, fault reports, and escalations. It's a different app in the <code>frontend-admin</code> folder:</p>
+<pre>cd frontend-admin
+npm install     # first time only
+npm run dev</pre>
+<p>It opens on its own port (check the terminal output) and asks for a password — that password is set in <code>backend/.env</code> as <code>ADMIN_PASSWORD</code>.</p>
+
+<h2>7. Where to go if you want to change something</h2>
+<p>Everything the chatbot does lives in a small number of files. Here's what each one is for, in plain terms:</p>
+
+<p><strong>Backend files</strong> (<code>backend/</code>)</p>
+<table>
+  <thead><tr><th>File</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td><code>chatbot.py</code></td><td>The actual "thinking" of the bot: figures out what the customer wants (billing? outage? emergency?), decides how to answer, and builds the message sent to the AI model. <strong>This is the file you'll edit most.</strong></td></tr>
+    <tr><td><code>knowledge_base.py</code></td><td>Searches <code>ecg_knowledge.txt</code> for the most relevant facts to answer a question.</td></tr>
+    <tr><td><code>ecg_knowledge.txt</code></td><td>Plain text file of everything the bot "knows" about ECG — billing, safety, connections, etc. No coding needed to update this — just edit the text.</td></tr>
+    <tr><td><code>database.py</code></td><td>Saves and reads everything from the database: chat history, ratings, fault reports, outages.</td></tr>
+    <tr><td><code>main.py</code></td><td>Connects everything together as a web server — this is what the frontend actually talks to.</td></tr>
+    <tr><td><code>ecg_scraper.py</code></td><td>Automatically checks ecg.com.gh once an hour for real outage updates.</td></tr>
+    <tr><td><code>eval/</code></td><td>A testing tool that checks how accurate the bot is — not part of the live chatbot, just for measuring quality.</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Frontend files</strong> (<code>frontend/src/</code>)</p>
+<table>
+  <thead><tr><th>File</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td><code>components/ChatWindow.jsx</code></td><td>The actual chat box — messages, typing indicator, quick-reply buttons, star ratings.</td></tr>
+    <tr><td><code>App.jsx</code></td><td>The page around the chat box — header, tabs, footer.</td></tr>
+    <tr><td><code>components/FaultForm.jsx</code></td><td>The "Report a Fault" form.</td></tr>
+    <tr><td><code>components/OutageBoard.jsx</code></td><td>The "Outage Status" list.</td></tr>
+    <tr><td><code>tailwind.config.js</code></td><td>All the brand colors (navy/red/yellow) in one place.</td></tr>
+    <tr><td><code>config.js</code></td><td>Where the frontend looks for the backend — only touch this if you change the backend's address/port.</td></tr>
+  </tbody>
+</table>
+
+<h2>8. Quick "I want to change X" cheat sheet</h2>
+<table>
+  <thead><tr><th>I want to...</th><th>Go to...</th></tr></thead>
+  <tbody>
+    <tr><td>Change how the bot talks / its personality</td><td><code>chatbot.py</code></td></tr>
+    <tr><td>Teach the bot new facts / FAQs</td><td><code>ecg_knowledge.txt</code></td></tr>
+    <tr><td>Change when it hands off to a human</td><td><code>chatbot.py</code> (danger/escalation keywords near the top)</td></tr>
+    <tr><td>Change the colors</td><td><code>tailwind.config.js</code></td></tr>
+    <tr><td>Change how chat messages look</td><td><code>ChatWindow.jsx</code></td></tr>
+    <tr><td>Change the fault report form</td><td><code>FaultForm.jsx</code></td></tr>
+    <tr><td>Add a new backend feature/endpoint</td><td><code>main.py</code></td></tr>
+    <tr><td>Change what's saved in the database</td><td><code>database.py</code></td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

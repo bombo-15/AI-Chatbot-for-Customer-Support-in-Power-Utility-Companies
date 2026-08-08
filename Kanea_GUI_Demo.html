@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kanea — AI Customer Support</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --blue: #1e3a8a; --yellow: #facc15; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; }
+    .chat-bubble-bot  { background:#fff; border:1px solid #fde68a; border-radius:0 1rem 1rem 1rem; }
+    .chat-bubble-user { background:#1e3a8a; color:#fff; border-radius:1rem 0 1rem 1rem; }
+    .typing span { display:inline-block; width:7px; height:7px; background:#facc15; border-radius:50%; animation:bounce 1.2s infinite; }
+    .typing span:nth-child(2){ animation-delay:.2s; }
+    .typing span:nth-child(3){ animation-delay:.4s; }
+    @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
+    .tab-active { border-bottom:3px solid #facc15; color:#1e3a8a; font-weight:700; }
+    .tab-inactive { border-bottom:3px solid transparent; color:#6b7280; }
+    .tab-inactive:hover { border-color:#d1d5db; color:#374151; }
+    #messages { scroll-behavior: smooth; }
+    .badge-active    { background:#fee2e2; color:#b91c1c; }
+    .badge-scheduled { background:#fef3c7; color:#92400e; }
+    .badge-resolved  { background:#dcfce7; color:#166534; }
+    .step-done   { background:#1e3a8a; color:#facc15; }
+    .step-active { background:#facc15; color:#1e3a8a; }
+    .step-future { background:#e5e7eb; color:#9ca3af; }
+    .star { cursor:pointer; transition:transform .15s; font-size:1.6rem; }
+    .star:hover { transform:scale(1.2); }
+    .bar { transition: width .6s ease; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-yellow-50 min-h-screen">
+
+<!-- ════════════════════════ HEADER ════════════════════════ -->
+<header class="bg-blue-900 shadow-lg">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-2xl shadow">💡</div>
+      <div>
+        <h1 class="text-white font-bold text-lg leading-tight">Kanea</h1>
+        <p class="text-yellow-300 text-xs">AI Customer Support System</p>
+      </div>
+    </div>
+    <a href="tel:0800768937" class="hidden sm:flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-semibold text-sm rounded-full px-4 py-1.5 transition-colors shadow">
+      📞 0800-POWER
+    </a>
+  </div>
+</header>
+
+<!-- ════════════════════════ TABS ════════════════════════ -->
+<div class="bg-white border-b border-gray-200 shadow-sm">
+  <div class="max-w-5xl mx-auto px-4 flex overflow-x-auto">
+    <button onclick="showTab('chat')"     id="tab-chat"     class="tab-active     px-5 py-3.5 text-sm whitespace-nowrap transition-all">💬 Chat Support</button>
+    <button onclick="showTab('outages')"  id="tab-outages"  class="tab-inactive   px-5 py-3.5 text-sm whitespace-nowrap transition-all">⚡ Outage Status</button>
+    <button onclick="showTab('fault')"    id="tab-fault"    class="tab-inactive   px-5 py-3.5 text-sm whitespace-nowrap transition-all">🔧 Report a Fault</button>
+    <button onclick="showTab('analytics')" id="tab-analytics" class="tab-inactive px-5 py-3.5 text-sm whitespace-nowrap transition-all">📊 Analytics</button>
+  </div>
+</div>
+
+<main class="max-w-5xl mx-auto px-4 py-6">
+
+<!-- ════════════════════════ CHAT TAB ════════════════════════ -->
+<div id="page-chat">
+  <div class="max-w-2xl mx-auto">
+    <div class="mb-4">
+      <h2 class="text-xl font-bold text-blue-900">AI Chat Support</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Powered by Llama 3.3 70B — understands your enquiry and routes to the right solution</p>
+    </div>
+
+    <div class="flex flex-col bg-white rounded-2xl shadow-md border border-yellow-200 overflow-hidden" style="height:600px">
+
+      <!-- Chat header -->
+      <div class="bg-blue-900 px-4 py-3 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-full bg-yellow-400 flex items-center justify-center text-xl shadow">💡</div>
+          <div>
+            <p class="text-white font-semibold text-sm">Kanea</p>
+            <p class="text-yellow-300 text-xs">AI Customer Support</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 rounded-full bg-green-400"></div>
+          <span class="text-blue-300 text-xs">Online</span>
+          <button onclick="openRating()" class="text-xs text-yellow-400 border border-yellow-500 rounded-full px-2 py-0.5 hover:text-yellow-300 transition-colors">Rate chat</button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div id="messages" class="flex-1 overflow-y-auto px-4 py-4 bg-blue-50/20 space-y-3">
+        <!-- Welcome message -->
+        <div class="flex justify-start">
+          <div class="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-base mr-2 mt-1 shrink-0 shadow">💡</div>
+          <div class="max-w-[78%]">
+            <div class="chat-bubble-bot px-4 py-2.5 text-sm text-gray-800 leading-relaxed">
+              Hello! I'm <strong>Kanea</strong>, your AI customer support assistant.<br><br>
+              I can help you with:<br>
+              • Power outage status<br>
+              • Reporting electrical faults<br>
+              • Billing &amp; payment queries<br>
+              • Connecting you to a human agent<br><br>
+              How can I assist you today?
+            </div>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-xs text-gray-400" id="welcome-time"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick replies -->
+      <div id="quick-replies" class="px-4 py-2 flex gap-2 flex-wrap bg-white border-t border-yellow-100 shrink-0">
+        <button onclick="sendQuick('Check outages')"       class="text-xs bg-yellow-50 text-blue-800 border border-yellow-300 rounded-full px-3 py-1 hover:bg-yellow-100 font-medium transition-colors">Check outages</button>
+        <button onclick="sendQuick('Report a fault')"      class="text-xs bg-yellow-50 text-blue-800 border border-yellow-300 rounded-full px-3 py-1 hover:bg-yellow-100 font-medium transition-colors">Report a fault</button>
+        <button onclick="sendQuick('Billing enquiry')"     class="text-xs bg-yellow-50 text-blue-800 border border-yellow-300 rounded-full px-3 py-1 hover:bg-yellow-100 font-medium transition-colors">Billing enquiry</button>
+        <button onclick="sendQuick('Speak to an agent')"   class="text-xs bg-yellow-50 text-blue-800 border border-yellow-300 rounded-full px-3 py-1 hover:bg-yellow-100 font-medium transition-colors">Speak to an agent</button>
+      </div>
+
+      <!-- Input -->
+      <div class="border-t border-yellow-100 bg-white px-3 py-3 flex gap-2 shrink-0">
+        <input id="chat-input" type="text" placeholder="Type your message…"
+          class="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300"
+          onkeydown="if(event.key==='Enter') sendMessage()"/>
+        <button onclick="sendMessage()" class="bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-semibold rounded-full px-4 py-2 text-sm transition-colors shadow-sm">Send</button>
+      </div>
+    </div>
+
+    <!-- Feature badges -->
+    <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs text-gray-500">
+      <div class="bg-white rounded-xl border border-yellow-200 py-2.5 shadow-sm"><div class="text-lg">🤖</div>NLP Intent Detection</div>
+      <div class="bg-white rounded-xl border border-yellow-200 py-2.5 shadow-sm"><div class="text-lg">⚡</div>Live Outage Context</div>
+      <div class="bg-white rounded-xl border border-yellow-200 py-2.5 shadow-sm"><div class="text-lg">🧑‍💼</div>Human Escalation</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ OUTAGE TAB ════════════════════════ -->
+<div id="page-outages" class="hidden">
+  <div class="mb-4">
+    <h2 class="text-xl font-bold text-blue-900">Outage Status Board</h2>
+    <p class="text-sm text-gray-500 mt-0.5">Live outage and planned maintenance updates across all service areas</p>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="grid grid-cols-3 gap-3 mb-4">
+    <div class="bg-red-50 border border-red-200 rounded-xl p-3 text-center"><div class="text-2xl">🔴</div><div class="text-2xl font-bold text-red-700">2</div><div class="text-xs text-red-600">Active Outages</div></div>
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center"><div class="text-2xl">🟡</div><div class="text-2xl font-bold text-amber-700">2</div><div class="text-xs text-amber-600">Scheduled Works</div></div>
+    <div class="bg-green-50 border border-green-200 rounded-xl p-3 text-center"><div class="text-2xl">🟢</div><div class="text-2xl font-bold text-green-700">1</div><div class="text-xs text-green-600">Resolved Today</div></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex gap-2 flex-wrap mb-4">
+    <input id="outage-search" type="text" placeholder="Search area…" oninput="filterOutages()"
+      class="flex-1 min-w-[140px] border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300"/>
+    <button onclick="filterByStatus('all')"       id="sf-all"       class="px-3 py-1.5 rounded-lg text-xs font-medium border bg-blue-900 text-yellow-400 border-blue-900">All</button>
+    <button onclick="filterByStatus('active')"    id="sf-active"    class="px-3 py-1.5 rounded-lg text-xs font-medium border bg-white text-gray-600 border-gray-200 hover:border-yellow-300">Active</button>
+    <button onclick="filterByStatus('scheduled')" id="sf-scheduled" class="px-3 py-1.5 rounded-lg text-xs font-medium border bg-white text-gray-600 border-gray-200 hover:border-yellow-300">Scheduled</button>
+    <button onclick="filterByStatus('resolved')"  id="sf-resolved"  class="px-3 py-1.5 rounded-lg text-xs font-medium border bg-white text-gray-600 border-gray-200 hover:border-yellow-300">Resolved</button>
+  </div>
+
+  <div id="outage-list" class="space-y-3"></div>
+</div>
+
+<!-- ════════════════════════ FAULT TAB ════════════════════════ -->
+<div id="page-fault" class="hidden">
+  <div class="max-w-xl mx-auto">
+    <div class="mb-4">
+      <h2 class="text-xl font-bold text-blue-900">Report a Fault</h2>
+      <p class="text-sm text-gray-500 mt-0.5">Submit an electrical fault report — our field team will respond based on urgency</p>
+    </div>
+
+    <div id="fault-form-wrap" class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <!-- Step indicator -->
+      <div class="bg-gray-50 px-6 pt-5 pb-3 border-b border-gray-100">
+        <div class="flex items-center">
+          <div id="step-1" class="step-active w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0">1</div>
+          <div id="bar-1" class="flex-1 h-0.5 mx-2 bg-gray-200"></div>
+          <div id="step-2" class="step-future w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0">2</div>
+          <div id="bar-2" class="flex-1 h-0.5 mx-2 bg-gray-200"></div>
+          <div id="step-3" class="step-future w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0">3</div>
+        </div>
+        <div class="flex justify-between text-xs mt-1.5 text-gray-500">
+          <span>Customer Details</span><span>Fault &amp; Urgency</span><span>Review</span>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <!-- Step 1 -->
+        <div id="fstep-1">
+          <h3 class="font-semibold text-gray-800 mb-4">Your Details</h3>
+          <div class="space-y-3">
+            <div><label class="text-xs font-medium text-gray-500 block mb-1">Full Name *</label>
+              <input id="f-name" placeholder="e.g. Kwame Mensah" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300"/></div>
+            <div><label class="text-xs font-medium text-gray-500 block mb-1">Phone Number *</label>
+              <input id="f-phone" placeholder="e.g. 0244 123 456" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300"/></div>
+            <div><label class="text-xs font-medium text-gray-500 block mb-1">Location / Address *</label>
+              <input id="f-location" placeholder="e.g. 14 Ring Road, Accra Central" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300"/></div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="fstep-2" class="hidden">
+          <h3 class="font-semibold text-gray-800 mb-3">Fault Type *</h3>
+          <div class="grid grid-cols-2 gap-2 mb-5" id="fault-type-grid">
+            <button onclick="selectFault('Fallen Power Line','⚡')"      class="fault-btn flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm text-left bg-white border-gray-200 hover:border-yellow-300">⚡ Fallen Power Line <span class="ml-auto text-red-500 text-xs">⚠️</span></button>
+            <button onclick="selectFault('No Power Supply','🔌')"        class="fault-btn flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm bg-white border-gray-200 hover:border-yellow-300">🔌 No Power Supply</button>
+            <button onclick="selectFault('Flickering Lights','💡')"      class="fault-btn flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm bg-white border-gray-200 hover:border-yellow-300">💡 Flickering Lights</button>
+            <button onclick="selectFault('Damaged Pole / Equipment','🪵')" class="fault-btn flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm bg-white border-gray-200 hover:border-yellow-300">🪵 Damaged Pole <span class="ml-auto text-red-500 text-xs">⚠️</span></button>
+            <button onclick="selectFault('Streetlight Fault','🔦')"      class="fault-btn flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm bg-white border-gray-200 hover:border-yellow-300">🔦 Streetlight Fault</button>
+            <button onclick="selectFault('Other','📋')"                   class="fault-btn flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm bg-white border-gray-200 hover:border-yellow-300">📋 Other</button>
+          </div>
+          <h3 class="font-semibold text-gray-800 mb-2">Urgency Level *</h3>
+          <div class="space-y-2" id="urgency-grid">
+            <button onclick="selectUrgency('Critical — Immediate danger','🔴')" class="urgency-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl border text-sm bg-white border-gray-200 hover:border-yellow-300">🔴 Critical — Immediate danger</button>
+            <button onclick="selectUrgency('High — Major disruption','🟠')"     class="urgency-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl border text-sm bg-white border-gray-200 hover:border-yellow-300">🟠 High — Major disruption</button>
+            <button onclick="selectUrgency('Medium — Partial issue','🟡')"      class="urgency-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl border text-sm bg-white border-gray-200 hover:border-yellow-300">🟡 Medium — Partial issue</button>
+            <button onclick="selectUrgency('Low — Minor / cosmetic','🟢')"      class="urgency-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl border text-sm bg-white border-gray-200 hover:border-yellow-300">🟢 Low — Minor / cosmetic</button>
+          </div>
+          <div class="mt-4"><label class="text-xs font-medium text-gray-500 block mb-1">Additional Description</label>
+            <textarea id="f-desc" rows="2" placeholder="Describe the fault in more detail (optional)…" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-yellow-300"></textarea></div>
+        </div>
+
+        <!-- Step 3 -->
+        <div id="fstep-3" class="hidden">
+          <h3 class="font-semibold text-gray-800 mb-3">Review &amp; Confirm</h3>
+          <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-sm" id="review-box"></div>
+          <div id="danger-notice" class="hidden mt-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+            <strong>⚠️ Danger notice:</strong> If there is immediate risk to life, call <strong>0800-POWER</strong> now — do not wait.
+          </div>
+        </div>
+
+        <!-- Nav buttons -->
+        <div class="flex justify-between mt-6">
+          <button id="btn-back" onclick="faultBack()" disabled class="px-5 py-2 rounded-lg border border-gray-200 text-gray-600 text-sm disabled:opacity-30 hover:bg-gray-50">Back</button>
+          <button id="btn-next" onclick="faultNext()" class="px-5 py-2 rounded-lg bg-yellow-400 text-blue-900 text-sm font-semibold hover:bg-yellow-300 transition-colors">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success screen -->
+    <div id="fault-success" class="hidden bg-white rounded-2xl border border-gray-200 p-8 text-center shadow-sm">
+      <div class="text-5xl mb-3">✅</div>
+      <h3 class="text-xl font-bold text-gray-800 mb-1">Fault Report Submitted</h3>
+      <p class="text-gray-500 text-sm mb-4">Your reference number is:</p>
+      <div class="bg-blue-50 border border-blue-200 rounded-xl px-6 py-3 inline-block mb-6">
+        <span id="ref-number" class="text-2xl font-mono font-bold text-blue-800"></span>
+      </div>
+      <p class="text-sm text-gray-500 mb-6">Our team has been notified and will respond based on urgency.</p>
+      <button onclick="resetFault()" class="bg-yellow-400 hover:bg-yellow-300 text-blue-900 rounded-lg px-6 py-2 text-sm font-semibold">Submit Another Report</button>
+    </div>
+
+    <p class="text-xs text-center text-gray-400 mt-3">For life-threatening emergencies call <strong>0800-POWER</strong> immediately</p>
+  </div>
+</div>
+
+<!-- ════════════════════════ ANALYTICS TAB ════════════════════════ -->
+<div id="page-analytics" class="hidden">
+  <div class="mb-4">
+    <h2 class="text-xl font-bold text-blue-900">Chatbot Analytics</h2>
+    <p class="text-sm text-gray-500 mt-0.5">Response precision, user satisfaction scores, and NLP intent breakdown</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+    <div class="bg-yellow-50 border border-yellow-300 rounded-2xl p-4"><div class="text-2xl mb-1">⭐</div><div class="text-2xl font-bold text-blue-900">4.3/5</div><div class="text-sm font-medium text-blue-900">Avg Satisfaction</div><div class="text-xs opacity-70 mt-0.5">from 24 ratings</div></div>
+    <div class="bg-green-50 border border-green-200 rounded-2xl p-4"><div class="text-2xl mb-1">🎯</div><div class="text-2xl font-bold text-green-700">88.5%</div><div class="text-sm font-medium text-green-700">Response Accuracy</div><div class="text-xs opacity-70 mt-0.5">77 helpful / 10 not</div></div>
+    <div class="bg-orange-50 border border-orange-200 rounded-2xl p-4"><div class="text-2xl mb-1">🧑‍💼</div><div class="text-2xl font-bold text-orange-700">12%</div><div class="text-sm font-medium text-orange-700">Escalation Rate</div><div class="text-xs opacity-70 mt-0.5">4 sessions escalated</div></div>
+    <div class="bg-purple-50 border border-purple-200 rounded-2xl p-4"><div class="text-2xl mb-1">💬</div><div class="text-2xl font-bold text-purple-700">33</div><div class="text-sm font-medium text-purple-700">Conversations</div><div class="text-xs opacity-70 mt-0.5">218 messages total</div></div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <!-- Satisfaction histogram -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-semibold text-gray-800">Satisfaction Distribution</h3>
+        <div class="flex items-center gap-1">
+          <span class="text-yellow-400 text-sm">★★★★</span><span class="text-gray-300 text-sm">★</span>
+          <span class="text-sm font-bold text-gray-700 ml-1">4.3</span>
+        </div>
+      </div>
+      <div class="flex items-end gap-2 h-28">
+        <div class="flex-1 flex flex-col items-center gap-1"><span class="text-xs text-gray-500">11</span><div class="w-full rounded-t-md bg-green-500" style="height:100%"></div><span class="text-xs text-gray-500">5★</span></div>
+        <div class="flex-1 flex flex-col items-center gap-1"><span class="text-xs text-gray-500">7</span><div class="w-full rounded-t-md bg-lime-400" style="height:64%"></div><span class="text-xs text-gray-500">4★</span></div>
+        <div class="flex-1 flex flex-col items-center gap-1"><span class="text-xs text-gray-500">4</span><div class="w-full rounded-t-md bg-yellow-400" style="height:36%"></div><span class="text-xs text-gray-500">3★</span></div>
+        <div class="flex-1 flex flex-col items-center gap-1"><span class="text-xs text-gray-500">1</span><div class="w-full rounded-t-md bg-orange-400" style="height:9%"></div><span class="text-xs text-gray-500">2★</span></div>
+        <div class="flex-1 flex flex-col items-center gap-1"><span class="text-xs text-gray-500">1</span><div class="w-full rounded-t-md bg-red-500" style="height:9%"></div><span class="text-xs text-gray-500">1★</span></div>
+      </div>
+    </div>
+
+    <!-- Intent distribution -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+      <h3 class="font-semibold text-gray-800 mb-4">NLP Intent Distribution</h3>
+      <div class="space-y-3 text-xs">
+        <div><div class="flex justify-between text-gray-600 mb-1"><span>Outage Status</span><span class="font-medium">84 (38%)</span></div><div class="h-2.5 bg-gray-100 rounded-full"><div class="h-full bg-red-400 rounded-full bar" style="width:100%"></div></div></div>
+        <div><div class="flex justify-between text-gray-600 mb-1"><span>Billing</span><span class="font-medium">52 (24%)</span></div><div class="h-2.5 bg-gray-100 rounded-full"><div class="h-full bg-yellow-400 rounded-full bar" style="width:62%"></div></div></div>
+        <div><div class="flex justify-between text-gray-600 mb-1"><span>Fault Reports</span><span class="font-medium">41 (19%)</span></div><div class="h-2.5 bg-gray-100 rounded-full"><div class="h-full bg-orange-400 rounded-full bar" style="width:49%"></div></div></div>
+        <div><div class="flex justify-between text-gray-600 mb-1"><span>General Queries</span><span class="font-medium">24 (11%)</span></div><div class="h-2.5 bg-gray-100 rounded-full"><div class="h-full bg-blue-400 rounded-full bar" style="width:29%"></div></div></div>
+        <div><div class="flex justify-between text-gray-600 mb-1"><span>Complaints</span><span class="font-medium">12 (5%)</span></div><div class="h-2.5 bg-gray-100 rounded-full"><div class="h-full bg-pink-400 rounded-full bar" style="width:14%"></div></div></div>
+        <div><div class="flex justify-between text-gray-600 mb-1"><span>Escalation</span><span class="font-medium">5 (2%)</span></div><div class="h-2.5 bg-gray-100 rounded-full"><div class="h-full bg-purple-400 rounded-full bar" style="width:6%"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Precision breakdown -->
+  <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm mb-4">
+    <h3 class="font-semibold text-gray-800 mb-4">Response Precision Breakdown</h3>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <div class="flex-1">
+        <div class="flex justify-between text-sm mb-1"><span class="text-green-600 font-medium">👍 Helpful responses</span><span class="font-bold">77</span></div>
+        <div class="h-3 bg-gray-100 rounded-full"><div class="h-full bg-green-500 rounded-full bar" style="width:88.5%"></div></div>
+      </div>
+      <div class="flex-1">
+        <div class="flex justify-between text-sm mb-1"><span class="text-red-500 font-medium">👎 Unhelpful responses</span><span class="font-bold">10</span></div>
+        <div class="h-3 bg-gray-100 rounded-full"><div class="h-full bg-red-400 rounded-full bar" style="width:11.5%"></div></div>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 mt-3">Precision is calculated from user thumbs up/down votes on individual bot messages.</p>
+  </div>
+
+  <!-- Recent feedback -->
+  <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+    <h3 class="font-semibold text-gray-800 mb-3">Recent User Feedback</h3>
+    <div class="space-y-3">
+      <div class="flex items-start gap-3 border-b border-gray-50 pb-3">
+        <span class="text-yellow-400 text-sm shrink-0">★★★★★</span>
+        <div><p class="text-sm text-gray-700">"Very fast response. Told me exactly when power would be restored."</p><p class="text-xs text-gray-400 mt-0.5">21 Mar 2026, 09:14</p></div>
+      </div>
+      <div class="flex items-start gap-3 border-b border-gray-50 pb-3">
+        <span class="text-yellow-400 text-sm shrink-0">★★★★<span class="text-gray-300">★</span></span>
+        <div><p class="text-sm text-gray-700">"Got my fault reference quickly. Good service overall."</p><p class="text-xs text-gray-400 mt-0.5">21 Mar 2026, 08:55</p></div>
+      </div>
+      <div class="flex items-start gap-3 border-b border-gray-50 pb-3">
+        <span class="text-yellow-400 text-sm shrink-0">★★★★★</span>
+        <div><p class="text-sm text-gray-700">"Impressive — understood exactly what I was asking."</p><p class="text-xs text-gray-400 mt-0.5">20 Mar 2026, 17:30</p></div>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-yellow-400 text-sm shrink-0">★★★<span class="text-gray-300">★★</span></span>
+        <div><p class="text-sm text-gray-700 italic">No comment</p><p class="text-xs text-gray-400 mt-0.5">20 Mar 2026, 14:22</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- ════════════════════════ RATING MODAL ════════════════════════ -->
+<div id="rating-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
+    <div id="rating-form">
+      <h3 class="text-lg font-semibold text-blue-900 mb-1">Rate this conversation</h3>
+      <p class="text-sm text-gray-500 mb-4">How satisfied were you with the support you received?</p>
+      <div class="flex justify-center gap-2 mb-4" id="star-row">
+        <span class="star text-gray-300" onclick="setStar(1)" id="s1">★</span>
+        <span class="star text-gray-300" onclick="setStar(2)" id="s2">★</span>
+        <span class="star text-gray-300" onclick="setStar(3)" id="s3">★</span>
+        <span class="star text-gray-300" onclick="setStar(4)" id="s4">★</span>
+        <span class="star text-gray-300" onclick="setStar(5)" id="s5">★</span>
+      </div>
+      <textarea id="rating-comment" rows="2" placeholder="Optional comment…" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-yellow-300 mb-4"></textarea>
+      <div class="flex gap-2">
+        <button onclick="closeRating()" class="flex-1 py-2 rounded-lg border border-gray-200 text-gray-600 text-sm hover:bg-gray-50">Skip</button>
+        <button onclick="submitRating()" class="flex-1 py-2 rounded-lg bg-yellow-400 text-blue-900 text-sm font-semibold hover:bg-yellow-300 transition-colors">Submit</button>
+      </div>
+    </div>
+    <div id="rating-thanks" class="hidden text-center py-4">
+      <div class="text-4xl mb-2">🙏</div>
+      <p class="text-green-600 font-semibold">Thank you for your feedback!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ FOOTER ════════════════════════ -->
+<footer class="mt-12 bg-blue-900 py-4">
+  <div class="max-w-5xl mx-auto px-4 flex flex-wrap items-center justify-between gap-2 text-xs text-blue-300">
+    <span>© 2026 Kanea — AI Customer Support Phase 2</span>
+    <span>Emergency: <a href="tel:0800768937" class="text-yellow-400 hover:underline">0800-POWER</a></span>
+  </div>
+</footer>
+
+<!-- ════════════════════════ JAVASCRIPT ════════════════════════ -->
+<script>
+// ── Tab switching ──────────────────────────────────────────────
+function showTab(name) {
+  ['chat','outages','fault','analytics'].forEach(t => {
+    document.getElementById('page-' + t).classList.toggle('hidden', t !== name)
+    const btn = document.getElementById('tab-' + t)
+    btn.className = t === name
+      ? 'tab-active px-5 py-3.5 text-sm whitespace-nowrap transition-all'
+      : 'tab-inactive px-5 py-3.5 text-sm whitespace-nowrap transition-all'
+  })
+}
+
+// ── Set welcome time ───────────────────────────────────────────
+document.getElementById('welcome-time').textContent =
+  new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+
+// ── AI Response bank (NLP simulation) ─────────────────────────
+const responses = [
+  {
+    keys: ['outage','blackout','no power','no light','electricity','power off','lights off','current'],
+    intent: 'outage_status',
+    reply: '⚡ Based on our live data, there are currently **2 active outages**:\n\n• **Accra Central** — High-voltage line fault. Est. restoration: 16 Mar, 16:00\n• **Kumasi North** — Transformer overload. Est. restoration: 16 Mar, 12:00\n\nIf your area is not listed, there are no reported outages for your location. You can check the **Outage Status tab** for full details.',
+    quick: ['Check restoration time', 'Report a fault', 'Speak to agent']
+  },
+  {
+    keys: ['bill','pay','payment','invoice','charge','meter','token','prepaid','tariff','overcharge'],
+    intent: 'billing',
+    reply: '💳 For billing enquiries, I can help with:\n\n• **Prepaid token** — Purchase via mobile money or our app\n• **Bill disputes** — I can log a complaint for our billing team\n• **Meter reading** — Submit your reading online or via this chat\n\nWhat specific billing issue are you facing?',
+    quick: ['Pay online', 'Dispute a charge', 'Check balance']
+  },
+  {
+    keys: ['fault','report','fallen','wire','pole','spark','damage','transformer','broken','snapped'],
+    intent: 'fault_report',
+    reply: '🔧 To report an electrical fault, please use the **Report a Fault** tab — it takes less than 2 minutes and you will receive a unique reference number.\n\nIf there is **immediate danger** (fallen wire, sparking pole), please call **0800-POWER** right now.',
+    quick: ['Open fault form', 'Speak to agent', 'Track my report']
+  },
+  {
+    keys: ['human','agent','person','representative','speak to','manager','supervisor','real'],
+    intent: 'escalation',
+    reply: 'I completely understand — let me connect you with a human agent right away.\n\nYou can also call us directly on **0800-POWER (0800-76937)** — our agents are available 24/7.',
+    escalate: true,
+    quick: ['Call 0800-POWER', 'Leave a message', 'Track my case']
+  },
+  {
+    keys: ['complain','angry','frustrated','terrible','bad','unacceptable','worst','useless','poor service'],
+    intent: 'complaint',
+    reply: 'I sincerely apologise for the experience you\'ve had. That\'s not the standard we aim for.\n\nI\'m escalating this to a senior agent who will contact you within 2 hours. Alternatively, call **0800-POWER** for immediate assistance.',
+    escalate: true,
+    quick: ['Speak to agent', 'Submit feedback', 'Check outages']
+  },
+  {
+    keys: ['hello','hi','hey','good morning','good afternoon','good evening'],
+    intent: 'general',
+    reply: 'Hello! 👋 Welcome to **Kanea** AI Customer Support.\n\nI can help you with power outages, fault reports, billing, and more. What do you need help with today?',
+    quick: ['Check outages', 'Report a fault', 'Billing enquiry']
+  },
+  {
+    keys: ['restoration','when will','how long','eta','restore','come back'],
+    intent: 'outage_status',
+    reply: '⏱️ Based on our current data:\n\n• **Accra Central**: Estimated restoration by **16:00 today**\n• **Kumasi North**: Estimated restoration by **12:00 today**\n• **Tema Industrial** (scheduled): Work completes by **14:00 on 17 Mar**\n\nFor a specific area not listed, there are currently no reported outages.',
+    quick: ['Report a fault', 'Check outage board', 'Speak to agent']
+  }
+]
+
+const defaultResponse = {
+  intent: 'general',
+  reply: 'Thank you for reaching out. I\'m here to help with power outages, fault reports, billing, and more.\n\nCould you give me a bit more detail about what you need? Or choose one of the quick options below.',
+  quick: ['Check outages', 'Report a fault', 'Billing enquiry']
+}
+
+function classify(text) {
+  const lower = text.toLowerCase()
+  for (const r of responses) {
+    if (r.keys.some(k => lower.includes(k))) return r
+  }
+  return defaultResponse
+}
+
+// ── Chat functions ─────────────────────────────────────────────
+let msgCount = 0
+
+function now() {
+  return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+}
+
+function addUserMsg(text) {
+  const el = document.createElement('div')
+  el.className = 'flex justify-end'
+  el.innerHTML = `
+    <div class="max-w-[78%]">
+      <div class="chat-bubble-user px-4 py-2.5 text-sm leading-relaxed">${escHtml(text)}</div>
+      <div class="flex justify-end mt-1"><span class="text-xs text-gray-400">${now()}</span></div>
+    </div>`
+  document.getElementById('messages').appendChild(el)
+  scrollBottom()
+}
+
+function addTyping() {
+  const el = document.createElement('div')
+  el.className = 'flex justify-start'
+  el.id = 'typing-indicator'
+  el.innerHTML = `
+    <div class="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-base mr-2 mt-1 shrink-0 shadow">💡</div>
+    <div class="chat-bubble-bot px-4 py-3">
+      <div class="typing flex gap-1"><span></span><span></span><span></span></div>
+    </div>`
+  document.getElementById('messages').appendChild(el)
+  scrollBottom()
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing-indicator')
+  if (el) el.remove()
+}
+
+function addBotMsg(text, intent, escalate, quick) {
+  msgCount++
+  const mid = msgCount
+  const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')
+  const el = document.createElement('div')
+  el.className = 'flex justify-start'
+  el.innerHTML = `
+    <div class="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-base mr-2 mt-1 shrink-0 shadow">💡</div>
+    <div class="max-w-[78%]">
+      <div class="chat-bubble-bot px-4 py-2.5 text-sm text-gray-800 leading-relaxed">${formatted}</div>
+      <div class="flex items-center gap-2 mt-1">
+        <span class="text-xs text-gray-400">${now()}</span>
+        <button onclick="rate(${mid},'helpful',this)" class="text-xs px-1.5 py-0.5 rounded text-gray-400 hover:text-green-500 transition-colors">👍</button>
+        <button onclick="rate(${mid},'unhelpful',this)" class="text-xs px-1.5 py-0.5 rounded text-gray-400 hover:text-red-400 transition-colors">👎</button>
+      </div>
+      ${intent && intent !== 'general' ? `<span class="inline-block mt-1 text-[10px] bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full">${intent.replace('_',' ')}</span>` : ''}
+      ${escalate ? `<div class="mt-2 flex items-center gap-2 bg-yellow-50 border border-yellow-300 rounded-lg px-3 py-2">
+        <span class="text-yellow-600">🧑‍💼</span>
+        <span class="text-xs text-blue-900 font-medium">Connecting you to a human agent — or call <strong>0800-POWER</strong> now</span>
+      </div>` : ''}
+    </div>`
+  document.getElementById('messages').appendChild(el)
+
+  // Update quick replies
+  const qr = document.getElementById('quick-replies')
+  qr.innerHTML = (quick || []).map(q =>
+    `<button onclick="sendQuick('${q}')" class="text-xs bg-yellow-50 text-blue-800 border border-yellow-300 rounded-full px-3 py-1 hover:bg-yellow-100 font-medium transition-colors">${q}</button>`
+  ).join('')
+  scrollBottom()
+}
+
+function rate(id, val, btn) {
+  const row = btn.parentElement
+  row.innerHTML = `<span class="text-xs text-gray-400">${now()}</span> <span class="text-xs ${val==='helpful'?'text-green-600':'text-red-500'}">${val==='helpful'?'✓ Helpful':'✗ Not helpful'}</span>`
+}
+
+function scrollBottom() {
+  const m = document.getElementById('messages')
+  m.scrollTop = m.scrollHeight
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+}
+
+function sendMessage() {
+  const inp = document.getElementById('chat-input')
+  const text = inp.value.trim()
+  if (!text) return
+  inp.value = ''
+  addUserMsg(text)
+  addTyping()
+  const result = classify(text)
+  setTimeout(() => {
+    removeTyping()
+    addBotMsg(result.reply, result.intent, result.escalate || false, result.quick || [])
+  }, 900 + Math.random() * 600)
+}
+
+function sendQuick(text) {
+  document.getElementById('chat-input').value = text
+  sendMessage()
+}
+
+// ── Rating modal ───────────────────────────────────────────────
+let currentStar = 0
+
+function openRating() {
+  currentStar = 0
+  ;[1,2,3,4,5].forEach(i => document.getElementById('s'+i).className='star text-gray-300')
+  document.getElementById('rating-comment').value = ''
+  document.getElementById('rating-form').classList.remove('hidden')
+  document.getElementById('rating-thanks').classList.add('hidden')
+  document.getElementById('rating-modal').classList.remove('hidden')
+}
+function closeRating() { document.getElementById('rating-modal').classList.add('hidden') }
+function setStar(n) {
+  currentStar = n
+  ;[1,2,3,4,5].forEach(i => {
+    document.getElementById('s'+i).className = 'star ' + (i<=n ? 'text-yellow-400' : 'text-gray-300')
+  })
+}
+function submitRating() {
+  if (!currentStar) return
+  document.getElementById('rating-form').classList.add('hidden')
+  document.getElementById('rating-thanks').classList.remove('hidden')
+  setTimeout(closeRating, 1600)
+}
+
+// ── Outage board ───────────────────────────────────────────────
+const outages = [
+  { id:1, area:'Accra Central',    type:'unplanned', status:'active',    start:'16 Mar, 08:00', est:'16 Mar, 16:00', cause:'High-voltage line fault', affected:3200 },
+  { id:2, area:'Tema Industrial',  type:'scheduled', status:'scheduled', start:'17 Mar, 06:00', est:'17 Mar, 14:00', cause:'Routine maintenance',     affected:870  },
+  { id:3, area:'Kumasi North',     type:'unplanned', status:'active',    start:'15 Mar, 22:00', est:'16 Mar, 12:00', cause:'Transformer overload',     affected:1500 },
+  { id:4, area:'East Legon',       type:'scheduled', status:'scheduled', start:'18 Mar, 09:00', est:'18 Mar, 17:00', cause:'Network upgrade',          affected:420  },
+  { id:5, area:'Takoradi Port',    type:'unplanned', status:'resolved',  start:'14 Mar, 10:00', est:'14 Mar, 18:00', cause:'Cable fault repaired',     affected:950  },
+]
+
+let statusF = 'all'
+
+function filterByStatus(s) {
+  statusF = s
+  ;['all','active','scheduled','resolved'].forEach(x => {
+    const b = document.getElementById('sf-'+x)
+    b.className = 'px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ' +
+      (x===s ? 'bg-blue-900 text-yellow-400 border-blue-900' : 'bg-white text-gray-600 border-gray-200 hover:border-yellow-300')
+  })
+  renderOutages()
+}
+
+function filterOutages() { renderOutages() }
+
+function renderOutages() {
+  const search = document.getElementById('outage-search').value.toLowerCase()
+  const list = document.getElementById('outage-list')
+  const filtered = outages.filter(o =>
+    o.area.toLowerCase().includes(search) &&
+    (statusF === 'all' || o.status === statusF)
+  )
+  if (!filtered.length) {
+    list.innerHTML = '<div class="py-12 text-center"><div class="text-4xl mb-2">✅</div><p class="text-gray-500 text-sm">No outages match your search.</p></div>'
+    return
+  }
+  const icons = { unplanned:'⚠️', scheduled:'🔧' }
+  const badgeCls = { active:'badge-active', scheduled:'badge-scheduled', resolved:'badge-resolved' }
+  list.innerHTML = filtered.map(o => `
+    <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-start justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">${icons[o.type]||'⚡'}</span>
+          <div><p class="font-semibold text-gray-800">${o.area}</p><p class="text-xs text-gray-500 capitalize">${o.type} outage</p></div>
+        </div>
+        <span class="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border font-medium ${badgeCls[o.status]||''}">
+          <span class="w-1.5 h-1.5 rounded-full ${o.status==='active'?'bg-red-500':o.status==='scheduled'?'bg-amber-500':'bg-green-500'}"></span>
+          ${o.status.charAt(0).toUpperCase()+o.status.slice(1)}
+        </span>
+      </div>
+      <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600">
+        <div><span class="text-gray-400">Started:</span> ${o.start}</div>
+        <div><span class="text-gray-400">Est. Restoration:</span> <span class="font-medium text-blue-900">${o.est}</span></div>
+        <div><span class="text-gray-400">Cause:</span> ${o.cause}</div>
+        <div><span class="text-gray-400">Affected:</span> <span class="font-medium">${o.affected.toLocaleString()} customers</span></div>
+      </div>
+    </div>`).join('')
+}
+renderOutages()
+
+// ── Fault form ─────────────────────────────────────────────────
+let fStep = 1, fType = '', fUrgency = ''
+
+function selectFault(label, icon) {
+  fType = label
+  document.querySelectorAll('.fault-btn').forEach(b => {
+    b.className = 'fault-btn flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm text-left ' +
+      (b.textContent.includes(label)
+        ? 'bg-blue-50 border-blue-500 text-blue-700'
+        : 'bg-white border-gray-200 hover:border-yellow-300')
+  })
+}
+
+function selectUrgency(label, dot) {
+  fUrgency = label
+  document.querySelectorAll('.urgency-btn').forEach(b => {
+    b.className = 'urgency-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl border text-sm ' +
+      (b.textContent.includes(label.split('—')[0].trim())
+        ? 'bg-blue-50 border-blue-500 text-blue-700'
+        : 'bg-white border-gray-200 hover:border-yellow-300')
+  })
+}
+
+function updateSteps() {
+  for (let i=1; i<=3; i++) {
+    const el = document.getElementById('step-'+i)
+    el.textContent = i < fStep ? '✓' : i
+    el.className = (i < fStep ? 'step-done' : i === fStep ? 'step-active' : 'step-future') +
+      ' w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0'
+  }
+  for (let i=1; i<=2; i++) {
+    document.getElementById('bar-'+i).className =
+      'flex-1 h-0.5 mx-2 ' + (fStep > i ? 'bg-blue-900' : 'bg-gray-200')
+  }
+  document.getElementById('btn-back').disabled = fStep === 1
+  document.getElementById('btn-next').textContent = fStep === 3 ? 'Submit Report' : 'Next →'
+  document.getElementById('btn-next').className = 'px-5 py-2 rounded-lg text-sm font-semibold transition-colors ' +
+    (fStep === 3 ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-yellow-400 text-blue-900 hover:bg-yellow-300')
+}
+
+function faultNext() {
+  if (fStep === 1) {
+    if (!document.getElementById('f-name').value ||
+        !document.getElementById('f-phone').value ||
+        !document.getElementById('f-location').value) {
+      alert('Please fill in all required fields.'); return
+    }
+    fStep = 2
+  } else if (fStep === 2) {
+    if (!fType || !fUrgency) { alert('Please select a fault type and urgency level.'); return }
+    // Build review
+    const rev = document.getElementById('review-box')
+    rev.innerHTML = [
+      ['Name', document.getElementById('f-name').value],
+      ['Phone', document.getElementById('f-phone').value],
+      ['Location', document.getElementById('f-location').value],
+      ['Fault', fType],
+      ['Urgency', fUrgency],
+      ['Notes', document.getElementById('f-desc').value || '—'],
+    ].map(([k,v])=>`<div class="flex gap-2"><span class="text-gray-500 w-20 shrink-0">${k}:</span><span class="text-gray-800 font-medium">${v}</span></div>`).join('')
+    const danger = fUrgency.toLowerCase().includes('critical') || fUrgency.toLowerCase().includes('high')
+    document.getElementById('danger-notice').classList.toggle('hidden', !danger)
+    fStep = 3
+  } else {
+    // Submit
+    const ref = 'FAULT-' + Math.random().toString(16).slice(2,10).toUpperCase()
+    document.getElementById('ref-number').textContent = ref
+    document.getElementById('fault-form-wrap').classList.add('hidden')
+    document.getElementById('fault-success').classList.remove('hidden')
+    return
+  }
+  ;[1,2,3].forEach(i => document.getElementById('fstep-'+i).classList.toggle('hidden', i !== fStep))
+  updateSteps()
+}
+
+function faultBack() {
+  if (fStep > 1) fStep--
+  ;[1,2,3].forEach(i => document.getElementById('fstep-'+i).classList.toggle('hidden', i !== fStep))
+  updateSteps()
+}
+
+function resetFault() {
+  fStep = 1; fType = ''; fUrgency = ''
+  document.getElementById('fault-form-wrap').classList.remove('hidden')
+  document.getElementById('fault-success').classList.add('hidden')
+  ;['f-name','f-phone','f-location','f-desc'].forEach(id => document.getElementById(id).value='')
+  ;[1,2,3].forEach(i => document.getElementById('fstep-'+i).classList.toggle('hidden', i !== 1))
+  updateSteps()
+}
+updateSteps()
+</script>
+</body>
+</html>

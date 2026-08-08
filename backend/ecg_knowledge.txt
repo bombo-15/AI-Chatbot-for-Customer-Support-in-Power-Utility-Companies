@@ -1,0 +1,139 @@
+--- ECG_SECTION: company_overview
+Electricity Company of Ghana (ECG) - Company Overview
+ECG is a limited liability company wholly owned by the Government of Ghana. The first government-sponsored public electricity supply in Ghana commenced in 1914 at Sekon. ECG is the primary distributor of electricity across southern Ghana, serving residential, commercial, and industrial customers.
+Mission: To provide quality, reliable and safe electricity services to support the economic growth and development of Ghana.
+Vision: To be a competitive, sustainable, innovative, and customer-centric energy service provider.
+Tagline: ECG: The Name Behind Electricity in Ghana.
+Core Values (ENERGY): Excellence, Nurturing, Ethical, Reliability, Growth, You.
+Primary objectives: Supply and distribute electrical energy, purchase bulk electricity from VRA and Independent Power Producers, construct and maintain electrical infrastructure, execute national electrification programs, operate on sound commercial principles.
+Contact: Phone +233-302-611-611 or +233-551-444-011. Email help@ecggh.com or ecgho@ecggh.com. Address: Electro-Volta House, P.O. Box 521, Accra, Ghana.
+Social media: Facebook ECGghOfficial, Twitter ECGghOfficial, Instagram ecgghofficial. WhatsApp channel available.
+PowerApp available on Google Play Store. Online portal at powerapp.ecg.com.gh.
+
+--- ECG_SECTION: service_areas
+ECG Service Areas and Districts
+ECG serves eight regional divisions across southern Ghana.
+Accra East Region districts: Mampong, Kwabenya, Legon, Dodowa, Roman Ridge, Adentan, Teshie, Makola.
+Accra West Region districts: Amasaman, Achimota, Nsawam, Ablekuma, Bortianor, Korle Bu, Dansoman, Kaneshie.
+Tema Region districts: Ada, Afienya, Ashaiman, Juapong, Krobo, Nungua, Prampram, Tema North, Tema South.
+Ashanti East Region districts: Ayigya, Effiduase, Ejisu, Konongo, Kwabre, and others.
+Ashanti South and West Region districts: Suame, Bibiani, Ahinsan, Offinso, and others.
+Central Region districts: Cape Coast, Twifo Praso, Assin Fosu, Winneba, Kasoa North, Kasoa South, Agona Swedru, Saltpond, Breman Asikuma, Ajumako, and others.
+Volta Region districts: Akatsi, Denu, Dambai, Hohoe, Ho, Jasikan, Kpando.
+Western Region districts: Takoradi, Tarkwa, Sekondi, Half Assini, and surrounding areas.
+Emergency fault numbers for Accra West districts: Ablekuma 0205437513 or 0205437514, Achimota 0205164989, Bortianor 0205437507 to 0205437509, Dansoman 0205164985, Kaneshie 0205164199, Korle Bu 0205164231.
+
+--- ECG_SECTION: billing_and_payment
+Billing and Payment Information
+Electricity charges are in accordance with PURC (Public Utilities Regulatory Commission) approved tariff under Act 538 of 1997. Tariffs are reviewed periodically; current rates from April 2026 apply. Customers can view tariff details on the PURC website purc.com.gh or at any ECG office.
+Where to pay postpaid bills: ECG District and Customer Service Centers, private ECG vending stations, or authorized payment outlets with real-time database updates.
+Online payment available via PowerApp at powerapp.ecg.com.gh or the ECG Power mobile app.
+A service charge is a monthly charge for customer services rendered, covering maintenance of the network equipment, beyond electricity consumption charges. This charge continues even when a meter is disconnected.
+Bills are calculated based on energy consumed plus fixed statutory charges. Using LED lights and discarding inefficient appliances helps reduce consumption.
+To change details on your bill: contact your District Manager with account name, account or SPN number, geographic code, and pole number shown in red. For name changes due to marriage, divorce, or death, attach relevant certificates.
+If you were travelling and requested billing suspension but returned to a large debt, register a complaint at your District. Technical staff will visit for meter reading and account adjustment, though monthly service charges cannot be adjusted.
+Bills continue after meter disconnection because your account remains in the database. Monthly service charges accumulate and cannot be waived.
+
+--- ECG_SECTION: prepaid_meters
+Prepaid Meter Information
+Prepaid meters offer benefits including consumption control, no estimated bills, lower disconnection risk, and preventing tenant debt accumulation. It is ECG's prerogative to install postpaid or prepaid meters.
+You cannot buy prepaid credits at any vending station. Your meter type determines your vending station. Contact your District Office to identify where to purchase tokens.
+If your prepaid card is missing, register at the District Office with a vending receipt copy. A new programmed card will be issued for a replacement fee.
+If you have credit but no power though neighbors do, the meter may have tripped from over or under voltage shown by amber POWER OFF light, or a main switch fuse may have blown.
+Buying more prepaid credits despite unchanged gadget use is likely because a previous credit meter was under-recording due to its age or class. Practice energy conservation to improve consumption patterns.
+If your prepaid remote is not responding, register the complaint at your District Office prepaid fault section.
+A meter is issued for use in a specific location and is never transferable to another point. Even relocation within the same premises requires ECG approval.
+
+--- ECG_SECTION: new_connection
+Getting a New Electricity Connection
+Apply through the ECG Self Service Platform or ECG PowerApp by selecting New Service Connection under Service Request.
+Low Voltage Connection Process:
+Step 1 Registration: Submit a completed service form, site plan, and ID to a Customer Relations Assistant for a GHC 10 fee. Required documents include Installation Completion Certificate signed by licensed electrician, copy of identification such as National ID, Passport, Voters ID, or Drivers License, original and photocopy of site plan. Businesses must also provide proof of business operation.
+Step 2 Quotation: An ECG inspection team surveys the premises. If qualified, a cost estimate is provided. Projects requiring more than 2 poles are classified as development projects requiring engineering studies.
+Step 3 Connection: After full payment of the quotation, ECG completes the connection within 3 working days if lines exist, or 5 days for extensions up to 2 poles.
+High Voltage Connection Process for 11kV or 33kV:
+Step 1: Submit written application to the regional General Manager with details about power demand in KVA, location, connection timeline, load type, equipment lists, site maps, and phased demand schedules.
+Step 2: ECG Engineering team surveys the site and provides multiple design options with cost estimates.
+Step 3: Upon payment, a licensed ECG contractor performs installation. Customers may negotiate payment plans for larger projects. Costs depend on power requirements, distance to nearest line or substation, and feeder type.
+To get a separate meter in a compound house: ensure installations are properly separated by a licensed electrician, maintain at least 300 monthly consumption units for three consecutive months, complete a service form (GHC 10), submit proof of debt payment on existing meter, valid ID, and wiring certificate from the Energy Commission. Connection takes 3 working days after payment.
+SHEP service connection is a government-funded rural electrification program for residential and non-residential customers. Marketing officers register customers, premises are numbered, wiring by licensed contractors, meter boards installed at 1.8m height. Connection is free once registered.
+
+--- ECG_SECTION: disconnection_reconnection
+Disconnection and Reconnection Procedures
+To reconnect after disconnection: settle all outstanding bills and pay the approved reconnection fee at your District Office. Your meter will be reconnected as soon as the reconnection team is available, usually within the same day.
+ECG may disconnect supply for non-payment of bills, illegal connection, or unauthorized supply extensions following proper notice.
+ECG has the right to disconnect supply temporarily when necessary to carry out repairs, maintenance, or other work.
+Previous tenant electricity debt: the bearer of the account is usually responsible for their debts. Tenants should settle outstanding balances before vacating to avoid ECG pursuing other account users.
+Burnt meters require payment only if negligence is proven. Faulty meters are replaced free if untampered. Stolen meters are replaced free if reported to police and theft was not due to customer negligence.
+
+--- ECG_SECTION: illegal_connections
+Illegal Connections and Meter Tampering
+An illegal connection is the acquisition of electricity services from an unauthorized person or source, including direct connections without meters, meter transfers without approval, meter tampering, meter bypass, unauthorized network extensions, unauthorized supply redistribution, or self-reconnection after legal disconnection.
+Examples of meter tampering: removing or damaging original meter seals, loosening potential links, connecting source voltage to load cables, or physically damaging the meter.
+Effects of illegal connections: transformer and line overloading, poor supply quality, electrical appliance damage, and fire outbreak risks.
+ECG does not draw service lines without meters, so any neighbor with lights but no meter has an illegal connection.
+There is a cash reward for every informant on power theft when confirmed. Call 0302 611 611 to report.
+Only qualified and authorized ECG personnel must reconnect your meter. Reconnection by any other electrician is illegal.
+
+--- ECG_SECTION: safety_guidelines
+Safety Guidelines and Emergency Procedures
+If electricity lines are sagged or hanging low: stay away at a distance. Do not touch the wire or contact objects it touches such as metal fences or standing water. Even fallen trees can conduct high voltage. Do not attempt to move the wire. Call ECG immediately on 0302 611 611.
+If sparks appear on service wires during rain, this indicates loose contact. Treat this as an emergency. Contact ECG faults team immediately on 0302 611 611.
+If switches and sockets give electric shocks, contact a qualified electrician immediately for wiring and earthing system check. It could be dangerous if left unattended.
+To relocate an electricity pole: write to your District with original and photocopy of site plan, valid ID, account name and number, and contact details requesting relocation.
+Emergency line for electrical hazards: 0302 611 611.
+For fallen wires, electric shock, fire near power equipment, call ECG emergency line immediately and do not approach the area.
+
+--- ECG_SECTION: fault_reporting
+Fault Reporting and Complaints
+To report a fault: contact your District Office, call 0302 611 611 or 0551 444 011, or use the online portal at cx.eservicesafrica.com.
+For complaints about staff conduct, incorrect billing, or service quality, submit through the ECG customer service portal at cx.eservicesafrica.com or visit any District Office.
+Complaint submission process: register complaint with District Manager providing account details and description of issue. Technical staff will visit within a set timeframe. Unresolved complaints can be escalated to PURC at purc.com.gh.
+ECG investigates all reported faults including broken poles, transformer issues, line faults, and network failures. Emergency faults are prioritized.
+
+--- ECG_SECTION: outage_causes
+Common Causes of Power Outages in Ghana
+Unplanned outages common causes: broken high-tension (HT) poles due to vehicle accidents or weather, feeder faults on 11kV or 33kV lines, transformer overloads or failures, cable faults underground or overhead, fire outbreaks near equipment, upstream challenges from GRIDCo or VRA.
+Planned maintenance outages are scheduled by ECG to upgrade or maintain infrastructure. These include transformer replacements, feeder upgrades, substation maintenance, and network expansion projects.
+GRIDCo (Ghana Grid Company) manages the national transmission grid and supplies bulk power to ECG. Faults at GRIDCo substations such as Akosombo, Aboadze, or Anwomaso can affect large areas.
+VRA (Volta River Authority) and Independent Power Producers supply electricity to GRIDCo. Gas supply challenges from Nigeria or generation plant shutdowns can cause widespread outages.
+Recent major outages include: fire outbreak at GRIDCo Akosombo Substation April 2026, works on 330kV Takoradi-Thermal-Anwomaso Transmission Line, FPSO John Agyekum Kufuor shutdown September 2024 affecting gas supply, MMS-compliant meter technical challenges.
+Restoration times depend on fault type. Broken poles may take several hours. Transformer faults may take a day or more. Network upgrades are typically completed within the scheduled window.
+
+--- ECG_SECTION: street_lighting
+Street Lighting
+To install street lighting: apply through your Assembly or District Manager with area layout; ECG invites estimates from certified contractors; General Manager verifies transformer capacity; applicant pays deposit; ECG authorizes contractor to proceed; on completion contractor is paid from deposited amount.
+Street lighting defects that result in removal: luminous flux directed at residences instead of streets, unmetered security lighting, scantling or untreated poles, undersized cables, power exceeding 250W, missing manual or photocell or timer switching, or non-functional daytime switching systems.
+
+--- ECG_SECTION: purc_regulation
+PURC and Regulatory Framework
+PURC (Public Utilities Regulatory Commission) ensures efficient electricity markets, fair pricing, maximized access in urban and rural areas, customer rights protection, adequate reliable and safe electricity, and a level playing field for customers, operators, and investors. Website: purc.com.gh.
+Energy Commission regulates the energy sector including licensing of electricians and contractors under LI 2008. Website: energycom.gov.gh.
+Ministry of Energy oversees energy policy. Website: energymin.gov.gh.
+GRIDCo manages the national transmission grid. Website: gridcogh.com.
+VRA (Volta River Authority) generates and sells bulk electricity. Website: vra.com.
+All electrical work must be performed by licensed contractors per Energy Commission regulations.
+
+--- ECG_SECTION: recent_news
+Recent ECG News and Infrastructure Projects
+Transformer Upgrade Projects 2026: ECG commenced transformer replacement and upgrade exercises in parts of Accra including Lashibi Primary Substation Phase Two (April 2026), Teshie-Nungua Primary Substation (April 2026), Kumasi Ridge Enclave (May 2026). These upgrades aim to improve reliability and reduce outage frequency.
+Technical Challenge with MMS-Compliant Meters: ECG issued public notices about technical challenges affecting MMS (Meter Management System) compliant meters. Customers experiencing issues should contact their District Office.
+Vandalization of ECG installations: ECG warned against vandalism of electrical infrastructure which causes outages and poses public danger.
+Power Outage Due to Technical Challenges from GRIDCo at Kumasi BSPs: bulk supply points in Kumasi were affected by upstream GRIDCo technical issues.
+Works on 330kV Takoradi-Thermal-Anwomaso Transmission Line: major transmission infrastructure maintenance affecting Western and Ashanti regions.
+Disconnection of Electricity Supply to the Believers Worship Centre: ECG issued official statement September 2025 regarding disconnection for outstanding debt.
+ECG Debunks Media Reports on Scale Down of electricity supply by IPPs: official clarification on supply concerns.
+Gas Challenge from Nigeria June 2024: press statement addressing gas supply constraints affecting electricity generation capacity.
+
+--- ECG_SECTION: contact_directory
+ECG Contact Directory
+Main call centre: 0302 611 611 or 0551 444 011. Available 24 hours for fault reporting and emergencies.
+Email: help@ecggh.com for general enquiries. ecgho@ecggh.com for head office. publicrelations@ecggh.com for media.
+Emergency line for electrical hazards and fallen wires: 0302 611 611.
+Online portal for complaints and enquiries: cx.eservicesafrica.com.
+PowerApp web platform: powerapp.ecg.com.gh.
+ECG Training Centre: ecgtc.edu.gh.
+Accra West emergency fault numbers: Ablekuma 0205437513 or 0205437514, Achimota 0205164989, Bortianor 0205437507, Dansoman 0205164985, Kaneshie 0205164199, Korle Bu 0205164231.
+Tema Region call centre: 0302 611 611 or 0551 444 011.
+Western Region: Takoradi District 050 8283977, Tarkwa District 053 9202988.
+Central Region: Cape Coast, Kasoa North, Kasoa South, Agona Swedru, Winneba, Saltpond, Assin Fosu, Breman Asikuma, Twifo Praso, Ajumako all have dedicated district fault numbers reachable via 0302 611 611.

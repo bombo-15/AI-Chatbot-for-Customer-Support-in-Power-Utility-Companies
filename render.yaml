@@ -1,0 +1,32 @@
+# Render Blueprint for the Kanea FastAPI backend.
+# Import this repo at https://dashboard.render.com/blueprints and Render will
+# read this file automatically (or configure the same values manually in a
+# New Web Service if you'd rather not use a Blueprint).
+#
+# NOTE on persistence: Render's free-tier filesystem is ephemeral — chatbot.db
+# (fault reports, chat history, escalations, seeded/scraped outages) resets on
+# every deploy and on the spin-down that follows ~15 min of inactivity. That's
+# fine for a demo; for anything longer-lived, add a paid persistent disk (see
+# the commented `disk:` block below) mounted over backend/, or move to a
+# hosted database.
+
+services:
+  - type: web
+    name: kanea-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false   # set the real value in the Render dashboard, not here
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false   # set to your Vercel frontend URL(s) once deployed
+    # disk:
+    #   name: kanea-data
+    #   mountPath: /opt/render/project/src/backend
+    #   sizeGB: 1

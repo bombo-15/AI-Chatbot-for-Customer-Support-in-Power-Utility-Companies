@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Environment / secrets — NEVER commit these
+backend/.env
+*.env
+
+# Database
+backend/chatbot.db
+
+# Frontend build output (both apps)
+frontend/dist/
+frontend/node_modules/
+frontend-admin/dist/
+frontend-admin/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp

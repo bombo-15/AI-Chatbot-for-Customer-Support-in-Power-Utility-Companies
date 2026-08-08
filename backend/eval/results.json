@@ -1,0 +1,664 @@
+{
+  "intent_classification": {
+    "n_cases": 70,
+    "intent_accuracy": 0.814,
+    "routing_accuracy": 0.871,
+    "per_class": {
+      "billing": {
+        "precision": 0.9,
+        "recall": 0.9,
+        "f1": 0.9,
+        "support": 10
+      },
+      "complaint": {
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1": 0.947,
+        "support": 10
+      },
+      "escalation": {
+        "precision": 0.889,
+        "recall": 0.8,
+        "f1": 0.842,
+        "support": 10
+      },
+      "fault_report": {
+        "precision": 0.692,
+        "recall": 0.9,
+        "f1": 0.783,
+        "support": 10
+      },
+      "general": {
+        "precision": 0.615,
+        "recall": 0.8,
+        "f1": 0.696,
+        "support": 10
+      },
+      "outage_status": {
+        "precision": 0.778,
+        "recall": 0.7,
+        "f1": 0.737,
+        "support": 10
+      },
+      "safety": {
+        "precision": 1.0,
+        "recall": 0.7,
+        "f1": 0.824,
+        "support": 10
+      }
+    },
+    "confusion_matrix": {
+      "billing": {
+        "billing": 9,
+        "complaint": 0,
+        "escalation": 0,
+        "fault_report": 0,
+        "general": 0,
+        "outage_status": 1,
+        "safety": 0
+      },
+      "complaint": {
+        "billing": 0,
+        "complaint": 9,
+        "escalation": 0,
+        "fault_report": 1,
+        "general": 0,
+        "outage_status": 0,
+        "safety": 0
+      },
+      "escalation": {
+        "billing": 0,
+        "complaint": 0,
+        "escalation": 8,
+        "fault_report": 0,
+        "general": 2,
+        "outage_status": 0,
+        "safety": 0
+      },
+      "fault_report": {
+        "billing": 1,
+        "complaint": 0,
+        "escalation": 0,
+        "fault_report": 9,
+        "general": 0,
+        "outage_status": 0,
+        "safety": 0
+      },
+      "general": {
+        "billing": 0,
+        "complaint": 0,
+        "escalation": 1,
+        "fault_report": 0,
+        "general": 8,
+        "outage_status": 1,
+        "safety": 0
+      },
+      "outage_status": {
+        "billing": 0,
+        "complaint": 0,
+        "escalation": 0,
+        "fault_report": 0,
+        "general": 3,
+        "outage_status": 7,
+        "safety": 0
+      },
+      "safety": {
+        "billing": 0,
+        "complaint": 0,
+        "escalation": 0,
+        "fault_report": 3,
+        "general": 0,
+        "outage_status": 0,
+        "safety": 7
+      }
+    },
+    "danger_detection": {
+      "precision": 0.833,
+      "recall": 1.0,
+      "f1": 0.909,
+      "tp": 5,
+      "fp": 1,
+      "fn": 0,
+      "tn": 64
+    },
+    "escalation_detection": {
+      "precision": 0.867,
+      "recall": 0.867,
+      "f1": 0.867,
+      "tp": 13,
+      "fp": 2,
+      "fn": 2,
+      "tn": 53
+    },
+    "mismatches": [
+      {
+        "id": "out-4",
+        "text": "My area has been in darkness for 3 days, any updates?",
+        "gold_intent": "outage_status",
+        "pred_intent": "general",
+        "gold_query_type": "dynamic",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "out-7",
+        "text": "Please check if there is scheduled maintenance in East Legon today",
+        "gold_intent": "outage_status",
+        "pred_intent": "general",
+        "gold_query_type": "dynamic",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "out-8",
+        "text": "The whole street has no current, is ECG aware?",
+        "gold_intent": "outage_status",
+        "pred_intent": "general",
+        "gold_query_type": "dynamic",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "flt-5",
+        "text": "My meter box is smoking, please send someone",
+        "gold_intent": "fault_report",
+        "pred_intent": "billing",
+        "gold_query_type": "static",
+        "pred_query_type": "static",
+        "gold_danger": true,
+        "pred_danger": true
+      },
+      {
+        "id": "bil-1",
+        "text": "My electricity bill this month is way too high",
+        "gold_intent": "billing",
+        "pred_intent": "outage_status",
+        "gold_query_type": "static",
+        "pred_query_type": "dynamic",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "bil-4",
+        "text": "My meter shows I have credit but there's no power",
+        "gold_intent": "billing",
+        "pred_intent": "billing",
+        "gold_query_type": "static",
+        "pred_query_type": "dynamic",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "saf-3",
+        "text": "Is it dangerous to stand near a transformer during rain?",
+        "gold_intent": "safety",
+        "pred_intent": "fault_report",
+        "gold_query_type": "static",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "saf-4",
+        "text": "What should I do if I see sparks from a socket?",
+        "gold_intent": "safety",
+        "pred_intent": "fault_report",
+        "gold_query_type": "static",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "saf-8",
+        "text": "Can lightning damage my wiring, and how do I prevent it?",
+        "gold_intent": "safety",
+        "pred_intent": "fault_report",
+        "gold_query_type": "static",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "saf-10",
+        "text": "What should I do to avoid electric shock at home?",
+        "gold_intent": "safety",
+        "pred_intent": "safety",
+        "gold_query_type": "static",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": true
+      },
+      {
+        "id": "esc-7",
+        "text": "I've been on this bot too long, I need real help",
+        "gold_intent": "escalation",
+        "pred_intent": "general",
+        "gold_query_type": "escalation",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "esc-10",
+        "text": "I demand to speak with customer service staff directly",
+        "gold_intent": "escalation",
+        "pred_intent": "general",
+        "gold_query_type": "escalation",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "cmp-6",
+        "text": "I'm angry that nobody responded to my last report",
+        "gold_intent": "complaint",
+        "pred_intent": "fault_report",
+        "gold_query_type": "static",
+        "pred_query_type": "static",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "gen-2",
+        "text": "What can you help me with?",
+        "gold_intent": "general",
+        "pred_intent": "escalation",
+        "gold_query_type": "static",
+        "pred_query_type": "escalation",
+        "gold_danger": false,
+        "pred_danger": false
+      },
+      {
+        "id": "gen-5",
+        "text": "Where is your head office located?",
+        "gold_intent": "general",
+        "pred_intent": "outage_status",
+        "gold_query_type": "static",
+        "pred_query_type": "dynamic",
+        "gold_danger": false,
+        "pred_danger": false
+      }
+    ]
+  },
+  "retrieval": {
+    "top_n": 5,
+    "n_positive_queries": 22,
+    "precision_at_5": 0.358,
+    "recall_at_5": 0.955,
+    "hit_at_5": 0.955,
+    "mrr": 0.909,
+    "negative_query_accuracy": 1.0,
+    "per_case": [
+      {
+        "id": "r-1",
+        "query": "What is ECG's mission and when was the company formed?",
+        "expected": [
+          "ecg_company_overview"
+        ],
+        "retrieved": [
+          "ecg_company_overview",
+          "purc_overview"
+        ],
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      {
+        "id": "r-2",
+        "query": "Which districts does the Tema region cover?",
+        "expected": [
+          "ecg_service_areas"
+        ],
+        "retrieved": [
+          "ecg_service_areas",
+          "ecg_contact_directory"
+        ],
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      {
+        "id": "r-3",
+        "query": "Why do I still get a service charge after my meter was disconnected?",
+        "expected": [
+          "ecg_billing_and_payment"
+        ],
+        "retrieved": [
+          "ecg_billing_and_payment",
+          "ecg_prepaid_meters",
+          "ecg_disconnection_reconnection",
+          "purc_residential_electricity_tariffs"
+        ],
+        "precision": 0.25,
+        "recall": 1.0
+      },
+      {
+        "id": "r-4",
+        "query": "My prepaid card is missing, how do I get a replacement?",
+        "expected": [
+          "ecg_prepaid_meters"
+        ],
+        "retrieved": [
+          "ecg_prepaid_meters"
+        ],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "id": "r-5",
+        "query": "What documents do I need to apply for a new electricity connection?",
+        "expected": [
+          "ecg_new_connection"
+        ],
+        "retrieved": [
+          "ecg_new_connection",
+          "ecg_prepaid_meters",
+          "ecg_safety_guidelines",
+          "ecg_billing_and_payment",
+          "ecg_disconnection_reconnection"
+        ],
+        "precision": 0.2,
+        "recall": 1.0
+      },
+      {
+        "id": "r-6",
+        "query": "How do I reconnect my power supply after paying an outstanding bill?",
+        "expected": [
+          "ecg_disconnection_reconnection"
+        ],
+        "retrieved": [
+          "ecg_disconnection_reconnection",
+          "ecg_illegal_connections",
+          "ecg_billing_and_payment",
+          "ecg_recent_news",
+          "ecg_safety_guidelines"
+        ],
+        "precision": 0.2,
+        "recall": 1.0
+      },
+      {
+        "id": "r-7",
+        "query": "What counts as an illegal electricity connection or meter tampering?",
+        "expected": [
+          "ecg_illegal_connections"
+        ],
+        "retrieved": [
+          "ecg_illegal_connections",
+          "ecg_disconnection_reconnection",
+          "ecg_new_connection",
+          "ecg_safety_guidelines",
+          "ecg_outage_causes"
+        ],
+        "precision": 0.2,
+        "recall": 1.0
+      },
+      {
+        "id": "r-8",
+        "query": "What should I do if I see a sagged or fallen electricity wire?",
+        "expected": [
+          "ecg_safety_guidelines"
+        ],
+        "retrieved": [
+          "ecg_safety_guidelines",
+          "ecg_disconnection_reconnection",
+          "ecg_prepaid_meters",
+          "purc_tariff_regulatory_context",
+          "purc_how_tariffs_are_set"
+        ],
+        "precision": 0.2,
+        "recall": 1.0
+      },
+      {
+        "id": "r-9",
+        "query": "How do I report a fault or file a complaint about ECG staff conduct?",
+        "expected": [
+          "ecg_fault_reporting"
+        ],
+        "retrieved": [
+          "ecg_fault_reporting",
+          "ecg_prepaid_meters",
+          "ecg_safety_guidelines",
+          "ecg_billing_and_payment",
+          "ecg_illegal_connections"
+        ],
+        "precision": 0.2,
+        "recall": 1.0
+      },
+      {
+        "id": "r-10",
+        "query": "What are the common causes of unplanned power outages in Ghana?",
+        "expected": [
+          "ecg_outage_causes"
+        ],
+        "retrieved": [
+          "ecg_outage_causes",
+          "ecg_recent_news"
+        ],
+        "precision": 0.5,
+        "recall": 1.0
+      },
+      {
+        "id": "r-11",
+        "query": "How can I apply to install street lighting in my neighborhood?",
+        "expected": [
+          "ecg_street_lighting"
+        ],
+        "retrieved": [
+          "ecg_street_lighting",
+          "ecg_prepaid_meters",
+          "ecg_billing_and_payment",
+          "ecg_new_connection"
+        ],
+        "precision": 0.25,
+        "recall": 1.0
+      },
+      {
+        "id": "r-12",
+        "query": "What does PURC regulate and where can I find their tariff rules?",
+        "expected": [
+          "ecg_purc_regulation",
+          "purc_overview"
+        ],
+        "retrieved": [
+          "ecg_billing_and_payment",
+          "purc_how_tariffs_are_set",
+          "purc_tariff_regulatory_context"
+        ],
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      {
+        "id": "r-13",
+        "query": "What recent transformer or substation upgrades has ECG announced?",
+        "expected": [
+          "ecg_recent_news"
+        ],
+        "retrieved": [
+          "ecg_outage_causes",
+          "ecg_recent_news",
+          "ecg_new_connection"
+        ],
+        "precision": 0.333,
+        "recall": 1.0
+      },
+      {
+        "id": "r-14",
+        "query": "What is ECG's emergency phone number for fallen wires?",
+        "expected": [
+          "ecg_contact_directory",
+          "ecg_safety_guidelines"
+        ],
+        "retrieved": [
+          "ecg_safety_guidelines",
+          "ecg_contact_directory"
+        ],
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "id": "r-15",
+        "query": "How many monthly consumption units do I need for a separate meter in a compound house?",
+        "expected": [
+          "ecg_new_connection"
+        ],
+        "retrieved": [
+          "ecg_new_connection",
+          "purc_residential_electricity_tariffs",
+          "ecg_prepaid_meters",
+          "ecg_billing_and_payment"
+        ],
+        "precision": 0.25,
+        "recall": 1.0
+      },
+      {
+        "id": "r-16",
+        "query": "What is a good recipe for jollof rice?",
+        "expected": [],
+        "retrieved": [],
+        "ok": true
+      },
+      {
+        "id": "r-17",
+        "query": "What is the current residential electricity tariff per kWh?",
+        "expected": [
+          "purc_residential_electricity_tariffs"
+        ],
+        "retrieved": [
+          "purc_non_residential_electricity_tariffs",
+          "purc_residential_electricity_tariffs",
+          "purc_special_load_tariffs",
+          "purc_net_metering_tariffs",
+          "ecg_billing_and_payment"
+        ],
+        "precision": 0.2,
+        "recall": 1.0
+      },
+      {
+        "id": "r-18",
+        "query": "How often does PURC review or change electricity tariffs?",
+        "expected": [
+          "purc_how_tariffs_are_set"
+        ],
+        "retrieved": [
+          "purc_how_tariffs_are_set",
+          "ecg_billing_and_payment",
+          "purc_residential_electricity_tariffs",
+          "purc_functions",
+          "purc_tariff_regulatory_context"
+        ],
+        "precision": 0.2,
+        "recall": 1.0
+      },
+      {
+        "id": "r-19",
+        "query": "What is the Special Load Tariff for a factory connected at medium voltage?",
+        "expected": [
+          "purc_special_load_tariffs"
+        ],
+        "retrieved": [
+          "purc_special_load_tariffs",
+          "purc_non_residential_electricity_tariffs",
+          "purc_net_metering_tariffs",
+          "ecg_new_connection"
+        ],
+        "precision": 0.25,
+        "recall": 1.0
+      },
+      {
+        "id": "r-20",
+        "query": "How is a rooftop solar customer billed for electricity exported back to the grid?",
+        "expected": [
+          "purc_net_metering_tariffs"
+        ],
+        "retrieved": [
+          "purc_net_metering_tariffs",
+          "ecg_outage_causes",
+          "purc_overview",
+          "purc_residential_electricity_tariffs"
+        ],
+        "precision": 0.25,
+        "recall": 1.0
+      },
+      {
+        "id": "r-21",
+        "query": "My complaint to ECG about a billing dispute was not resolved, how do I escalate it to PURC?",
+        "expected": [
+          "purc_functions"
+        ],
+        "retrieved": [
+          "purc_functions",
+          "ecg_prepaid_meters",
+          "purc_tariff_regulatory_context",
+          "ecg_billing_and_payment",
+          "ecg_fault_reporting"
+        ],
+        "precision": 0.2,
+        "recall": 1.0
+      },
+      {
+        "id": "r-22",
+        "query": "What is the non-residential electricity tariff for a shop using 400 units a month?",
+        "expected": [
+          "purc_non_residential_electricity_tariffs"
+        ],
+        "retrieved": [
+          "purc_non_residential_electricity_tariffs",
+          "purc_special_load_tariffs",
+          "ecg_new_connection",
+          "purc_residential_electricity_tariffs",
+          "purc_net_metering_tariffs"
+        ],
+        "precision": 0.2,
+        "recall": 1.0
+      },
+      {
+        "id": "r-23",
+        "query": "Who are PURC's commissioners and when was PURC established?",
+        "expected": [
+          "purc_overview"
+        ],
+        "retrieved": [
+          "purc_overview"
+        ],
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    ]
+  },
+  "live_metrics": {
+    "total_sessions": 16,
+    "total_messages": 51,
+    "avg_satisfaction": 0,
+    "total_ratings": 0,
+    "accuracy_percent": null,
+    "helpful_count": 0,
+    "unhelpful_count": 0,
+    "escalation_rate": 75.0,
+    "total_escalations": 12,
+    "intent_distribution": [
+      {
+        "intent": "general",
+        "count": 19
+      },
+      {
+        "intent": "fault_report",
+        "count": 13
+      },
+      {
+        "intent": "outage_status",
+        "count": 9
+      },
+      {
+        "intent": "billing",
+        "count": 8
+      },
+      {
+        "intent": "escalation",
+        "count": 2
+      }
+    ],
+    "satisfaction_distribution": {},
+    "recent_ratings": []
+  }
+}

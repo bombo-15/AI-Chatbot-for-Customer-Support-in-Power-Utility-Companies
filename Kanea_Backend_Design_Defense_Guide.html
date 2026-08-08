@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kanea Backend — Architecture, Design Rationale &amp; Defense Guide</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm 22mm 20mm; }
+  @media print {
+    .no-print { display: none !important; }
+    h2 { page-break-before: always; }
+    h2.no-break-before { page-break-before: avoid; }
+    .no-break { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.65;
+    color: #1a1a2e;
+    background: #fff;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 30px 40px;
+  }
+  .cover { text-align: center; padding: 60px 20px 50px; border-bottom: 3px solid #1a3a6b; margin-bottom: 40px; }
+  .cover .logo {
+    width: 80px; height: 80px; background: #1a3a6b; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 20px; color: #f5c518; font-weight: bold;
+  }
+  .cover h1 { font-size: 25pt; color: #1a3a6b; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .cover .subtitle { font-size: 13pt; color: #555; margin-bottom: 6px; }
+  .cover .tagline { font-size: 11pt; color: #888; font-style: italic; margin-bottom: 36px; }
+  .cover-meta {
+    display: inline-block; text-align: left; background: #f7f9ff;
+    border: 1px solid #d0d8f0; border-radius: 10px; padding: 18px 30px;
+    font-size: 10pt; line-height: 2;
+  }
+  .cover-meta strong { color: #1a3a6b; }
+  h2 { font-size: 15pt; color: #1a3a6b; border-bottom: 2px solid #f5c518; padding-bottom: 5px; margin: 36px 0 14px; font-weight: 700; }
+  h3 { font-size: 11.5pt; color: #1a3a6b; margin: 22px 0 8px; font-weight: 600; }
+  h4 { font-size: 10.5pt; color: #2d4a8a; margin: 14px 0 5px; font-weight: 600; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 20px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  strong { color: #1a3a6b; }
+  em { color: #555; }
+  code {
+    background: #f0f2f8; border: 1px solid #d8ddf0; border-radius: 3px; padding: 1px 5px;
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; color: #2d4a8a;
+  }
+  pre {
+    background: #10182b; color: #d7e0ff; border-radius: 8px; padding: 14px 16px;
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 8.8pt; line-height: 1.55;
+    overflow-x: auto; margin: 10px 0 16px;
+  }
+  pre .c { color: #8a95b8; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 9.5pt; }
+  thead { background: #1a3a6b; color: #fff; }
+  thead th { padding: 8px 10px; text-align: left; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f5f7ff; }
+  tbody td { padding: 7px 10px; border-bottom: 1px solid #e0e4f0; vertical-align: top; }
+  .box { border-radius: 8px; padding: 14px 18px; margin: 14px 0; font-size: 10pt; }
+  .box-blue  { background: #eef2ff; border-left: 4px solid #1a3a6b; }
+  .box-gold  { background: #fff9e6; border-left: 4px solid #f5c518; }
+  .box-green { background: #edfaf3; border-left: 4px solid #27ae60; }
+  .box-red   { background: #fff1f0; border-left: 4px solid #e74c3c; }
+  .box h4 { margin: 0 0 6px; font-size: 10.5pt; }
+  .arch {
+    background: #f0f2f8; border: 1px solid #c8ceea; border-radius: 8px; padding: 16px 20px;
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 9pt; line-height: 1.7;
+    color: #1a1a2e; margin: 14px 0; white-space: pre; overflow-x: auto;
+  }
+  .timeline { margin: 14px 0; }
+  .phase { display: flex; gap: 14px; margin-bottom: 14px; page-break-inside: avoid; }
+  .phase-num {
+    min-width: 30px; height: 30px; background: #1a3a6b; border-radius: 50%; color: #f5c518;
+    font-weight: 700; font-size: 11pt; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .phase-body h4 { margin: 0 0 4px; color: #1a3a6b; }
+  .phase-body p  { margin: 0; color: #444; font-size: 10pt; }
+  .badge {
+    display: inline-block; background: #e8ecff; color: #1a3a6b; border: 1px solid #b0baee;
+    border-radius: 20px; padding: 2px 9px; font-size: 8.5pt; font-weight: 600; margin: 2px 2px;
+  }
+  .badge-green { background: #e6f9f0; color: #1a7a50; border-color: #a0dfc0; }
+  .badge-gold  { background: #fffbe6; color: #8a6000; border-color: #f5d65a; }
+  .qa { margin: 14px 0 20px; page-break-inside: avoid; }
+  .qa .q { font-weight: 700; color: #1a3a6b; margin-bottom: 4px; }
+  .qa .q::before { content: "Q. "; color: #f5c518; font-weight: 800; }
+  .qa .a { margin-left: 4px; }
+  .qa .a::before { content: "A. "; font-weight: 700; color: #27ae60; }
+  .print-btn {
+    position: fixed; top: 20px; right: 20px; background: #1a3a6b; color: #fff; border: none;
+    border-radius: 8px; padding: 10px 20px; font-size: 10pt; font-weight: 600; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2); z-index: 100;
+  }
+  .print-btn:hover { background: #2d4a8a; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 5px; }
+  .toc a { color: #1a3a6b; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .footer { margin-top: 48px; border-top: 1px solid #d0d8f0; padding-top: 12px; font-size: 8.5pt; color: #999; text-align: center; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">&#8595; Save as PDF</button>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="logo">&#9889;</div>
+  <h1>Kanea Backend</h1>
+  <p class="subtitle">Architecture, Design Rationale &amp; Defense Guide</p>
+  <p class="tagline">A companion document to prepare for the project viva / defense</p>
+  <div class="cover-meta">
+    <div><strong>Component Covered:</strong> Backend only (FastAPI + AI engine + database)</div>
+    <div><strong>Companion File:</strong> <code>Kanea_Project_Report.html</code> (full project report)</div>
+    <div><strong>Purpose:</strong> Explain every backend design decision and why it was made</div>
+    <div><strong>Version:</strong> 2.0.0</div>
+  </div>
+</div>
+
+<div class="toc">
+  <h2 class="no-break-before">Table of Contents</h2>
+  <ol>
+    <li><a href="#s1">How to Use This Guide</a></li>
+    <li><a href="#s2">The Backend at a Glance</a></li>
+    <li><a href="#s3">Design Philosophy — Why Hybrid, Not Pure-NLP or Pure-LLM</a></li>
+    <li><a href="#s4">Step-by-Step: How the Backend Was Designed and Built</a></li>
+    <li><a href="#s5">Deep Dive 1 — The Three-Step Decision Engine (chatbot.py)</a></li>
+    <li><a href="#s6">Deep Dive 2 — The RAG Knowledge Base (knowledge_base.py)</a></li>
+    <li><a href="#s7">Deep Dive 3 — The Live Data Pipeline (ecg_scraper.py)</a></li>
+    <li><a href="#s8">Deep Dive 4 — The Data Layer (database.py)</a></li>
+    <li><a href="#s9">Deep Dive 5 — The API Layer (main.py)</a></li>
+    <li><a href="#s10">Design Trade-offs — Alternatives Considered</a></li>
+    <li><a href="#s11">Anticipated Defense Questions &amp; Model Answers</a></li>
+    <li><a href="#s12">Glossary of Key Terms</a></li>
+  </ol>
+</div>
+
+<!-- S1 -->
+<h2 id="s1">1. How to Use This Guide</h2>
+<p>
+  This document exists for one purpose: to give you, the developer, enough command of <strong>why</strong>
+  the backend was built the way it was — not just what it does — that you can answer any panel question
+  confidently. Section 4 walks through the build as a chronological procedure you can recite. Sections 5–9
+  are deep dives into each backend file with the reasoning behind key lines of code. Section 10 lists the
+  alternatives you rejected and why. Section 11 is the highest-value section for defense prep: it rehearses
+  the questions a panel is most likely to ask and gives you a tight model answer for each.
+</p>
+<div class="box box-gold no-break">
+  <h4>The one idea to hold onto</h4>
+  <p>
+    The backend is a <strong>hybrid decision engine</strong>: cheap, deterministic keyword rules decide
+    <em>what kind of question this is and where the answer should come from</em>, and the LLM is only
+    responsible for <em>phrasing</em> that answer in natural language from data it is explicitly given.
+    The LLM never decides routing and never invents facts — it is constrained by the system prompt to only
+    use the outage records and knowledge-base excerpts handed to it. This is the single design decision
+    that everything else in the backend supports, and it is the answer to most "why" questions.
+  </p>
+</div>
+
+<!-- S2 -->
+<h2 id="s2">2. The Backend at a Glance</h2>
+<p>
+  The backend is five Python modules, each with one job. There is no framework magic hidden anywhere —
+  every request you can trace by eye from the file that receives it to the file that answers it.
+</p>
+<div class="arch">backend/
+ ├── main.py            FastAPI app: REST endpoints, WebSocket, auth, rate limiting, app lifecycle
+ ├── chatbot.py          The decision engine: intent → route → prompt → Groq LLM call
+ ├── knowledge_base.py   RAG: TF-IDF search over static ECG knowledge text
+ ├── ecg_scraper.py      Live scraper: pulls real outage notices from ecg.com.gh
+ ├── database.py         SQLite access layer: 9 tables, all reads/writes go through here
+ ├── ecg_knowledge.txt   Static knowledge corpus (billing, safety, meters, procedures, ...)
+ └── presentation_text.txt   Extracted text from the Phase-1 slide deck (extra RAG corpus)</div>
+
+<table>
+  <thead><tr><th>File</th><th>Responsibility</th><th>Depends on</th></tr></thead>
+  <tbody>
+    <tr><td><code>main.py</code></td><td>HTTP/WebSocket surface, request validation, auth, rate limits, background scrape scheduling</td><td>database, chatbot, ecg_scraper</td></tr>
+    <tr><td><code>chatbot.py</code></td><td>Classifies intent, decides the query route, builds the system prompt, calls Groq</td><td>knowledge_base, database (session history)</td></tr>
+    <tr><td><code>knowledge_base.py</code></td><td>Loads two text corpora at import time, scores queries against them with TF-IDF</td><td>presentation_text.txt, ecg_knowledge.txt</td></tr>
+    <tr><td><code>ecg_scraper.py</code></td><td>Fetches and parses live HTML from ecg.com.gh into structured outage records</td><td>httpx, BeautifulSoup</td></tr>
+    <tr><td><code>database.py</code></td><td>Owns the SQLite schema and every query; the only file that touches <code>chatbot.db</code></td><td>sqlite3 (standard library)</td></tr>
+  </tbody>
+</table>
+
+<h3>Request Flow — a single chat message, end to end</h3>
+<ol>
+  <li>Browser sends <code>{"message": "..."}</code> over the open <code>/ws/&#123;session_id&#125;</code> WebSocket.</li>
+  <li><code>main.py</code> checks the 20-messages-per-minute session throttle, then echoes the message back as type <code>"user"</code> and persists it via <code>db.save_message()</code>.</li>
+  <li><code>main.py</code> pulls the current outage list (<code>db.get_all_outages()</code>) and calls <code>chatbot.get_bot_response()</code> — this single call is where all "thinking" happens.</li>
+  <li>Inside <code>chatbot.py</code>: <code>classify_intent()</code> scores the message against 7 keyword sets, <code>classify_query_type()</code> turns that into a routing decision (<code>static</code> / <code>dynamic</code> / <code>escalation</code>), <code>_build_rag_context()</code> fetches supporting documents if needed, and <code>_build_system_prompt()</code> assembles all of it into one instruction block for the LLM.</li>
+  <li>The Groq API is called with that system prompt plus the last 4 conversation turns; the raw completion is scanned for the <code>[ESCALATE_TO_AGENT]</code> marker and stripped of it before being returned.</li>
+  <li><code>main.py</code> saves the bot reply (getting back a message ID), logs an escalation row if needed, and sends the reply back over the WebSocket together with intent, quick replies, and RAG source metadata.</li>
+</ol>
+
+<!-- S3 -->
+<h2 id="s3">3. Design Philosophy — Why Hybrid, Not Pure-NLP or Pure-LLM</h2>
+<p>
+  Before writing any code, the design had to answer one question: <strong>where does routing intelligence
+  live — in the LLM's own judgement, or in code you control?</strong> Three approaches were possible.
+</p>
+<table>
+  <thead><tr><th>Approach</th><th>What it means</th><th>Why it was rejected / accepted</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Pure LLM (send raw message straight to the model, let it decide everything)</td>
+      <td>No routing layer — the model reads the user's message and free-writes a reply, possibly with tools</td>
+      <td><span class="badge badge-gold">Rejected</span> — the model can hallucinate outage times, fees, or procedures it wasn't told, and there is no reliable, auditable trigger for escalation to a human agent. Unacceptable for a utility company where wrong information (e.g. a wrong restoration time) has real consequences.</td>
+    </tr>
+    <tr>
+      <td>Pure rule-based / retrieval-only (classic decision-tree chatbot)</td>
+      <td>Fixed menu of intents, each mapped to a canned response or template</td>
+      <td><span class="badge badge-gold">Rejected</span> — brittle and robotic; cannot handle paraphrased questions, cannot hold a natural multi-turn conversation, and every new phrasing needs a new rule.</td>
+    </tr>
+    <tr>
+      <td><strong>Hybrid</strong> — keyword classification decides <em>what</em> and <em>where from</em>; LLM decides <em>how to phrase it</em></td>
+      <td>Deterministic Python code (fast, free, auditable) does routing; the LLM (flexible, natural) does language generation constrained to supplied facts</td>
+      <td><span class="badge badge-green">Chosen</span> — gets natural, empathetic conversation <em>and</em> factual control. Routing is 100% predictable and testable without needing an LLM call at all. The LLM's only freedom is wording, not facts.</td>
+    </tr>
+  </tbody>
+</table>
+<div class="box box-blue no-break">
+  <h4>Why this matters for a viva</h4>
+  <p>
+    If asked "why didn't you just use ChatGPT/an LLM for everything?", the answer is <strong>controllability and
+    correctness for a safety- and money-adjacent domain</strong>: outage restoration times and billing procedures
+    must come from ECG's actual data, not from whatever the model has memorised about generic utilities. The
+    routing layer is what prevents the model from ever being asked to invent that data in the first place.
+  </p>
+</div>
+
+<!-- S4 -->
+<h2 id="s4">4. Step-by-Step: How the Backend Was Designed and Built</h2>
+<p>
+  This is the procedure to recite when asked "walk me through how you built this." It is written as the
+  logical design sequence — each step exists because the previous step exposed a requirement for it.
+</p>
+<div class="timeline">
+
+  <div class="phase no-break">
+    <div class="phase-num">1</div>
+    <div class="phase-body">
+      <h4>Define the customer service scope, then design the database schema first</h4>
+      <p>Before writing any endpoint, the four customer needs (outage status, fault reporting, billing
+      queries, human escalation) were translated directly into database tables:
+      <code>outages</code>, <code>fault_reports</code>, <code>escalations</code>, and <code>messages</code>.
+      Designing the schema first — rather than the API — meant every endpoint added afterward had an
+      obvious, already-decided place to read from and write to.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">2</div>
+    <div class="phase-body">
+      <h4>Stand up the transport layer: FastAPI + WebSocket</h4>
+      <p>FastAPI was chosen for automatic request validation (Pydantic models catch malformed requests
+      before they reach any logic) and native <code>async</code> support. A WebSocket endpoint
+      (<code>/ws/&#123;session_id&#125;</code>) was added specifically for chat, instead of plain REST,
+      because chat needs the server to push messages to the client without the client re-polling — a
+      single persistent connection instead of one HTTP round-trip per message.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">3</div>
+    <div class="phase-body">
+      <h4>Build the naive version first: keyword classifier only, canned replies</h4>
+      <p>The very first working version scored the message against keyword lists and returned a
+      fixed template per intent. This proved the plumbing (WebSocket, DB writes, session IDs) worked
+      before any AI was introduced — isolating transport bugs from AI bugs.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">4</div>
+    <div class="phase-body">
+      <h4>Replace canned replies with an LLM, constrained by a system prompt</h4>
+      <p>Groq's free-tier API (<code>llama-3.3-70b-versatile</code>) was integrated because it is fast
+      and free for a student project, and OpenAI-compatible (so the request/response shape is a widely
+      documented standard). At this point the intent classifier's output stopped being the final answer
+      and became an <em>instruction to the LLM</em> instead — the seed of the routing design in Section 3.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">5</div>
+    <div class="phase-body">
+      <h4>Split "static" knowledge from "dynamic" live data — introduce RAG</h4>
+      <p>Once the LLM was in the loop, a new failure mode appeared: it would answer billing questions
+      correctly (general knowledge) but invent outage restoration times (no way for it to know these).
+      This is the exact problem <code>classify_query_type()</code> exists to solve. Two data sources were
+      then built: <code>knowledge_base.py</code> (TF-IDF search over static ECG text for billing/safety/FAQ
+      answers) and the live outage table (fed by the scraper in step 6) for anything about current power
+      status. The routing instruction told the LLM explicitly which of the two it was allowed to draw
+      from for a given message.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">6</div>
+    <div class="phase-body">
+      <h4>Replace seeded/manual outage data with a live scraper</h4>
+      <p>Seed data in <code>outages</code> proved the routing worked, but it was static and would go stale.
+      <code>ecg_scraper.py</code> was built to fetch real outage/maintenance notices from ecg.com.gh's
+      homepage, its status index page, and all 8 regional pages, parsing the Joomla CMS link structure
+      into structured records (area, type, cause, status). A separate table, <code>ecg_outages</code>,
+      keeps scraped data isolated from the manually seeded <code>outages</code> table so a scrape failure
+      never wipes the fallback demo data.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">7</div>
+    <div class="phase-body">
+      <h4>Automate the scrape and make it resilient</h4>
+      <p>An <code>asyncio</code> background task scrapes once at startup and then every 3600 seconds,
+      using <code>asyncio.to_thread()</code> so the synchronous BeautifulSoup/HTTP work never blocks the
+      event loop that serves chat requests. Every scrape result — including failures — is written to
+      <code>ecg_scrape_log</code> so there is an audit trail of when the live data was last refreshed.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">8</div>
+    <div class="phase-body">
+      <h4>Add the escalation and safety-net logic</h4>
+      <p>A hard-coded <code>DANGER_KEYWORDS</code> list (fallen wire, electric shock, fire, ...) was added
+      as a final check that runs independently of the LLM's own judgement — if a customer describes a
+      life-threatening situation, escalation is forced in Python code, not left to the model to decide.
+      This is a deliberate defense-in-depth choice: the LLM is also told to add
+      <code>[ESCALATE_TO_AGENT]</code> for danger, but the keyword check cannot be "talked out of it"
+      by clever phrasing the way a model's judgement sometimes can be.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">9</div>
+    <div class="phase-body">
+      <h4>Add session continuity and crash recovery</h4>
+      <p>Conversation history is kept in an in-memory dict (<code>_sessions</code>) for speed during an
+      active session, but every message is also durably written to SQLite. If the backend process
+      restarts mid-conversation, <code>get_session_history_for_chat()</code> reconstructs the last 4 turns
+      from the database the next time that session sends a message — so a server restart does not erase
+      the user's context.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">10</div>
+    <div class="phase-body">
+      <h4>Add observability: analytics, feedback, and RAG audit tables</h4>
+      <p>To measure whether the chatbot was actually working (not just running), tables were added for
+      thumbs-up/down per message, 1–5 star session ratings, and a log of which knowledge-base documents
+      were used for each reply. <code>db.get_analytics()</code> aggregates these into satisfaction score,
+      escalation rate, and intent distribution — turning "does it work?" into a measurable number instead
+      of an opinion.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">11</div>
+    <div class="phase-body">
+      <h4>Harden the backend for anything other than a single trusted user</h4>
+      <p>Once the system worked end-to-end, it was audited as if a stranger had access to it: the admin
+      password was moved server-side behind a token-issuing login endpoint, every mutating REST endpoint
+      got IP-based rate limiting via <code>slowapi</code>, the WebSocket got a per-session message cap,
+      and every SQL statement was confirmed to use parameterised placeholders. This step is described in
+      full in Section 9.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- S5 -->
+<h2 id="s5">5. Deep Dive 1 — The Three-Step Decision Engine (chatbot.py)</h2>
+
+<h3>Step 1 — Intent classification is a scoring problem, not a lookup</h3>
+<p>
+  <code>classify_intent()</code> does not stop at the first keyword match. It scores <em>every</em> intent
+  category by counting how many of its keywords appear in the message, then returns whichever category
+  scored highest. This matters because customer messages often contain words from more than one category
+  (e.g. "my meter is sparking" contains both <code>billing</code> and <code>fault_report</code>/<code>safety</code>
+  vocabulary) — a first-match approach would be order-dependent and fragile; a scoring approach picks the
+  category with the strongest overall evidence.
+</p>
+<pre>def classify_intent(text: str) -> str:
+    <span class="c"># count keyword hits per category, ignore 'general' (it has no keywords),</span>
+    <span class="c"># return the category with the most hits, or 'general' if nothing matched</span>
+    scores = {intent: 0 for intent in INTENT_KEYWORDS}
+    for intent, keywords in INTENT_KEYWORDS.items():
+        for kw in keywords:
+            if kw in text.lower():
+                scores[intent] += 1
+    scored = {k: v for k, v in scores.items() if k != "general" and v > 0}
+    return max(scored, key=lambda k: scores[k]) if scored else "general"</pre>
+
+<h3>Step 2 — Routing overrides intent when it matters</h3>
+<p>
+  <code>classify_query_type()</code> does not simply trust <code>classify_intent()</code>'s output. Two
+  overrides exist on top of it:
+</p>
+<ul>
+  <li><strong>Escalation always wins.</strong> Even if the highest-scoring intent is <code>billing</code>,
+  if any escalation keyword is present the query is routed to escalation — a customer asking for a human
+  should never be redirected into a FAQ answer.</li>
+  <li><strong>A dedicated <code>_DYNAMIC_PHRASES</code> set can force live-data routing</strong> even when
+  the intent classifier is ambiguous — e.g. "when will power be back" might not clearly out-score other
+  categories on keyword count alone, but it unambiguously needs live outage data, so it is phrase-matched
+  directly.</li>
+</ul>
+<p>
+  Everything that is neither escalation nor dynamic falls through to <code>static</code> — this includes
+  billing, safety, complaints, and general queries, all of which are answered from the RAG knowledge base
+  rather than invented.
+</p>
+
+<h3>Step 3 — The system prompt is built differently per route</h3>
+<p>
+  <code>_build_system_prompt()</code> does not send the same instructions for every query. For a
+  <code>dynamic</code> route the prompt explicitly forbids inventing outage information and instructs the
+  model to say "no active outage recorded" if the area isn't in the live data. For a <code>static</code>
+  route it instructs the model to cite the knowledge base and fall back to the general support number
+  (0302 611 611) rather than speculate. This per-route prompt is the mechanism that actually enforces the
+  "LLM only phrases, never invents" rule from Section 3 — it is not automatic, it has to be told every
+  single time.
+</p>
+<div class="box box-green no-break">
+  <h4>Why <code>top_n</code> differs by route (5 for static, 2 for dynamic)</h4>
+  <p>
+    For a static query, the knowledge base <em>is</em> the answer, so more context (top-5 documents) is
+    given. For a dynamic query, the live outage table is the answer and the knowledge base is only
+    "supplemental background" (e.g. general safety advice) — so only 2 documents are pulled to avoid
+    diluting the prompt with irrelevant FAQ text.
+  </p>
+</div>
+
+<!-- S6 -->
+<h2 id="s6">6. Deep Dive 2 — The RAG Knowledge Base (knowledge_base.py)</h2>
+<p>
+  This module answers a specific requirement: how does the chatbot answer "how do I dispute an overcharge?"
+  accurately without the LLM inventing ECG-specific policy? The answer is retrieval — find the actual
+  text describing that policy and hand it to the LLM instead of asking the LLM to know it.
+</p>
+<h3>Why TF-IDF over keyword search and why not embeddings</h3>
+<table>
+  <thead><tr><th>Option</th><th>Trade-off</th></tr></thead>
+  <tbody>
+    <tr><td>Plain keyword/substring search</td><td>Would treat every matching word equally — common words like "power" or "customer" would dominate scoring over specific, meaningful terms like "prepaid" or "reconnection".</td></tr>
+    <tr><td><strong>TF-IDF (chosen)</strong></td><td>Weighs each matched term by how rare it is across the whole corpus (via IDF), so domain-specific terms score much higher than generic words — with zero external dependencies or API cost, computed with the Python standard library only (<code>re</code>, <code>math</code>, <code>collections.Counter</code>).</td></tr>
+    <tr><td>Vector embeddings + a vector database</td><td>Would give better semantic matching (paraphrase-tolerant) but adds an embedding-model dependency, a vector store, and cost/latency — unjustified for a corpus of only ~30 short documents. TF-IDF's precision is sufficient at this scale and keeps the system dependency-free and instantly explainable in a defense.</td></tr>
+  </tbody>
+</table>
+<h3>How the score is computed</h3>
+<p style="text-align:center;font-style:italic;margin:12px 0;">IDF(term) = log( (N + 1) / (df + 1) ) + 1.0</p>
+<p>
+  where <code>N</code> is the total number of documents and <code>df</code> is how many documents contain
+  that term. A document's score for a query is the sum, over each shared term, of
+  <code>min(query_count, doc_count) × IDF(term)</code>. The <code>+1</code> smoothing in both numerator and
+  denominator prevents division-by-zero and stops any single term from producing an infinite or undefined
+  weight. Documents are then ranked by this score and the top-<code>N</code> are returned.
+</p>
+<h3>Two corpora, one search function</h3>
+<p>
+  <code>DOCS = _load_presentation_sections() + _load_ecg_knowledge_sections()</code> loads two distinct
+  sources at import time: the Phase-1 presentation slide text (project background) and
+  <code>ecg_knowledge.txt</code> (14 sections of real ECG policy — billing, prepaid meters, safety,
+  connections, PURC regulation, contact directory). Both are tokenised and merged into a single searchable
+  list, but each document keeps a <code>source</code> tag (<code>presentation</code> vs
+  <code>ecg_website</code>) so retrieved answers can be traced back to where they came from — this is what
+  powers the <code>/admin/rag-sources</code> audit endpoint.
+</p>
+
+<!-- S7 -->
+<h2 id="s7">7. Deep Dive 3 — The Live Data Pipeline (ecg_scraper.py)</h2>
+<p>
+  The scraper exists to solve the staleness problem: seeded outage rows would become fiction the moment
+  a real outage was resolved. Rather than requiring ECG to expose an API (none exists), the scraper reads
+  the same public HTML pages a customer's browser would.
+</p>
+<h3>Design decisions and the reasoning behind them</h3>
+<table>
+  <thead><tr><th>Decision</th><th>Reasoning</th></tr></thead>
+  <tbody>
+    <tr><td>Scrape the homepage, the status index page, <em>and</em> all 8 regional pages separately</td><td>ECG's site (a Joomla CMS) surfaces different outage notices on different pages — the homepage shows only the newest; older or region-specific notices only appear on their regional page. Hitting all 9 URLs and deduplicating by title is the only way to get full coverage.</td></tr>
+    <tr><td>Deduplicate using a <code>seen</code> set keyed on lower-cased title</td><td>The same notice is often linked from both the homepage and its regional page — without dedup, outages would double-count in the live outage list shown to customers.</td></tr>
+    <tr><td>Fail soft: <code>_fetch()</code> returns <code>None</code> on any exception instead of raising</td><td>A single region page being down or slow must never crash the whole scrape — the other 8 sources should still succeed. This is a defensive-programming choice appropriate for scraping a third-party site you don't control.</td></tr>
+    <tr><td>Regex-based cause/date/type extraction instead of a fixed HTML structure parse</td><td>ECG's article titles are free-text (e.g. "EMERGENCY MAINTENANCE ON ACCRA EAST FEEDER — 16TH JUNE 2026"), not structured data fields — pattern-matching against known phrasing (broken pole, transformer fault, GRIDCo, feeder names) is the only way to extract structured fields from unstructured titles.</td></tr>
+    <tr><td>A dedicated <code>ecg_outages</code> table, separate from <code>outages</code></td><td>Keeps the manually seeded demo/fallback data untouched by scrape cycles; <code>sync_ecg_outages()</code> only ever replaces rows in <code>ecg_outages</code>, and <code>get_all_outages()</code> unions both tables for the chatbot and the public <code>/outages</code> endpoint.</td></tr>
+  </tbody>
+</table>
+
+<!-- S8 -->
+<h2 id="s8">8. Deep Dive 4 — The Data Layer (database.py)</h2>
+<h3>Why SQLite and not PostgreSQL/MySQL</h3>
+<p>
+  SQLite requires zero setup (no server process, no connection string, no credentials) and the entire
+  database is a single file (<code>chatbot.db</code>) — appropriate for a single-instance student/demo
+  deployment. It fully supports SQL, transactions, and indexes, so the schema design and query patterns
+  transfer directly to a client-server database if the project were scaled up later; only the connection
+  code in <code>get_conn()</code> would need to change.
+</p>
+<h3>The context-manager pattern</h3>
+<pre>@contextmanager
+def get_conn():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row   <span class="c"># rows behave like dicts: row["area"]</span>
+    try:
+        yield conn
+        conn.commit()                 <span class="c"># commit only if no exception was raised</span>
+    except Exception:
+        conn.rollback()               <span class="c"># undo partial writes on failure</span>
+        raise
+    finally:
+        conn.close()                  <span class="c"># always release the connection</span></pre>
+<p>
+  Every function in <code>database.py</code> uses <code>with get_conn() as conn:</code>. This guarantees
+  three things automatically for every single database operation in the codebase: a transaction is
+  committed only on success, any error rolls back cleanly instead of leaving a half-written row, and the
+  connection is always closed — without repeating that logic in 20 different functions.
+</p>
+<h3>Why every query uses <code>?</code> placeholders</h3>
+<p>
+  <code>conn.execute("INSERT INTO fault_reports (...) VALUES (?,?,?,?,?,?,?,?)", (reference, ...))</code>
+  — parameters are always passed separately from the SQL string, never interpolated with f-strings. This
+  is what makes SQL injection structurally impossible in this codebase: the database driver treats
+  parameter values purely as data, never as executable SQL syntax, regardless of what a user types into a
+  fault report or a chat message.
+</p>
+<h3>Schema at a glance</h3>
+<table>
+  <thead><tr><th>Table</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><code>messages</code></td><td>Every chat message (user + bot), with intent tag and timestamp — the source of truth for session history</td></tr>
+    <tr><td><code>message_feedback</code></td><td>Per-message helpful/unhelpful rating, upserted (one per message per session)</td></tr>
+    <tr><td><code>chat_ratings</code></td><td>Session-level 1–5 star rating with optional comment</td></tr>
+    <tr><td><code>fault_reports</code></td><td>Submitted fault reports with a generated reference code (<code>FAULT-XXXXXXXX</code>)</td></tr>
+    <tr><td><code>outages</code></td><td>Seeded/manual outage records (demo + fallback data)</td></tr>
+    <tr><td><code>ecg_outages</code></td><td>Live scraped outage records — fully replaced on each scrape cycle</td></tr>
+    <tr><td><code>ecg_scrape_log</code></td><td>Audit history of every scrape: when, how many outages, which regions, success/failure</td></tr>
+    <tr><td><code>escalations</code></td><td>Sessions flagged for human agent follow-up</td></tr>
+    <tr><td><code>rag_references</code></td><td>Which knowledge-base documents were used for each bot reply — the audit trail behind <code>/admin/rag-sources</code></td></tr>
+  </tbody>
+</table>
+
+<!-- S9 -->
+<h2 id="s9">9. Deep Dive 5 — The API Layer (main.py)</h2>
+<h3>REST for state, WebSocket for conversation</h3>
+<p>
+  Endpoints that are one-shot request/response (submit a fault report, fetch outages, log in) are plain
+  REST — this is the correct fit because each call is independent and stateless. Chat is different: it is
+  a long-lived, bidirectional exchange, so it uses one persistent WebSocket connection per session instead
+  of the client polling a REST endpoint every few seconds. Polling would waste bandwidth and add latency to
+  every message; WebSocket lets the server push a reply the instant it's ready.
+</p>
+<h3>Auth design: token issuance, not password-per-request</h3>
+<p>
+  <code>POST /admin/login</code> checks the password once and mints a random 256-bit token
+  (<code>secrets.token_hex(32)</code>) stored server-side in an in-memory set. Every subsequent admin call
+  sends that opaque token as a Bearer credential, checked by the <code>require_admin</code> dependency.
+  This means the actual admin password is transmitted exactly once, is never stored in the frontend, and a
+  leaked token can be revoked independently via <code>/admin/logout</code> without changing the password.
+</p>
+<h3>Two independent rate limiters, for two different threats</h3>
+<table>
+  <thead><tr><th>Layer</th><th>Mechanism</th><th>Threat it addresses</th></tr></thead>
+  <tbody>
+    <tr><td>REST endpoints</td><td><code>slowapi</code>, keyed by client IP (<code>5/min</code> fault reports, <code>10/min</code> ratings, <code>30/min</code> feedback)</td><td>Scripted abuse/spam of public write endpoints from a single source</td></tr>
+    <tr><td>WebSocket chat</td><td>Custom in-process check (<code>_is_rate_limited</code>): max 20 messages per rolling 60-second window, keyed by session ID</td><td>A single chat client flooding the LLM API with rapid messages (which would also burn through Groq's free-tier quota)</td></tr>
+  </tbody>
+</table>
+<h3>Why the scrape runs as a background <code>asyncio</code> task, not inline</h3>
+<p>
+  The lifespan handler schedules the scrape as a fire-and-forget task at startup and again every hour,
+  rather than scraping inside a request handler. This keeps outage data warm without making any customer
+  wait for a live scrape to finish before they can chat — the scrape and the chat API run concurrently on
+  the same event loop, and the actual HTML-parsing work is pushed to a thread
+  (<code>asyncio.to_thread</code>) so it never blocks other requests being served.
+</p>
+
+<!-- S10 -->
+<h2 id="s10">10. Design Trade-offs — Alternatives Considered</h2>
+<table>
+  <thead><tr><th>Decision point</th><th>Alternative(s) considered</th><th>Why the current choice won</th></tr></thead>
+  <tbody>
+    <tr><td>Intent classification</td><td>Trained ML classifier (e.g. scikit-learn, spaCy) / fine-tuned model</td><td>A keyword scorer needs no training data, no model file, is instantly explainable to a panel, and is fast enough that classification never adds latency. A trained classifier would need labelled data this project doesn't have.</td></tr>
+    <tr><td>Knowledge retrieval</td><td>Vector embeddings + FAISS/Pinecone</td><td>Overkill for ~30 short documents; TF-IDF gives adequate precision with zero extra services or cost, and the scoring math is trivial to explain and defend line-by-line.</td></tr>
+    <tr><td>LLM provider</td><td>OpenAI GPT, self-hosted open model</td><td>Groq's free tier gave a capable 70B model with very low latency and no cost for a student project; the API is OpenAI-compatible so switching providers later only means changing <code>GROQ_URL</code>/<code>GROQ_MODEL</code>.</td></tr>
+    <tr><td>Database</td><td>PostgreSQL/MySQL</td><td>SQLite needs no server process or network config — appropriate for the deployment scale of this project; the SQL and schema are portable if scaling is ever required.</td></tr>
+    <tr><td>Real-time chat transport</td><td>HTTP long-polling / Server-Sent Events</td><td>WebSocket gives full-duplex, low-latency communication in one connection, matching how modern chat UIs behave; SSE is one-directional and polling wastes requests.</td></tr>
+    <tr><td>Escalation decision</td><td>Trust the LLM's judgement entirely</td><td>A hard-coded danger-keyword check runs independently of the model so a safety escalation can never be "argued out of" by ambiguous phrasing or a model mistake.</td></tr>
+  </tbody>
+</table>
+
+<!-- S11 -->
+<h2 id="s11">11. Anticipated Defense Questions &amp; Model Answers</h2>
+
+<div class="qa no-break">
+  <div class="q">Why is the chatbot not "just calling ChatGPT"? What's actually yours?</div>
+  <div class="a">The LLM call is one line; everything around it is the project — the 7-category intent
+  classifier, the static/dynamic/escalation routing decision, the TF-IDF retrieval engine that grounds
+  answers in real ECG content, the live scraper that keeps outage data current, the danger-keyword safety
+  net, and the schema/analytics layer that measures whether it's actually working. The LLM only converts
+  already-decided facts into natural sentences.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How do you stop the AI from making up an outage restoration time?</div>
+  <div class="a">The system prompt for a dynamic query includes the literal live outage list and an explicit
+  instruction: answer only from this data, and if the area isn't listed, say no outage is recorded for it.
+  The prompt is regenerated per-message from the current database state, so the model is never asked a
+  question it has to guess the answer to.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">What happens if the Groq API is down or the API key is missing?</div>
+  <div class="a">Two separate fallbacks exist: if no API key is configured, the bot returns a clear setup
+  message instead of crashing; if the API call fails at runtime (network error, timeout, rate limit), the
+  <code>except</code> block returns a message directing the customer to the emergency line and forces
+  <code>[ESCALATE_TO_AGENT]</code> — the system degrades to "call a human" rather than failing silently.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">Why keyword scoring instead of a proper NLP/ML model for intent classification?</div>
+  <div class="a">It requires no training data or labelled examples (which this project doesn't have),
+  is deterministic and instantly testable, and adds no latency. Given the domain has a fixed, well-known
+  vocabulary (outage/fault/billing/safety terms), a scored keyword match reaches acceptable accuracy without
+  the overhead of training and maintaining a model.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How does the chatbot know an outage is real and current, not stale demo data?</div>
+  <div class="a">Two outage tables exist: <code>outages</code> (seeded fallback/demo data) and
+  <code>ecg_outages</code> (live scraped data, fully replaced every scrape). <code>get_all_outages()</code>
+  unions both, and each scraped row carries a <code>scraped_at</code> timestamp plus an entry in
+  <code>ecg_scrape_log</code>, so freshness is auditable, not assumed.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">What if the ECG website's HTML structure changes — does the scraper break?</div>
+  <div class="a">The scraper is intentionally defensive: <code>_fetch()</code> catches all exceptions and
+  returns <code>None</code> rather than crashing the whole scrape cycle, and link-matching relies on URL
+  substrings (<code>current-system-status</code>, <code>regional-status</code>) plus outage keyword
+  presence, not on rigid CSS selectors — a moderate markup change is less likely to break it than a
+  selector-based scraper. A structural change severe enough to remove those URL patterns or keywords would
+  require an update, which is a known and stated limitation.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">Why TF-IDF instead of embeddings/semantic search for the knowledge base?</div>
+  <div class="a">The corpus is small (~30 short sections) and mostly keyword-distinctive domain terms
+  (prepaid, tariff, reconnection, PURC). TF-IDF gives strong precision at this scale using only the Python
+  standard library — no embedding model, no vector database, no added cost or latency. Embeddings would
+  help with paraphrase tolerance but aren't justified by the corpus size here.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How is admin access secured?</div>
+  <div class="a">The password lives only in a server-side environment variable and is checked once at
+  <code>/admin/login</code>. A random 256-bit token is issued and required as a Bearer credential on every
+  admin call thereafter; the password itself never appears in the frontend code or is ever sent again.
+  Tokens can be individually revoked via logout.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How do you prevent abuse of the public endpoints (spam fault reports, chat flooding)?</div>
+  <div class="a">Two independent limiters: <code>slowapi</code> rate-limits REST writes by IP (e.g. 5
+  fault-report submissions per minute), and a custom per-session check caps WebSocket chat at 20 messages
+  per rolling 60-second window — protecting both the server and the Groq API quota from a single abusive
+  client.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">What happens to a conversation if the backend server restarts mid-session?</div>
+  <div class="a">Conversation history is written to the <code>messages</code> table after every turn, not
+  just kept in memory. On the next message from that session, if the in-memory session store doesn't have
+  it (fresh process), <code>get_session_history_for_chat()</code> reloads the last 4 turns from the
+  database, so the user doesn't lose conversational context across a restart.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How is SQL injection prevented?</div>
+  <div class="a">Every single query in <code>database.py</code> uses parameterised <code>?</code>
+  placeholders with values passed as a separate tuple — never string-formatted into the SQL text. This is
+  a structural guarantee, not a per-endpoint check: there is no SQL string interpolation anywhere in the
+  codebase.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How is a safety-critical message (e.g. "there's a fallen wire") guaranteed to escalate?</div>
+  <div class="a">Two layers, deliberately redundant: the system prompt instructs the LLM to add
+  <code>[ESCALATE_TO_AGENT]</code> for danger scenarios, and independently, <code>is_danger_message()</code>
+  checks the raw user text against a hard-coded danger-keyword list in Python and forces escalation
+  regardless of what the model outputs. If the model fails to add the marker, the keyword check still
+  catches it.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How would this scale beyond a single-instance demo?</div>
+  <div class="a">The main constraints at scale are the in-memory admin-token set and session-history dict
+  (both process-local — would need to move to Redis/shared cache for multiple server instances) and SQLite
+  (would migrate to PostgreSQL, which the parameterised-query pattern already supports with minimal
+  change). The routing/RAG/scraper logic itself is stateless per request and would scale horizontally
+  unchanged.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">Why does the routing instruction change the system prompt instead of just filtering what data is sent?</div>
+  <div class="a">Both happen together: the data sent is filtered (only outage data for dynamic, only
+  knowledge-base excerpts for static), <em>and</em> the instruction text explicitly tells the model which
+  source is authoritative and forbids inventing beyond it. Filtering alone reduces the chance of a wrong
+  answer; the explicit instruction is what makes the constraint reliable rather than incidental.</div>
+</div>
+
+<!-- S12 -->
+<h2 id="s12">12. Glossary of Key Terms</h2>
+<table>
+  <thead><tr><th>Term</th><th>Meaning in this project</th></tr></thead>
+  <tbody>
+    <tr><td>Intent classification</td><td>Deciding which category of question a message falls into (outage, billing, fault, safety, escalation, complaint, general) using keyword scoring</td></tr>
+    <tr><td>Query routing</td><td>Deciding which data source should answer the message: live outage data (dynamic), the knowledge base (static), or a human agent (escalation)</td></tr>
+    <tr><td>RAG (Retrieval-Augmented Generation)</td><td>Retrieving relevant text documents first, then giving them to an LLM as context, so the model answers from real supplied facts instead of its own memorised (and possibly wrong) knowledge</td></tr>
+    <tr><td>TF-IDF</td><td>Term Frequency–Inverse Document Frequency: a scoring method that weighs matched words by how rare/distinctive they are across the whole document collection</td></tr>
+    <tr><td>System prompt</td><td>The instruction block sent to the LLM before the conversation, defining its role, the data it may use, and rules it must follow</td></tr>
+    <tr><td>WebSocket</td><td>A persistent, full-duplex network connection allowing the server to push messages to the client without the client re-requesting</td></tr>
+    <tr><td>Escalation</td><td>Handing a conversation off to a human agent, triggered either by explicit request, danger keywords, or unresolved repetition</td></tr>
+    <tr><td>Rate limiting</td><td>Capping how many requests a client can make in a time window, to prevent abuse or accidental overload</td></tr>
+    <tr><td>Parameterised query</td><td>An SQL statement where values are passed separately from the query text, preventing SQL injection</td></tr>
+    <tr><td>Idempotent scrape sync</td><td><code>sync_ecg_outages()</code> fully replaces the <code>ecg_outages</code> table each run, so re-running it never accumulates duplicates</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  Kanea Backend Design &amp; Defense Guide &mdash; companion to the full Kanea Project Report.
+</div>
+
+</body>
+</html>

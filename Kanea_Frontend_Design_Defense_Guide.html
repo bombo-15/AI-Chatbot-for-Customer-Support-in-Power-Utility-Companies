@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kanea Frontend — Architecture, Design Rationale &amp; Defense Guide</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm 22mm 20mm; }
+  @media print {
+    .no-print { display: none !important; }
+    h2 { page-break-before: always; }
+    h2.no-break-before { page-break-before: avoid; }
+    .no-break { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.65;
+    color: #1a1a2e;
+    background: #fff;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 30px 40px;
+  }
+  .cover { text-align: center; padding: 60px 20px 50px; border-bottom: 3px solid #1a3a6b; margin-bottom: 40px; }
+  .cover .logo {
+    width: 80px; height: 80px; background: #1a3a6b; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 20px; color: #f5c518; font-weight: bold;
+  }
+  .cover h1 { font-size: 25pt; color: #1a3a6b; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .cover .subtitle { font-size: 13pt; color: #555; margin-bottom: 6px; }
+  .cover .tagline { font-size: 11pt; color: #888; font-style: italic; margin-bottom: 36px; }
+  .cover-meta {
+    display: inline-block; text-align: left; background: #f7f9ff;
+    border: 1px solid #d0d8f0; border-radius: 10px; padding: 18px 30px;
+    font-size: 10pt; line-height: 2;
+  }
+  .cover-meta strong { color: #1a3a6b; }
+  h2 { font-size: 15pt; color: #1a3a6b; border-bottom: 2px solid #f5c518; padding-bottom: 5px; margin: 36px 0 14px; font-weight: 700; }
+  h3 { font-size: 11.5pt; color: #1a3a6b; margin: 22px 0 8px; font-weight: 600; }
+  h4 { font-size: 10.5pt; color: #2d4a8a; margin: 14px 0 5px; font-weight: 600; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 20px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  strong { color: #1a3a6b; }
+  em { color: #555; }
+  code {
+    background: #f0f2f8; border: 1px solid #d8ddf0; border-radius: 3px; padding: 1px 5px;
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; color: #2d4a8a;
+  }
+  pre {
+    background: #10182b; color: #d7e0ff; border-radius: 8px; padding: 14px 16px;
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 8.8pt; line-height: 1.55;
+    overflow-x: auto; margin: 10px 0 16px;
+  }
+  pre .c { color: #8a95b8; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 9.5pt; }
+  thead { background: #1a3a6b; color: #fff; }
+  thead th { padding: 8px 10px; text-align: left; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f5f7ff; }
+  tbody td { padding: 7px 10px; border-bottom: 1px solid #e0e4f0; vertical-align: top; }
+  .box { border-radius: 8px; padding: 14px 18px; margin: 14px 0; font-size: 10pt; }
+  .box-blue  { background: #eef2ff; border-left: 4px solid #1a3a6b; }
+  .box-gold  { background: #fff9e6; border-left: 4px solid #f5c518; }
+  .box-green { background: #edfaf3; border-left: 4px solid #27ae60; }
+  .box-red   { background: #fff1f0; border-left: 4px solid #e74c3c; }
+  .box h4 { margin: 0 0 6px; font-size: 10.5pt; }
+  .arch {
+    background: #f0f2f8; border: 1px solid #c8ceea; border-radius: 8px; padding: 16px 20px;
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 9pt; line-height: 1.7;
+    color: #1a1a2e; margin: 14px 0; white-space: pre; overflow-x: auto;
+  }
+  .timeline { margin: 14px 0; }
+  .phase { display: flex; gap: 14px; margin-bottom: 14px; page-break-inside: avoid; }
+  .phase-num {
+    min-width: 30px; height: 30px; background: #1a3a6b; border-radius: 50%; color: #f5c518;
+    font-weight: 700; font-size: 11pt; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .phase-body h4 { margin: 0 0 4px; color: #1a3a6b; }
+  .phase-body p  { margin: 0; color: #444; font-size: 10pt; }
+  .badge {
+    display: inline-block; background: #e8ecff; color: #1a3a6b; border: 1px solid #b0baee;
+    border-radius: 20px; padding: 2px 9px; font-size: 8.5pt; font-weight: 600; margin: 2px 2px;
+  }
+  .badge-green { background: #e6f9f0; color: #1a7a50; border-color: #a0dfc0; }
+  .badge-gold  { background: #fffbe6; color: #8a6000; border-color: #f5d65a; }
+  .qa { margin: 14px 0 20px; page-break-inside: avoid; }
+  .qa .q { font-weight: 700; color: #1a3a6b; margin-bottom: 4px; }
+  .qa .q::before { content: "Q. "; color: #f5c518; font-weight: 800; }
+  .qa .a { margin-left: 4px; }
+  .qa .a::before { content: "A. "; font-weight: 700; color: #27ae60; }
+  .print-btn {
+    position: fixed; top: 20px; right: 20px; background: #1a3a6b; color: #fff; border: none;
+    border-radius: 8px; padding: 10px 20px; font-size: 10pt; font-weight: 600; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2); z-index: 100;
+  }
+  .print-btn:hover { background: #2d4a8a; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 5px; }
+  .toc a { color: #1a3a6b; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .footer { margin-top: 48px; border-top: 1px solid #d0d8f0; padding-top: 12px; font-size: 8.5pt; color: #999; text-align: center; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">&#8595; Save as PDF</button>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="logo">&#9889;</div>
+  <h1>Kanea Frontend</h1>
+  <p class="subtitle">Architecture, Design Rationale &amp; Defense Guide</p>
+  <p class="tagline">A companion document to prepare for the project viva / defense</p>
+  <div class="cover-meta">
+    <div><strong>Component Covered:</strong> Frontend only (React + Vite customer app and admin panel)</div>
+    <div><strong>Companion Files:</strong> <code>Kanea_Project_Report.html</code>, <code>Kanea_Backend_Design_Defense_Guide.html</code></div>
+    <div><strong>Purpose:</strong> Explain every frontend design decision and why it was made</div>
+    <div><strong>Version:</strong> 2.0.0</div>
+  </div>
+</div>
+
+<div class="toc">
+  <h2 class="no-break-before">Table of Contents</h2>
+  <ol>
+    <li><a href="#s1">How to Use This Guide</a></li>
+    <li><a href="#s2">The Frontend at a Glance</a></li>
+    <li><a href="#s3">Design Philosophy — Why React + Vite, and Why No Router</a></li>
+    <li><a href="#s4">Step-by-Step: How the Frontend Was Designed and Built</a></li>
+    <li><a href="#s5">Deep Dive 1 — Real-Time Chat UI (ChatWindow.jsx)</a></li>
+    <li><a href="#s6">Deep Dive 2 — Outage Board (OutageBoard.jsx)</a></li>
+    <li><a href="#s7">Deep Dive 3 — Fault Report Wizard (FaultForm.jsx)</a></li>
+    <li><a href="#s8">Deep Dive 4 — Admin Panel &amp; Analytics Dashboard</a></li>
+    <li><a href="#s9">Deep Dive 5 — App Shell, Routing &amp; Network Configuration</a></li>
+    <li><a href="#s10">Design Trade-offs — Alternatives Considered</a></li>
+    <li><a href="#s11">Anticipated Defense Questions &amp; Model Answers</a></li>
+    <li><a href="#s12">Glossary of Key Terms</a></li>
+  </ol>
+</div>
+
+<!-- S1 -->
+<h2 id="s1">1. How to Use This Guide</h2>
+<p>
+  This document gives you command of <strong>why</strong> the frontend was built the way it was — not
+  just what each component renders. Section 4 is a chronological build procedure you can recite. Sections
+  5–9 are deep dives into each significant file with the reasoning behind specific implementation choices.
+  Section 10 lists rejected alternatives. Section 11 rehearses the questions a panel is most likely to ask
+  about the frontend, each with a tight model answer.
+</p>
+<div class="box box-gold no-break">
+  <h4>The one idea to hold onto</h4>
+  <p>
+    The frontend has <strong>no build-time router, no global state library, and no chart library</strong> —
+    and that is a deliberate scope decision, not an oversight. The app has exactly one structural route
+    split (customer app vs. admin panel), state that only ever needs to live in the component that uses
+    it, and a handful of simple bar/histogram visualisations. Every dependency actually used
+    (React, Vite, Tailwind, DOMPurify) earns its place; nothing was added "because it's standard."
+  </p>
+</div>
+
+<!-- S2 -->
+<h2 id="s2">2. The Frontend at a Glance</h2>
+<p>
+  The frontend is a single React application built with Vite, split into two independent shells that
+  share no state: the customer-facing app and the admin dashboard. Both are plain function components —
+  there is no Redux/Context state management because no piece of state is needed by more than one
+  component subtree.
+</p>
+<div class="arch">frontend/
+ ├── index.html                  Vite entry HTML — mounts <div id="root">
+ ├── vite.config.js              Dev server + proxy config (0.0.0.0 host, /api and /ws proxies)
+ ├── tailwind.config.js          Tailwind content scan paths
+ └── src/
+      ├── main.jsx               Entry point — chooses App vs AdminPanel by URL path
+      ├── config.js              API base path + dynamic WebSocket URL builder
+      ├── index.css              Tailwind directives + custom scrollbar
+      ├── App.jsx                Customer shell: header, 3-tab nav, footer
+      └── components/
+           ├── ChatWindow.jsx    WebSocket chat UI, ratings, feedback, escalation banner
+           ├── OutageBoard.jsx   Live outage list — polling, filtering, summary cards
+           ├── FaultForm.jsx     3-step fault report wizard
+           ├── AdminPanel.jsx    Login gate + admin shell (4 tabs) + adminFetch() helper
+           └── Analytics.jsx     KPI cards, histograms, and bar charts (hand-built, no chart lib)</div>
+
+<table>
+  <thead><tr><th>File</th><th>Responsibility</th><th>Talks to (backend)</th></tr></thead>
+  <tbody>
+    <tr><td><code>ChatWindow.jsx</code></td><td>Owns the WebSocket connection; renders messages, quick replies, typing indicator, star rating, per-message feedback</td><td><code>/ws/&#123;session_id&#125;</code>, <code>POST /chat-rating</code>, <code>POST /message-feedback</code></td></tr>
+    <tr><td><code>OutageBoard.jsx</code></td><td>Displays live/scheduled/resolved outages with search and status filters</td><td><code>GET /outages</code></td></tr>
+    <tr><td><code>FaultForm.jsx</code></td><td>Guided 3-step form for submitting an electrical fault report</td><td><code>POST /fault-report</code></td></tr>
+    <tr><td><code>AdminPanel.jsx</code></td><td>Password gate issuing a token, then a 4-tab operations dashboard</td><td><code>POST /admin/login</code>, <code>/admin/logout</code>, <code>/admin/fault-reports</code>, <code>/admin/escalations</code>, <code>/admin/rag-sources</code></td></tr>
+    <tr><td><code>Analytics.jsx</code></td><td>Renders KPI cards and hand-built charts from aggregated metrics</td><td><code>GET /admin/analytics</code></td></tr>
+  </tbody>
+</table>
+
+<h3>Rendered Component Tree</h3>
+<div class="arch">main.jsx
+ └── (URL path check: starts with "/admin"?)
+      ├── NO  → App.jsx
+      │         ├── ChatWindow.jsx      (tab: Chat Support)
+      │         ├── OutageBoard.jsx     (tab: Outage Status)
+      │         └── FaultForm.jsx       (tab: Report a Fault)
+      └── YES → AdminPanel.jsx
+                ├── LoginGate           (shown until a token exists in sessionStorage)
+                └── AdminShell
+                     ├── Analytics.jsx       (tab: Analytics)
+                     ├── FaultReportsTab      (tab: Fault Reports)
+                     ├── EscalationsTab       (tab: Escalations)
+                     └── RagSourcesTab        (tab: RAG Sources)</div>
+
+<!-- S3 -->
+<h2 id="s3">3. Design Philosophy — Why React + Vite, and Why No Router</h2>
+<p>
+  Three frontend stacks were actually compared during Phase 1 design (see the project's own tool
+  comparison from the presentation deck), and the same reasoning still holds for the final build:
+</p>
+<table>
+  <thead><tr><th>Factor</th><th>Vite + React (chosen)</th><th>Angular</th><th>Plain HTML/CSS/JS</th></tr></thead>
+  <tbody>
+    <tr><td>Speed</td><td>Very fast dev server (native ES modules, no bundling in dev)</td><td>Slower due to large framework size</td><td>Fast to load, but inefficient to build/maintain at scale</td></tr>
+    <tr><td>Scalability</td><td>Highly scalable — component-based, easy to add tabs/panels</td><td>Capable but overly complex for this project's scope</td><td>Poor — becomes unmanageable as features grow</td></tr>
+    <tr><td>Cost</td><td>Free</td><td>Free</td><td>Free</td></tr>
+    <tr><td>Usability for the team</td><td>Easy to learn, flexible, rapid development</td><td>Steep learning curve (strict structure, DI, RxJS)</td><td>Inefficient for a multi-view app with shared state (chat + forms + dashboard)</td></tr>
+  </tbody>
+</table>
+<p>
+  Within React, the decision to <strong>not add <code>react-router-dom</code></strong> was made because the
+  app only has one meaningful route split: customer app vs. admin panel. That split is resolved once, at
+  the earliest possible point, by reading <code>window.location.pathname</code> directly in
+  <code>main.jsx</code>:
+</p>
+<pre>const isAdmin = window.location.pathname.startsWith('/admin')
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  &lt;React.StrictMode&gt;
+    {isAdmin ? &lt;AdminPanel /&gt; : &lt;App /&gt;}
+  &lt;/React.StrictMode&gt;
+)</pre>
+<p>
+  Everything else — switching between "Chat Support", "Outage Status" and "Report a Fault", or between the
+  four admin tabs — is not real navigation at all. It's a single <code>useState</code> variable
+  (<code>tab</code>) controlling which child component renders, inside one already-mounted page. A router
+  library exists to manage browser history, deep-linkable URLs, and nested route trees — none of which this
+  app needs, since none of its internal tabs need their own shareable URL or back-button behaviour.
+</p>
+<div class="box box-blue no-break">
+  <h4>Why this matters for a viva</h4>
+  <p>
+    If asked "why no React Router?", the honest and correct answer is <strong>the app doesn't have enough
+    distinct routes to justify one</strong> — adding a routing library to manage two states
+    (<code>isAdminRoute ? &lt;AdminPanel/&gt; : &lt;App/&gt;</code>) would be exactly the kind of unnecessary
+    abstraction good engineering avoids. If the project grew to need shareable/bookmarkable URLs for
+    individual chat sessions or fault report references, that would be the point at which a router becomes
+    justified.
+  </p>
+</div>
+
+<!-- S4 -->
+<h2 id="s4">4. Step-by-Step: How the Frontend Was Designed and Built</h2>
+<p>This is the procedure to recite when asked "walk me through how you built the interface."</p>
+<div class="timeline">
+
+  <div class="phase no-break">
+    <div class="phase-num">1</div>
+    <div class="phase-body">
+      <h4>Scaffold the app shell around the four customer needs, not around pages</h4>
+      <p>Before any component was styled, the four customer needs identified in the requirements
+      (chat, outage status, fault reporting, escalation) were mapped directly to three visible tabs
+      plus one always-visible action (the 0800-POWER call button in the header) — the navigation
+      structure is a direct reflection of the problem statement, not an afterthought.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">2</div>
+    <div class="phase-body">
+      <h4>Set up Vite with Tailwind, and configure the dev-server proxy immediately</h4>
+      <p>Vite was chosen for near-instant dev server startup and hot reload. Tailwind was configured
+      up front so every component from the first commit onward used utility classes directly in JSX —
+      no separate CSS files to keep in sync per component. The proxy rules (<code>/api</code> →
+      backend REST, <code>/ws</code> → backend WebSocket) were set up in <code>vite.config.js</code>
+      before writing any component, so every component could assume relative URLs work regardless of
+      what host the page was loaded from.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">3</div>
+    <div class="phase-body">
+      <h4>Build the chat UI against the WebSocket contract first</h4>
+      <p><code>ChatWindow.jsx</code> was built first because it is the most complex piece of client
+      state: an open socket, a running message list, and a typing indicator. Getting the
+      connect/reconnect/send/receive lifecycle right early meant every later feature (ratings,
+      feedback, escalation banners) could be added as an incremental extension of an already-working
+      message loop instead of being designed alongside connection-handling bugs.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">4</div>
+    <div class="phase-body">
+      <h4>Add the outage board and fault-report form as independent, self-contained widgets</h4>
+      <p>Both <code>OutageBoard.jsx</code> and <code>FaultForm.jsx</code> were deliberately built to
+      own their own state and fetch their own data (no props from a parent, no shared context) — each
+      is a tab that can be developed, tested, and reasoned about in complete isolation from the chat
+      logic.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">5</div>
+    <div class="phase-body">
+      <h4>Wire up feedback loops (ratings, thumbs up/down) once the chat was stable</h4>
+      <p>The 1–5 star session rating and per-message helpful/unhelpful buttons were added after the
+      core chat worked, because they depend on the backend already returning a
+      <code>message_id</code> per bot reply — a dependency that only existed once the database
+      write-path (Section 8 of the backend guide) was finished.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">6</div>
+    <div class="phase-body">
+      <h4>Build the admin panel as a second, independent React root — not a protected route inside the main app</h4>
+      <p>Rather than nesting an admin view inside the customer <code>App</code> component behind a
+      permission check, the admin panel was built as an entirely separate component tree
+      (<code>AdminPanel.jsx</code>) selected at the earliest possible point (<code>main.jsx</code>).
+      This keeps admin-only code (fault report queue, escalations, analytics, RAG audit) completely
+      out of the bundle path a regular customer's browser reasons about, and avoids any chance of an
+      admin-only UI element flashing on screen before an auth check completes.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">7</div>
+    <div class="phase-body">
+      <h4>Move admin auth from a hardcoded frontend password to a backend-issued token</h4>
+      <p>The earliest version checked the password in frontend code. Once backend token auth was
+      added, <code>LoginGate</code> was rewritten to POST the password once to
+      <code>/admin/login</code>, store only the returned opaque token in
+      <code>sessionStorage</code>, and every subsequent admin call was routed through a single
+      <code>adminFetch()</code> wrapper that automatically attaches
+      <code>Authorization: Bearer &lt;token&gt;</code>. This is the frontend half of the security
+      hardening described in the backend guide.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">8</div>
+    <div class="phase-body">
+      <h4>Build the analytics dashboard by hand instead of importing a charting library</h4>
+      <p>Only three visualisation shapes were actually needed: a KPI stat card, a horizontal bar
+      (intent distribution), and a vertical histogram (1–5 star ratings). All three were implemented
+      as small components using plain Tailwind width/height percentages driven by inline
+      <code>style</code> — avoiding a charting library dependency for a handful of simple bars.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">9</div>
+    <div class="phase-body">
+      <h4>Harden the rendering of AI-generated content against XSS</h4>
+      <p>Once bot replies were being rendered with <code>dangerouslySetInnerHTML</code> (needed to
+      show **bold** emphasis and multi-line formatting), every bot message was passed through
+      <code>DOMPurify.sanitize()</code> with an explicit allow-list of safe tags
+      (<code>strong</code>, <code>em</code>, <code>br</code>, <code>ul</code>, <code>li</code>,
+      <code>p</code>) before being rendered — closing the XSS risk inherent in rendering raw model
+      output as HTML.</p>
+    </div>
+  </div>
+
+  <div class="phase no-break">
+    <div class="phase-num">10</div>
+    <div class="phase-body">
+      <h4>Make the app reachable from any device on the network</h4>
+      <p><code>vite.config.js</code> was set to <code>host: true</code> (bind to <code>0.0.0.0</code>
+      instead of just <code>localhost</code>), and <code>config.js</code>'s
+      <code>WS_URL</code> was written to derive the WebSocket host from
+      <code>window.location.host</code> at runtime rather than a hardcoded
+      <code>localhost:8000</code>. Together, these two changes are what let a phone or another laptop
+      on the same Wi-Fi load the app by IP address and have chat still connect correctly, with zero
+      configuration change.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- S5 -->
+<h2 id="s5">5. Deep Dive 1 — Real-Time Chat UI (ChatWindow.jsx)</h2>
+
+<h3>Session identity is a client-generated random ID, not a login</h3>
+<pre>function genSessionId() {
+  return 'sess-' + Math.random().toString(36).slice(2, 10)
+}</pre>
+<p>
+  Because Kanea is anonymous customer support (no account system), a session needs an identity only for
+  the duration of one browser tab's conversation — enough to group messages, ratings, and feedback
+  together in the database. The ID is generated once via <code>useState(genSessionId)</code> (the
+  initializer form, so it only runs on first render) and reused for the life of the component.
+</p>
+
+<h3>WebSocket lifecycle: connect, reconnect with backoff, clean up</h3>
+<pre>ws.onclose = () => {
+  setConnected(false)
+  <span class="c">// Backoff: 1s → 2s → 4s → 8s … capped at 30s</span>
+  const delay = Math.min(1000 * Math.pow(2, retryCount.current), 30_000)
+  retryCount.current += 1
+  retryTimeout.current = setTimeout(connect, delay)
+}</pre>
+<p>
+  Exponential backoff exists so a dropped connection doesn't hammer the backend with reconnect attempts
+  every second — each failure waits longer than the last, up to a 30-second ceiling, and
+  <code>retryCount</code> resets to zero the moment a connection succeeds (in <code>onopen</code>). The
+  <code>useEffect</code> cleanup function clears any pending retry timeout and closes the socket on
+  unmount, preventing a reconnect loop from continuing after the component is gone.
+</p>
+
+<h3>Rendering AI output safely</h3>
+<pre>function sanitize(text) {
+  const html = formatISODates(text).replace(/\*\*(.*?)\*\*/g, '&lt;strong&gt;$1&lt;/strong&gt;')
+  return DOMPurify.sanitize(html, { ALLOWED_TAGS: ['strong', 'em', 'br', 'ul', 'li', 'p'] })
+}</pre>
+<p>
+  Two transforms happen before sanitisation: raw ISO timestamps embedded in bot replies (e.g. from live
+  outage data) are converted to human-readable local date/time strings via <code>formatISODates()</code>,
+  and Markdown-style <code>**bold**</code> emphasis from the LLM's output is converted to
+  <code>&lt;strong&gt;</code> tags. Only then is the result run through DOMPurify with an explicit
+  allow-list — this ordering matters: sanitisation must be the <em>last</em> step, so nothing added by the
+  earlier transforms can reintroduce unsafe markup.
+</p>
+
+<h3>Why the rating prompt appears after exactly 5 bot replies</h3>
+<p>
+  <code>addMessage()</code> increments a <code>botMsgCount</code> counter on every bot message and flips
+  <code>showRating</code> to true the instant the count reaches 5. This is a deliberate UX threshold: too
+  early (e.g. after 1 message) and the user hasn't had enough interaction to judge quality; too late (e.g.
+  only at disconnect) and many users would never see the prompt at all because they simply close the tab.
+</p>
+
+<h3>Per-message feedback is tied to the backend's message ID</h3>
+<p>
+  Thumbs up/down buttons only render <code>if (isBot &amp;&amp; msg.message_id &amp;&amp; !feedback)</code>
+  — the ID comes from the backend's database write (<code>db.save_message()</code> returns the row's
+  auto-increment ID), so feedback can be attributed to one specific stored message rather than "the last
+  bot reply," which would be ambiguous if messages arrived out of order or the array re-rendered.
+</p>
+
+<!-- S6 -->
+<h2 id="s6">6. Deep Dive 2 — Outage Board (OutageBoard.jsx)</h2>
+<h3>Polling instead of a live connection</h3>
+<pre>useEffect(() => {
+  load()
+  const id = setInterval(load, 60_000)   <span class="c">// refresh every minute</span>
+  return () => clearInterval(id)
+}, [])</pre>
+<p>
+  The outage board deliberately uses simple 60-second polling of <code>GET /outages</code> rather than a
+  WebSocket. Outage status changes on the scale of minutes-to-hours (the backend's own scraper only
+  refreshes hourly — see the backend guide, Section 7), so a persistent connection would add complexity
+  for no meaningful gain in freshness. Polling is the right-sized tool here, in contrast to chat, where a
+  WebSocket is justified by genuinely sub-second interaction.
+</p>
+<h3>Client-side filtering keeps the UI instantly responsive</h3>
+<p>
+  The area search box and status filter buttons (<code>all</code> / <code>active</code> /
+  <code>scheduled</code> / <code>resolved</code>) both filter the already-fetched <code>outages</code>
+  array in-memory (<code>Array.filter</code>), rather than re-querying the backend per keystroke. Given
+  the dataset size (a handful to a few dozen outage records), this avoids unnecessary network round-trips
+  and gives filtering that feels instantaneous.
+</p>
+<h3>Defensive date formatting</h3>
+<p>
+  <code>fmt(iso)</code> wraps <code>new Date(iso)</code> in a try/catch and falls back to showing the raw
+  string if parsing fails, and separately treats a missing <code>estimated_restoration</code> as
+  <code>"TBD"</code> rather than showing "Invalid Date" — because the scraper (backend) can legitimately
+  return <code>null</code> for restoration time when ECG's website hasn't published one yet.
+</p>
+
+<!-- S7 -->
+<h2 id="s7">7. Deep Dive 3 — Fault Report Wizard (FaultForm.jsx)</h2>
+<h3>Why a 3-step wizard instead of one long form</h3>
+<p>
+  Splitting into Customer Details → Fault Type &amp; Urgency → Review &amp; Submit reduces the perceived
+  effort of the form (one short screen at a time) and lets each step validate independently before the
+  user can proceed — critical for a stressed customer reporting a possibly dangerous fault, who shouldn't
+  have to scroll through a long form under pressure.
+</p>
+<h3>Per-step validation gating</h3>
+<pre>const canNext = [
+  () => form.customer_name &amp;&amp; form.phone &amp;&amp; form.location,
+  () => form.fault_type &amp;&amp; form.urgency,
+  () => true,
+]</pre>
+<p>
+  Each step has its own validator function in an array indexed by the current step; the "Next" button is
+  disabled until <code>canNext[step]()</code> returns true. This keeps validation logic co-located with
+  the step definitions rather than one large conditional, and makes it trivial to add or reorder steps.
+</p>
+<h3>The danger notice is derived from data already collected, not asked for twice</h3>
+<p>
+  Both the review screen and the post-submission success screen check
+  <code>['critical', 'high'].includes(form.urgency)</code> to show a "call 0800-POWER now" banner — the
+  urgency value the customer already selected in Step 2 is reused to decide whether to escalate the
+  visual warning, rather than adding a redundant "is this an emergency?" question.
+</p>
+<h3>Failure handling matches the safety stakes of the form</h3>
+<p>
+  If <code>POST /fault-report</code> fails, the error message explicitly directs the customer to call
+  0800-POWER rather than just saying "try again" — because a failed fault report for a dangerous
+  situation (fallen wire, sparking transformer) must never leave the customer with only a silent retry
+  as their only guidance.
+</p>
+
+<!-- S8 -->
+<h2 id="s8">8. Deep Dive 4 — Admin Panel &amp; Analytics Dashboard</h2>
+<h3>Token storage: <code>sessionStorage</code>, not <code>localStorage</code></h3>
+<pre>sessionStorage.setItem(TOKEN_KEY, token)</pre>
+<p>
+  The admin token is stored in <code>sessionStorage</code> deliberately: it is cleared automatically when
+  the browser tab is closed, unlike <code>localStorage</code> which would persist indefinitely on a shared
+  or public machine. This narrows the window during which a stolen or forgotten session could be reused.
+</p>
+<h3>One authenticated-fetch wrapper, used everywhere</h3>
+<pre>export function adminFetch(url, options = {}) {
+  const token = sessionStorage.getItem(TOKEN_KEY) || ''
+  return fetch(url, {
+    ...options,
+    headers: { ...(options.headers || {}), Authorization: `Bearer ${token}` },
+  })
+}</pre>
+<p>
+  Every admin tab (<code>FaultReportsTab</code>, <code>EscalationsTab</code>, <code>RagSourcesTab</code>)
+  calls <code>adminFetch()</code> instead of the raw <code>fetch()</code> — this guarantees the Bearer
+  token is attached consistently and means a future change to the auth header (e.g. a refresh-token
+  scheme) only needs to be made in one place.
+</p>
+<h3>Each tab owns its own loading/error/data state</h3>
+<p>
+  <code>FaultReportsTab</code>, <code>EscalationsTab</code>, and <code>RagSourcesTab</code> are structured
+  identically: local <code>loading</code>/<code>error</code>/data state, a <code>load()</code> function
+  called on mount, and a manual "Retry"/"Refresh" button. This repetition is intentional at this scale —
+  three tabs with near-identical but not fully identical rendering (fault reports have urgency colour
+  coding, escalations have a status badge, RAG sources have nested source lists) don't yet justify
+  extracting a shared generic-list abstraction.
+</p>
+<h3>Analytics — hand-built visualisations instead of a charting library</h3>
+<p>
+  <code>SatisfactionHistogram</code> and <code>IntentBar</code> are both implemented as plain
+  <code>&lt;div&gt;</code> elements whose height/width is set via inline <code>style</code> as a
+  percentage of the maximum value in the dataset:
+</p>
+<pre>const pct = max > 0 ? Math.round((count / max) * 100) : 0
+<span class="c">...</span>
+&lt;div className={`h-full ${meta.color} rounded-full`} style={{ width: `${pct}%` }} /&gt;</pre>
+<p>
+  This avoids adding a charting dependency (e.g. Chart.js, Recharts) for what is, in total, one bar chart
+  and one histogram — both of which are simpler to hand-build with Tailwind than to configure through a
+  general-purpose charting API.
+</p>
+
+<!-- S9 -->
+<h2 id="s9">9. Deep Dive 5 — App Shell, Routing &amp; Network Configuration</h2>
+<h3>Two independent entry points selected by URL path</h3>
+<p>
+  Both <code>main.jsx</code> and <code>App.jsx</code> independently check
+  <code>window.location.pathname.startsWith('/admin')</code>. This is deliberately checked at the entry
+  point (<code>main.jsx</code>) so the admin bundle path never renders any customer UI at all, and the
+  same check exists defensively inside <code>App.jsx</code> in case it is ever rendered directly.
+</p>
+<h3>The proxy is what makes relative URLs possible</h3>
+<pre><span class="c">// vite.config.js</span>
+server: {
+  host: true,          <span class="c">// listen on 0.0.0.0 — reachable from other devices on the LAN</span>
+  proxy: {
+    '/ws':  { target: 'ws://localhost:8000', ws: true, changeOrigin: true },
+    '/api': { target: 'http://localhost:8000', rewrite: p => p.replace(/^\/api/, ''), changeOrigin: true }
+  }
+}</pre>
+<pre><span class="c">// config.js</span>
+export const API = '/api'
+export const WS_URL = (id) => `ws://${window.location.host}/ws/${id}`</pre>
+<p>
+  Because every request goes through <code>/api</code> or <code>/ws</code> and is proxied server-side by
+  Vite to <code>localhost:8000</code>, the frontend code never needs to know the backend's real address.
+  <code>WS_URL</code> builds its target from <code>window.location.host</code> — whatever hostname or IP
+  address the browser actually used to load the page — so opening the app at
+  <code>http://192.168.1.20:5173</code> from a phone on the same Wi-Fi automatically connects its
+  WebSocket to <code>ws://192.168.1.20:5173/ws/...</code>, which Vite then proxies through to the backend.
+  No environment variable or config change is needed to demo the app on another device.
+</p>
+
+<!-- S10 -->
+<h2 id="s10">10. Design Trade-offs — Alternatives Considered</h2>
+<table>
+  <thead><tr><th>Decision point</th><th>Alternative(s) considered</th><th>Why the current choice won</th></tr></thead>
+  <tbody>
+    <tr><td>Client-side routing</td><td><code>react-router-dom</code></td><td>Only one real route split exists (customer vs. admin); a single path check at the entry point achieves the same result with zero dependency and zero route-config boilerplate.</td></tr>
+    <tr><td>Global state management</td><td>Redux / Context API / Zustand</td><td>No piece of state is needed outside the component that owns it — each tab/component fetches and owns its own data. Adding a global store would centralise state nothing actually shares.</td></tr>
+    <tr><td>Chat transport</td><td>REST polling for chat messages</td><td>Polling would add latency to every message and waste requests on empty polls; a WebSocket gives instant server-push delivery, matching real chat UX expectations.</td></tr>
+    <tr><td>Outage board data transport</td><td>WebSocket (matching chat)</td><td>Outage data changes on an hourly scale (matching the backend scraper interval); 60-second polling is simpler and entirely sufficient — a persistent connection here would be unjustified complexity.</td></tr>
+    <tr><td>Analytics charts</td><td>Chart.js / Recharts / D3</td><td>Only a bar chart and a histogram were needed; both are simpler to hand-build with Tailwind width/height percentages than to configure through a general charting library, and this avoids an extra dependency and bundle weight.</td></tr>
+    <tr><td>Admin token storage</td><td><code>localStorage</code></td><td><code>sessionStorage</code> was chosen so a token doesn't persist indefinitely on a shared/public machine — it clears when the tab closes.</td></tr>
+    <tr><td>Styling approach</td><td>Component-level CSS files / CSS-in-JS (styled-components)</td><td>Tailwind's utility classes keep styling co-located with markup, avoid a separate stylesheet per component to keep in sync, and were the fastest fit for a small team building many small UI states (loading/error/empty/success) per component.</td></tr>
+  </tbody>
+</table>
+
+<!-- S11 -->
+<h2 id="s11">11. Anticipated Defense Questions &amp; Model Answers</h2>
+
+<div class="qa no-break">
+  <div class="q">Why React and Vite specifically, and not Angular or plain JS?</div>
+  <div class="a">The project's own Phase-1 comparison (speed, scalability, cost, usability) favoured
+  Vite+React: near-instant dev server reloads, a component model that scales cleanly as tabs/panels were
+  added, free and open-source, and a gentler learning curve than Angular's stricter framework structure.
+  Plain HTML/CSS/JS was rejected because a multi-view app with shared UI patterns (loading/error states,
+  forms, live data) becomes unmanageable without componentisation.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">Why is there no router library if there are multiple "pages"?</div>
+  <div class="a">The three customer tabs and four admin tabs aren't real navigable routes — none of them
+  need a shareable URL, deep-linking, or back-button semantics; they're just "which component is currently
+  shown," which a single <code>useState</code> handles. The only structural route split (customer vs.
+  admin) is resolved once at the entry point by reading <code>window.location.pathname</code> directly.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How does the frontend stay secure when rendering AI-generated text as HTML?</div>
+  <div class="a">Bot messages are rendered via <code>dangerouslySetInnerHTML</code> to support bold text and
+  line breaks, but every message is first passed through <code>DOMPurify.sanitize()</code> with an
+  explicit allow-list of six safe tags. Sanitisation runs last, after markdown-to-HTML and date formatting
+  transforms, so nothing those earlier steps introduce can bypass the filter.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">What happens if the WebSocket connection drops mid-chat?</div>
+  <div class="a">The <code>onclose</code> handler schedules a reconnect with exponential backoff (1s, 2s,
+  4s, 8s, capped at 30s), shows a "Reconnecting…" indicator, and resets the backoff counter the moment a
+  new connection succeeds — so a brief network blip recovers quickly, while a longer outage doesn't spam
+  the server with reconnect attempts.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How does the same frontend build work both on localhost and from another device on the network?</div>
+  <div class="a">The WebSocket URL is built at runtime from <code>window.location.host</code> rather than a
+  hardcoded address, and the Vite dev server is configured with <code>host: true</code> to bind to
+  <code>0.0.0.0</code>. Whatever hostname/IP a browser used to load the page is automatically reused to
+  reach the backend through the same Vite proxy, so no environment-specific configuration is needed to
+  demo on a phone or another laptop on the same Wi-Fi.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">Why is the admin panel a completely separate component tree instead of a protected route inside the main app?</div>
+  <div class="a">Selecting between <code>App</code> and <code>AdminPanel</code> happens at the earliest
+  possible point, in <code>main.jsx</code>, before any customer-facing component ever mounts. This means
+  admin-only UI and data never even exists in memory for a regular customer's session, and there's no risk
+  of an admin element flashing on screen before an auth check resolves.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How is the admin password protected on the frontend?</div>
+  <div class="a">The password itself is never stored in frontend code or state beyond the login form input;
+  it's sent once to <code>POST /admin/login</code>, which returns an opaque token. That token is stored in
+  <code>sessionStorage</code> (cleared when the tab closes) and attached automatically to every subsequent
+  admin request through a single <code>adminFetch()</code> wrapper.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">Why does the outage board poll every 60 seconds instead of using a live connection?</div>
+  <div class="a">The backend's own scraper only refreshes live outage data once an hour, so a WebSocket
+  here would add complexity without any real gain in freshness. 60-second polling is a right-sized match
+  for how often the underlying data can actually change, in contrast to chat, where sub-second delivery is
+  genuinely needed.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">Why is filtering on the outage board done client-side instead of via API query parameters?</div>
+  <div class="a">The dataset is small (a handful to a few dozen records fetched once per minute), so
+  filtering the already-loaded array in memory gives instant, no-network-latency results as the user types
+  or clicks a status filter — adding server-side query parameters would only add round-trip latency for no
+  benefit at this scale.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">Why build the analytics charts by hand instead of using a charting library like Chart.js?</div>
+  <div class="a">Only two visual shapes are needed — a horizontal bar (intent distribution) and a vertical
+  histogram (star ratings) — both trivially expressed as Tailwind-styled divs with an inline percentage
+  width/height. A charting library would add a dependency and API surface disproportionate to two simple
+  bar visualisations.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">How does per-message feedback (thumbs up/down) know which exact message it's rating?</div>
+  <div class="a">Every bot reply the backend sends includes the database row ID it was saved under
+  (<code>message_id</code>). The feedback buttons only render once that ID is present and post it back
+  verbatim to <code>/message-feedback</code>, so a rating is always attributed to one specific stored
+  message rather than inferred from message order.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">Why a 3-step wizard for the fault report form instead of one page?</div>
+  <div class="a">Splitting details, fault type/urgency, and review into separate steps reduces perceived
+  effort and allows per-step validation to gate progress — important for a customer who may be reporting
+  a dangerous situation under stress and shouldn't have to navigate one long, all-at-once form.</div>
+</div>
+
+<div class="qa no-break">
+  <div class="q">If this were to scale to many more users, what in the frontend would need to change first?</div>
+  <div class="a">Each admin tab currently fetches its own data independently with no caching or
+  pagination — at high data volumes, <code>/admin/fault-reports</code> and similar endpoints would need
+  pagination and the tabs would need to request pages rather than full lists. The chat and outage board
+  components themselves are already per-session/stateless on the client and would not need structural
+  changes.</div>
+</div>
+
+<!-- S12 -->
+<h2 id="s12">12. Glossary of Key Terms</h2>
+<table>
+  <thead><tr><th>Term</th><th>Meaning in this project</th></tr></thead>
+  <tbody>
+    <tr><td>SPA (Single-Page Application)</td><td>The entire customer app or admin panel runs as one HTML page; tab switches are in-memory state changes, not full page reloads</td></tr>
+    <tr><td>Vite dev-server proxy</td><td>Configuration that forwards <code>/api</code> and <code>/ws</code> requests from the frontend's port to the backend's port, so the browser only ever talks to one origin</td></tr>
+    <tr><td>Exponential backoff</td><td>A reconnect strategy where each retry waits longer than the last (1s, 2s, 4s, 8s…), preventing repeated-failure spam</td></tr>
+    <tr><td>DOMPurify</td><td>A JavaScript library that strips unsafe HTML/script content from a string before it's rendered, used here to sanitise AI-generated chat replies</td></tr>
+    <tr><td>Session token (Bearer auth)</td><td>A random string issued by the backend after a successful admin login, sent in the <code>Authorization</code> header on every subsequent admin request instead of the password</td></tr>
+    <tr><td><code>sessionStorage</code> vs <code>localStorage</code></td><td>Both are browser key-value stores; <code>sessionStorage</code> clears when the tab closes, <code>localStorage</code> persists indefinitely — the admin token intentionally uses the former</td></tr>
+    <tr><td>Optimistic/self-owned component state</td><td>Each tab component manages its own loading/error/data state independently rather than relying on a shared global store</td></tr>
+    <tr><td>Utility-first CSS (Tailwind)</td><td>A CSS approach where small, single-purpose classes (e.g. <code>px-4</code>, <code>rounded-xl</code>) are composed directly in markup instead of writing custom CSS rules per component</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  Kanea Frontend Design &amp; Defense Guide &mdash; companion to the full Kanea Project Report and the Backend Design &amp; Defense Guide.
+</div>
+
+</body>
+</html>
