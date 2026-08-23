@@ -4,21 +4,32 @@ AI chatbot engine for PowerGrid Customer Support (Kanea).
 Decision logic:
   Step 1 — Classify intent (keyword NLP pre-filter)
   Step 2 — Route query type: STATIC → RAG knowledge base | DYNAMIC → live outage data
-  Step 3 — Build context-aware system prompt and generate response via Groq LLM
+  Step 3 — Build context-aware system prompt and generate response via OpenRouter LLM
 """
 
+import asyncio
 import os
 import httpx
 
 import knowledge_base
 import database as db
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL   = "llama-3.3-70b-versatile"
-GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
+# OpenRouter (free tier): 20 requests/min; 50 requests/day with no deposit ever
+# made, 1000/day once you've deposited $10+ (usage on ":free" models stays free).
+# Request-count based, not token-based — unlike Groq's per-model TPM caps, our
+# ~1.5-2K token system prompt doesn't eat into the budget.
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+OPENROUTER_MODEL   = "openai/gpt-oss-20b:free"
+OPENROUTER_URL     = "https://openrouter.ai/api/v1/chat/completions"
 
 MAX_HISTORY = 4
 MAX_TOKENS  = 600
+
+# Retry budget for transient OpenRouter failures (429 rate limit / 5xx upstream
+# overload / network hiccup). Kept small — this blocks a live chat reply.
+MAX_LLM_ATTEMPTS   = 2     # 1 initial try + 1 retry
+DEFAULT_RETRY_WAIT = 2.0   # seconds, used when the response has no Retry-After
+MAX_RETRY_WAIT      = 5.0  # cap so a single retry can't stall the chat for too long
 
 # ─── Intent taxonomy ─────────────────────────────────────────────────────────
 
@@ -284,11 +295,11 @@ async def get_bot_response(
         history[:] = history[-(MAX_HISTORY * 2):]
 
     # ── No API key fallback ───────────────────────────────────────────────────
-    if not GROQ_API_KEY:
+    if not OPENROUTER_API_KEY:
         reply = (
             "The AI service is not configured yet. "
-            "Please set GROQ_API_KEY in your .env file. "
-            "Get a FREE key at https://console.groq.com"
+            "Please set OPENROUTER_API_KEY in your .env file. "
+            "Get a FREE key at https://openrouter.ai/keys"
         )
         history.append({"role": "assistant", "content": reply})
         return {
@@ -296,11 +307,11 @@ async def get_bot_response(
             "quick_replies": quick_replies, "escalate": False, "rag_sources": [],
         }
 
-    # ── Call Groq API ─────────────────────────────────────────────────────────
+    # ── Call OpenRouter API ────────────────────────────────────────────────────
     system_prompt = _build_system_prompt(outages, rag_context, query_type)
 
     payload = {
-        "model": GROQ_MODEL,
+        "model": OPENROUTER_MODEL,
         "max_tokens": MAX_TOKENS,
         "temperature": 0.4,
         "messages": [
@@ -309,26 +320,60 @@ async def get_bot_response(
         ],
     }
 
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.post(
-                GROQ_URL,
-                headers={
-                    "Authorization": f"Bearer {GROQ_API_KEY}",
-                    "Content-Type": "application/json",
-                },
-                json=payload,
-            )
-            resp.raise_for_status()
-            raw_reply: str = resp.json()["choices"][0]["message"]["content"]
+    technical_issue = False
+    raw_reply = ""
 
-    except Exception:
+    for attempt in range(MAX_LLM_ATTEMPTS):
+        is_last_attempt = attempt == MAX_LLM_ATTEMPTS - 1
+        try:
+            async with httpx.AsyncClient(timeout=30) as client:
+                resp = await client.post(
+                    OPENROUTER_URL,
+                    headers={
+                        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                        "Content-Type": "application/json",
+                        # Optional but recommended by OpenRouter for attribution/analytics.
+                        "HTTP-Referer": "https://ecg-kanea-chatbot.example",
+                        "X-Title": "Kanea ECG Customer Support",
+                    },
+                    json=payload,
+                )
+
+            # 429 (rate limit) / 5xx (upstream overload) are transient — worth
+            # one retry. Anything else (400/401/403/...) won't be fixed by
+            # retrying, so fail immediately via raise_for_status() below.
+            transient = resp.status_code == 429 or resp.status_code >= 500
+            if transient and not is_last_attempt:
+                try:
+                    wait = float(resp.headers.get("retry-after", DEFAULT_RETRY_WAIT))
+                except ValueError:
+                    wait = DEFAULT_RETRY_WAIT
+                await asyncio.sleep(min(wait, MAX_RETRY_WAIT))
+                continue
+
+            resp.raise_for_status()
+            raw_reply = resp.json()["choices"][0]["message"]["content"]
+            break
+
+        except httpx.HTTPStatusError:
+            break  # non-retryable client error, or a transient one on the last attempt
+        except Exception:
+            # Network error / timeout — worth a retry too.
+            if not is_last_attempt:
+                await asyncio.sleep(DEFAULT_RETRY_WAIT)
+                continue
+            break
+
+    if not raw_reply:
+        # Technical/rate-limit failure — NOT the same as the customer needing a
+        # human agent, so this must not silently set [ESCALATE_TO_AGENT].
+        technical_issue = True
         raw_reply = (
             "I'm having a technical issue right now. "
-            "Please call 0800-POWER (0800-76937) for immediate assistance.\n[ESCALATE_TO_AGENT]"
+            "Please call 0800-POWER (0800-76937) for immediate assistance."
         )
 
-    escalate = force_escalate or "[ESCALATE_TO_AGENT]" in raw_reply
+    escalate = force_escalate or (not technical_issue and "[ESCALATE_TO_AGENT]" in raw_reply)
     clean_reply = raw_reply.replace("[ESCALATE_TO_AGENT]", "").strip()
     history.append({"role": "assistant", "content": clean_reply})
 

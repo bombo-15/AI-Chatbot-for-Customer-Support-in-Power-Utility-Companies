@@ -54,7 +54,7 @@ limiter = Limiter(key_func=get_remote_address)
 _admin_tokens: set[str] = set()
 _bearer_scheme = HTTPBearer(auto_error=False)
 
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "kanea2026")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "OdaXltwpVGiOmBh2l6xcMCEQ")
 
 
 def require_admin(credentials: HTTPAuthorizationCredentials = Depends(_bearer_scheme)):
