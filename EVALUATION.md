@@ -2,7 +2,7 @@
 
 Kanea isn't one model, it's a pipeline: keyword intent classifier → query
 router (static/dynamic/escalation) → TF-IDF retrieval over the ECG knowledge
-base → Groq LLM generation, plus a safety-critical danger-phrase trigger that
+base → Claude LLM generation, plus a safety-critical danger-phrase trigger that
 can fire independently of all of that. A single "accuracy" number can't
 describe that pipeline, so this evaluation scores each stage separately, then
 rolls in the operational metrics the app already logs from real usage.
@@ -10,7 +10,7 @@ rolls in the operational metrics the app already logs from real usage.
 Two things feed this chapter:
 
 - **`backend/eval/evaluate.py`** — a deterministic, offline script. It needs
-  no Groq API key and makes no network calls, so it can be re-run any time
+  no Anthropic API key and makes no network calls, so it can be re-run any time
   and will always produce the same numbers for the same code.
 - **`backend/database.get_analytics()`** — live numbers pulled from
   `chatbot.db`, i.e. from real conversations once the app has been used.
@@ -220,7 +220,7 @@ conversations, 1–5 scale on: *faithfulness* — does it only state facts
 present in the retrieved context or live outage data; *relevance*; *tone*;
 *conciseness*), reported as a mean per criterion rather than a single
 number. Happy to build the sample-conversation harness for that if you want
-it — it would just call the real Groq endpoint and needs `GROQ_API_KEY` set.
+it — it would just call the real Claude endpoint and needs `ANTHROPIC_API_KEY` set.
 
 ---
 
@@ -262,7 +262,7 @@ fixes:
 
 ### 7.3 Still open (lower priority / longer-term)
 
-- Single point of failure on the Groq LLM provider, with no fallback model or cached responses.
+- Single point of failure on the Claude LLM provider, with no fallback model or cached responses.
 - `ADMIN_PASSWORD` falls back to a hardcoded default if the env var isn't set; CORS currently allows all origins; the WebSocket chat endpoint has no authentication.
 - No automated test suite / CI gate running `evaluate.py` on every change.
 - English-only keyword lists — no Twi/Ga support despite the Ghanaian customer base.

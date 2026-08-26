@@ -9,8 +9,10 @@ go in the code if you want to change something.
 
 - **Python 3.10+** (for the backend)
 - **Node.js 18+** (for the frontend)
-- A free **Groq API key** from https://console.groq.com — this is what powers
-  the chatbot's replies. It already goes in `backend/.env` as `GROQ_API_KEY`.
+- An **Anthropic (Claude) API key** from https://console.anthropic.com/settings/keys
+  — this is what powers the chatbot's replies. Requires billing to be set up
+  (no perpetual free tier), but costs only cents for typical usage. It goes
+  in `backend/.env` as `ANTHROPIC_API_KEY`.
 
 If this is your first time running the project, install the dependencies once:
 

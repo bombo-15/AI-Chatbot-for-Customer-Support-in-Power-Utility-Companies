@@ -51,7 +51,7 @@ If valid: Execute request, If invalid: Return 401 Unauthorized
 
 ```env
 # LLM Configuration
-GROQ_API_KEY=your_groq_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
 
 # Security (CHANGE IN PRODUCTION!)
 JWT_SECRET=your-very-long-random-secret-key-change-this
