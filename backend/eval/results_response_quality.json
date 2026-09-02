@@ -5,10 +5,11 @@
       "source": "ecg_company_overview",
       "query": "What is ECG and when was it established?",
       "reference_answer": "ECG (Electricity Company of Ghana) is a limited liability company wholly owned by the Government of Ghana. Ghana's first government-sponsored public electricity supply began in 1914, and ECG remains the primary electricity distributor across southern Ghana, serving residential, commercial, and industrial customers. Its mission is to provide quality, reliable, and safe electricity services to support Ghana's economic growth, guided by the ENERGY core values: Excellence, Nurturing, Ethical, Reliability, Growth, and You.",
-      "candidate_answer": "ECG stands for Electricity Company of Ghana. However, the provided knowledge base does not specify when ECG was established. For more information, you can contact ECG's general support at 0302 611 611.",
+      "candidate_answer": "# About ECG\n\n**ECG (Electricity Company of Ghana)** is Ghana's primary electricity distribution utility. It is responsible for distributing electricity to customers across most of Ghana's regions.\n\nHowever, I don't have the specific establishment date in my current knowledge base. \n\n**What I can tell you:**\n- ECG operates under regulation by **PURC** (Public Utilities Regulatory Commission), Ghana's independent electricity regulator established in October 1997.\n- PURC sets and approves the electricity tariffs (rates) that ECG is allowed to charge.\n- ECG manages customer services, billing, meter installation, and power distribution.\n\n**For detailed company history or founding information**, please contact ECG directly:\n📞 **0302 611 611** (ECG Customer Service)\n\nIs there something specific about ECG's services, billing, or tariffs I can help you with?",
       "intent": "general",
       "query_type": "static",
       "rag_sources": [
+        "purc_historical_tariff_timeline",
         "purc_overview",
         "ecg_prepaid_meters"
       ],
@@ -19,7 +20,7 @@
       "source": "ecg_service_areas",
       "query": "Which districts are part of the Tema region?",
       "reference_answer": "The Tema Region covers districts including Ada, Afienya, Ashaiman, Juapong, Krobo, Nungua, Prampram, Tema North, and Tema South.",
-      "candidate_answer": "The Tema Region districts include: Ada, Afienya, Ashaiman, Juapong, Krobo, Nungua, Prampram, Tema North, and Tema South.",
+      "candidate_answer": "**Tema Region Districts:**\n\nThe Tema Region serves the following districts:\n\n- Ada\n- Afienya\n- Ashaiman\n- Juapong\n- Krobo\n- Nungua\n- Prampram\n- Tema North\n- Tema South\n\nIf you need additional information about services in your specific Tema district, feel free to contact ECG's Tema Region call centre at **0302 611 611** or **0551 444 011** (available 24 hours).",
       "intent": "general",
       "query_type": "static",
       "rag_sources": [
@@ -33,7 +34,7 @@
       "source": "ecg_billing_and_payment",
       "query": "Why do I still have to pay a charge on my bill even though I don't use much electricity?",
       "reference_answer": "In addition to charges for the electricity you actually consume, ECG bills include a fixed monthly service charge that covers maintenance of the network equipment serving your connection. This service charge applies every month regardless of how much power you use, and it continues to accrue even if your meter has been disconnected, since your account remains active in ECG's database.",
-      "candidate_answer": "The charge you're referring to is likely the service charge. According to our billing information, this is a monthly charge for customer services rendered, covering maintenance of the network equipment, and it continues even when a meter is disconnected. If you're a low-consumption household, you might be eligible for the Lifeline band, which has a lower service charge. You can check the PURC website or visit an ECG office for more information on residential tariffs.",
+      "candidate_answer": "That's the **service charge** – a monthly fee that covers the cost of maintaining ECG's network equipment and providing customer services, regardless of how much electricity you actually use.\n\n**Here's the breakdown:**\n\n- **Service charge continues even if your meter is disconnected** or your usage is very low.\n- It's separate from your consumption charges and appears on every bill.\n\n**However, if you're a low-consumption household (using 30 kWh or less per month), you may qualify for the Residential Lifeline band**, which has a much lower service charge of **213.00 GHp/month** instead of the standard 1,073.09 GHp/month (effective July 1, 2026).\n\n**To check if you qualify or understand your specific charges:**\n- View your tariff details at any **ECG District Office** or on the **PURC website** (purc.com.gh)\n- Contact **ECG Customer Service: 0302 611 611**\n\nThis ensures affordable electricity for households with minimal consumption while funding the infrastructure that keeps power flowing to your home.",
       "intent": "billing",
       "query_type": "static",
       "rag_sources": [
@@ -41,7 +42,7 @@
         "purc_residential_electricity_tariffs",
         "ecg_safety_guidelines",
         "ecg_prepaid_meters",
-        "purc_overview"
+        "purc_historical_tariff_timeline"
       ],
       "error": null
     },
@@ -50,7 +51,7 @@
       "source": "ecg_prepaid_meters",
       "query": "My prepaid meter card got lost, what should I do?",
       "reference_answer": "If your prepaid card is missing, report it at your ECG District Office along with a copy of your vending receipt. ECG will issue you a new programmed card, and a replacement fee applies.",
-      "candidate_answer": "To replace a lost prepaid meter card, register at your District Office with a copy of your vending receipt. They will issue a new programmed card for a replacement fee. Contact your District Office for more information and assistance.",
+      "candidate_answer": "**Prepaid Meter Card Lost – Here's What To Do:**\n\n1. **Visit your District Office** with a copy of a vending receipt (proof of previous purchase).\n2. **Register the loss** at the office.\n3. **Receive a replacement card** – a new programmed card will be issued for a replacement fee.\n\n**Important:** You cannot buy prepaid credits at vending stations without a valid card. The District Office will help you identify the correct vending station for your meter type once your replacement card is ready.\n\nIf you're unsure which District Office to contact, call **0302 611 611** for location details.\n\nIs there anything else I can help with?",
       "intent": "billing",
       "query_type": "static",
       "rag_sources": [
@@ -63,7 +64,7 @@
       "source": "ecg_new_connection",
       "query": "What documents do I need to apply for a new low voltage electricity connection?",
       "reference_answer": "For a new low voltage connection, submit a completed service form with a GHC 10 registration fee, together with an Installation Completion Certificate signed by a licensed electrician, a valid ID (National ID, Passport, Voter's ID, or Driver's License), and the original plus a photocopy of your site plan. Businesses must also provide proof of business operation. After an ECG inspection and payment of the cost estimate, connection is completed within 3 working days if lines already exist, or up to 5 days for extensions of up to 2 poles.",
-      "candidate_answer": "To apply for a new low voltage electricity connection, you'll need to submit a completed service form, site plan, and ID. Additionally, you'll need an Installation Completion Certificate signed by a licensed electrician, and proof of identification such as a National ID, Passport, Voters ID, or Drivers License. Businesses must also provide proof of business operation.",
+      "candidate_answer": "# Documents Needed for New Low Voltage Connection\n\nTo apply for a new electricity connection through ECG, please prepare these documents:\n\n**Required Documents:**\n1. **Completed service form** (from ECG Self Service Platform or PowerApp)\n2. **Site plan** (original and photocopy)\n3. **Valid identification** — choose one:\n   - National ID\n   - Passport\n   - Voters ID\n   - Driver's License\n4. **Installation Completion Certificate** — signed by a licensed electrician\n\n**For Businesses:**\n- Proof of business operation (in addition to above)\n\n**Application Fee:** GHC 10\n\n**Next Steps:**\n1. Submit documents to a Customer Relations Assistant\n2. ECG inspection team surveys your premises\n3. If qualified, you'll receive a cost estimate\n\n*Note: Projects requiring more than 2 poles are classified as development projects and require additional engineering studies.*\n\nNeed help with the application process or have questions? Contact ECG on **0302 611 611**.",
       "intent": "outage_status",
       "query_type": "dynamic",
       "rag_sources": [
@@ -77,7 +78,7 @@
       "source": "ecg_disconnection_reconnection",
       "query": "How do I get my power reconnected after it was disconnected for non-payment?",
       "reference_answer": "To get reconnected, settle all outstanding bills and pay the approved reconnection fee at your ECG District Office. Your meter will then be reconnected by ECG's reconnection team, usually the same day, once a team is available.",
-      "candidate_answer": "To reconnect after disconnection, settle all outstanding bills and pay the approved reconnection fee at your District Office. Your meter will be reconnected as soon as the reconnection team is available, usually within the same day. Please contact your District Office for more information.",
+      "candidate_answer": "# Power Reconnection After Disconnection\n\nTo get your power reconnected, follow these steps:\n\n1. **Settle all outstanding bills** – Pay your complete electricity debt at your nearest ECG District Office or Customer Service Center.\n\n2. **Pay the reconnection fee** – An approved reconnection fee applies (contact your District Office for the exact amount).\n\n3. **Request reconnection** – Once both payments are made, submit your reconnection request at your District Office.\n\n4. **Restoration timeline** – Your meter will typically be reconnected **the same day**, depending on the reconnection team's availability.\n\n**Payment options:**\n- ECG District/Customer Service Centers\n- Private ECG vending stations\n- Authorized payment outlets\n- Online: PowerApp (powerapp.ecg.com.gh) or ECG Power mobile app\n\nIf you need help locating your nearest office or have questions about your bill amount, call **0302 611 611**.",
       "intent": "billing",
       "query_type": "static",
       "rag_sources": [
@@ -85,7 +86,7 @@
         "ecg_billing_and_payment",
         "ecg_prepaid_meters",
         "ecg_new_connection",
-        "ecg_safety_guidelines"
+        "purc_historical_tariff_timeline"
       ],
       "error": null
     },
@@ -94,7 +95,7 @@
       "source": "ecg_illegal_connections",
       "query": "What counts as an illegal electricity connection?",
       "reference_answer": "An illegal connection is obtaining electricity from an unauthorized source, which includes direct connections without a meter, unapproved meter transfers, meter tampering or bypass, unauthorized network extensions, unauthorized redistribution of supply, or reconnecting your own supply after a legal disconnection. Only qualified, authorized ECG personnel may reconnect a meter, and there is a cash reward for reporting confirmed power theft to 0302 611 611.",
-      "candidate_answer": "An illegal connection is the acquisition of electricity services from an unauthorized person or source. Examples include: direct connections without meters, meter transfers without approval, meter tampering, meter bypass, unauthorized network extensions, or self-reconnection after legal disconnection.",
+      "candidate_answer": "# Illegal Electricity Connection — Definition\n\nAn **illegal connection** includes any of the following:\n\n✗ **Direct connections without a meter**  \n✗ **Meter transfers without ECG approval**  \n✗ **Meter tampering** (removing seals, loosening links, physical damage)  \n✗ **Meter bypass** (connecting voltage source directly to load cables)  \n✗ **Unauthorized network extensions**  \n✗ **Unauthorized supply redistribution** (reselling electricity)  \n✗ **Self-reconnection after legal disconnection**  \n\n---\n\n## Why This Matters\n\nIllegal connections pose serious risks:\n- Transformer and line overloading\n- Poor power quality affecting your appliances\n- **Fire outbreak hazards**\n- Electrical safety dangers\n\n**Note:** If a neighbor has lights but no meter, that's likely an illegal connection.\n\nIf you suspect an illegal connection or need clarification on your own setup, contact ECG at **0302 611 611** or visit your nearest District Office.",
       "intent": "outage_status",
       "query_type": "dynamic",
       "rag_sources": [
@@ -108,7 +109,7 @@
       "source": "ecg_safety_guidelines",
       "query": "What should I do if I see a fallen or sagging power line?",
       "reference_answer": "Stay well away from a sagging or fallen power line. Do not touch the wire or anything it is in contact with, such as metal fences or standing water, and do not attempt to move it, since even a fallen tree touching a line can conduct high voltage. Call ECG immediately on 0302 611 611, or the emergency line 0800-POWER (0800-76937), and do not approach the area.",
-      "candidate_answer": "If you see a fallen or sagging power line, stay away at a distance. Do not touch the wire or contact objects it touches. Call ECG immediately on 0302 611 611.",
+      "candidate_answer": "**⚠️ SAFETY ALERT**\n\nIf you see a **fallen or sagging power line**:\n\n1. **Stay away** — Keep a safe distance. Do not touch the wire or anything it contacts (metal fences, water, fallen trees).\n2. **Do not attempt to move it** — Even fallen trees can conduct high voltage.\n3. **Call ECG immediately** — Contact our faults team on **0302 611 611**.\n\n**If you see sparks on service wires during rain**, this indicates a loose contact—treat it as an emergency and call **0302 611 611** right away.\n\nYour safety is our priority. Please report it immediately rather than risk serious injury.\n\nIs there anything else I can help you with?",
       "intent": "outage_status",
       "query_type": "dynamic",
       "rag_sources": [
@@ -122,14 +123,15 @@
       "source": "ecg_fault_reporting",
       "query": "How do I report a fault to ECG?",
       "reference_answer": "You can report a fault by contacting your ECG District Office, calling 0302 611 611 or 0551 444 011, or using the online portal at cx.eservicesafrica.com. Emergency faults are prioritized, and unresolved complaints can be escalated to PURC at purc.com.gh.",
-      "candidate_answer": "To report a fault, you can contact your District Office, call 0302 611 611 or 0551 444 011, or use the online portal at cx.eservicesafrica.com.",
+      "candidate_answer": "# How to Report a Fault to ECG\n\nYou have several convenient options:\n\n**1. Call ECG directly:**\n- **0302 611 611** (main line)\n- **0551 444 011** (alternative)\n\n**2. Online portal:**\n- Visit **cx.eservicesafrica.com** to submit your fault report digitally\n\n**3. Visit your District Office in person:**\n- Bring your account details and a clear description of the issue\n\n**What happens next:**\nOnce you report, ECG's technical staff will visit within a set timeframe to investigate. Emergency faults (like broken poles, transformer issues, or line faults) are prioritized.\n\n**For complaints** (billing errors, staff conduct, service quality):\n- Use the same online portal or District Office\n- You can escalate unresolved complaints to **PURC** at **purc.com.gh**\n\nIs there a specific fault you need to report?",
       "intent": "fault_report",
       "query_type": "static",
       "rag_sources": [
         "ecg_prepaid_meters",
         "ecg_fault_reporting",
+        "ecg_safety_guidelines",
         "ecg_illegal_connections",
-        "ecg_safety_guidelines"
+        "purc_historical_tariff_timeline"
       ],
       "error": null
     },
@@ -138,7 +140,7 @@
       "source": "ecg_outage_causes",
       "query": "What usually causes unplanned power outages in Ghana?",
       "reference_answer": "Unplanned outages are commonly caused by broken high-tension poles from vehicle accidents or weather, faults on 11kV or 33kV feeder lines, transformer overloads or failures, underground or overhead cable faults, fire outbreaks near equipment, and upstream challenges from GRIDCo or VRA. Restoration time depends on the fault type: broken poles may take several hours to fix, while transformer faults can take a day or more.",
-      "candidate_answer": "Unplanned power outages in Ghana are commonly caused by factors such as broken high-tension poles, feeder faults, transformer overloads or failures, cable faults, and fire outbreaks near equipment.",
+      "candidate_answer": "# Common Causes of Unplanned Power Outages in Ghana\n\nBased on ECG data, unplanned outages are typically caused by:\n\n**Infrastructure Failures:**\n- **Broken high-tension (HT) poles** — from vehicle accidents or severe weather\n- **Feeder faults** — on 11kV or 33kV distribution lines\n- **Transformer overloads or failures** — exceeding capacity\n- **Cable faults** — both underground and overhead lines\n\n**External Events:**\n- **Fire outbreaks** near electrical equipment\n- **Vandalism** of ECG installations (a growing concern)\n\n**Upstream Issues:**\n- **GRIDCo faults** — Ghana Grid Company supplies bulk power; substations like Akosombo, Aboadze, and Anwomaso can affect large areas when they fail\n- **VRA or Independent Power Producer disruptions**\n\nThese events are unpredictable and require emergency response teams to diagnose and restore power quickly.\n\n**If you experience an outage in your area, check if it's listed on [ecg.com.gh](http://ecg.com.gh) or contact ECG's emergency line: 0302 611 611**\n\nIs there a specific area experiencing an outage you'd like me to check?",
       "intent": "outage_status",
       "query_type": "dynamic",
       "rag_sources": [
@@ -152,7 +154,7 @@
       "source": "ecg_street_lighting",
       "query": "How can I apply to get street lighting installed in my area?",
       "reference_answer": "To install street lighting, apply through your local Assembly or ECG District Manager with a layout of the area. ECG invites estimates from certified contractors, the General Manager verifies transformer capacity, the applicant pays a deposit, and ECG then authorizes a contractor to proceed. The contractor is paid from the deposited amount once the work is completed.",
-      "candidate_answer": "To apply for street lighting installation, submit an application through your Assembly or District Manager with an area layout. ECG will then invite estimates from certified contractors, verify transformer capacity, and authorize a contractor to proceed after you pay a deposit. For more information, contact ECG at 0302 611 611.",
+      "candidate_answer": "# Street Lighting Installation\n\nTo install street lighting in your area, follow these steps:\n\n1. **Apply through your Assembly or District Manager** with an area layout of the proposed installation.\n\n2. **ECG Process:**\n   - ECG invites cost estimates from certified contractors\n   - The General Manager verifies transformer capacity\n   - You pay a deposit upfront\n\n3. **Installation & Payment:**\n   - ECG authorizes the contractor to proceed\n   - Upon completion, the contractor is paid from your deposited amount\n\n**Important Note:** Street lighting must meet ECG standards. Installations will be removed if they have issues like improper pole materials, undersized cables, power exceeding 250W, or missing/non-functional switching systems (manual, photocell, or daytime timer).\n\n**Need more details?** Contact ECG at **0302 611 611** or visit your nearest ECG District/Customer Service Center.",
       "intent": "billing",
       "query_type": "static",
       "rag_sources": [
@@ -167,7 +169,7 @@
       "source": "purc_overview",
       "query": "What is PURC and how is it different from ECG?",
       "reference_answer": "PURC (the Public Utilities Regulatory Commission) is the independent government regulator of electricity and water utilities in Ghana, established in October 1997 under Act 538. PURC is not ECG. It is the body that sets and approves the tariffs ECG is allowed to charge, monitors service standards, and handles complaints when a utility does not resolve a customer's issue, including billing disputes escalated from ECG's District level.",
-      "candidate_answer": "PURC (Public Utilities Regulatory Commission) is an independent regulator of electricity and water utility services in Ghana. It sets guidelines for utility rates, examines and approves tariffs, and protects consumer interests. ECG (Electricity Company of Ghana) is a utility company that provides electricity services. PURC is not ECG, but rather the independent body that oversees and regulates ECG's activities, including setting and approving the rates ECG can charge. For complaints or issues not resolved by ECG, customers can escalate to PURC.",
+      "candidate_answer": "# PURC vs. ECG – Key Differences\n\n**PURC** (Public Utilities Regulatory Commission) is Ghana's **independent government regulator**, established in 1997. It does NOT supply electricity.\n\n**ECG** (Electricity Company of Ghana) is the **utility company** that generates, distributes, and bills you for electricity.\n\n## What Each Does:\n\n| **PURC** | **ECG** |\n|----------|--------|\n| Sets and approves electricity tariffs (rates) | Supplies and bills you for power |\n| Monitors service standards | Handles meter readings, bills, connections |\n| Investigates complaints escalated beyond ECG | Resolves billing & service issues at district level |\n| Protects consumer & provider interests | Operates the network |\n\n## When to Contact Each:\n\n- **ECG (0302 611 611):** Billing questions, meter issues, outages, new connections\n- **PURC:** If ECG doesn't resolve your complaint after you've reported it to them → escalate to PURC at **0302 218 300** or **purc.com.gh**\n\nThink of it this way: **ECG serves you electricity; PURC makes sure ECG plays fair.**\n\nNeed help with a specific billing or service issue?",
       "intent": "general",
       "query_type": "static",
       "rag_sources": [
@@ -182,7 +184,7 @@
       "source": "ecg_contact_directory",
       "query": "What is ECG's main customer service phone number?",
       "reference_answer": "ECG's main call centre can be reached on 0302 611 611 or 0551 444 011, available 24 hours for fault reporting and emergencies. For electrical hazards or fallen wires, call the dedicated emergency line 0800-POWER (0800-76937).",
-      "candidate_answer": "The main customer service phone number for ECG is 0302 611 611.",
+      "candidate_answer": "ECG's main customer service phone number is **0302 611 611**.\n\nYou can use this number to report outages, billing issues, meter problems, safety hazards, or any other customer support needs.",
       "intent": "general",
       "query_type": "static",
       "rag_sources": [],
@@ -193,12 +195,12 @@
       "source": "purc_residential_electricity_tariffs",
       "query": "What is the current electricity tariff for a residential customer using 200 units a month?",
       "reference_answer": "For a residential customer using 200 kWh a month, that usage falls in the 0-300 kWh band, billed at 203.7509 GHp/kWh, plus the standard residential service charge, effective 1st July 2026. Customers in the Lifeline band (0-30 kWh) pay a lower rate of 89.9315 GHp/kWh with a reduced Lifeline service charge. Since PURC revises tariffs roughly every quarter, confirm the current rate via the ECG PowerApp or purc.com.gh.",
-      "candidate_answer": "I'm not provided with the current residential tariff information. However, I can help with outage-related queries or direct you to our general support line for further assistance: 0302 611 611.",
+      "candidate_answer": "I appreciate your question, but I don't have the current residential electricity tariff details in my available data. My system currently holds non-residential tariffs (effective 1st July 2026) and historical tariff information, but not the specific residential rates you need.\n\n**To get accurate residential tariff rates for 200 kWh/month:**\n\nPlease visit **www.purc.com.gh** or contact ECG directly at **0302 611 611**, and they'll provide the exact rate for your consumption band.\n\nAlternatively, check your recent ECG bill—it will show your applicable tariff and service charge.\n\nIs there anything else I can help with regarding outages or service status in your area?",
       "intent": "outage_status",
       "query_type": "dynamic",
       "rag_sources": [
-        "purc_non_residential_electricity_tariffs",
-        "purc_special_load_tariffs"
+        "purc_historical_tariff_timeline",
+        "purc_non_residential_electricity_tariffs"
       ],
       "error": null
     },
@@ -207,15 +209,15 @@
       "source": "purc_residential_electricity_tariffs",
       "query": "What is the Lifeline electricity tariff band and who does it apply to?",
       "reference_answer": "The Lifeline band covers residential customers using 0-30 kWh per month and exists to keep electricity affordable for the smallest consumers. As of 1st July 2026, it is billed at 89.9315 GHp/kWh with a lower Lifeline service charge of 213.0000 GHp/month, separate from the standard residential service charge.",
-      "candidate_answer": "The Lifeline electricity tariff band applies to low-consumption residential households, with a usage of 0-30 kWh per month. The tariff rate for this band is 89.9315 GHp/kWh, with a lower Lifeline service charge of 213.0000 GHp/month. This band is designed to keep electricity affordable for small residential consumers.",
+      "candidate_answer": "# Lifeline Electricity Tariff Band\n\n**What it is:**\nThe Lifeline band covers residential customers using **0–30 kWh per month** and is designed to keep electricity affordable for low-consumption households.\n\n**Current Rate (Effective 1 July 2026):**\n- **89.9315 GHp/kWh** (Ghana Pesewas per kilowatt-hour)\n- **Service charge:** 213.0000 GHp/month\n\n**Who it applies to:**\nResidential customers in the 0–30 kWh consumption band only. This is an *exclusive band*, meaning once you exceed 30 kWh in a month, you move to the standard residential tariff (203.7509 GHp/kWh for 0–300 kWh).\n\n**Why it exists:**\nThe Lifeline band protects vulnerable, low-income households by offering lower rates than standard residential tariffs.\n\nNeed help calculating your expected bill or checking which band applies to you? Contact ECG at **0302 611 611**.",
       "intent": "billing",
       "query_type": "static",
       "rag_sources": [
         "purc_net_metering_tariffs",
+        "purc_historical_tariff_timeline",
         "purc_residential_electricity_tariffs",
         "ecg_billing_and_payment",
-        "purc_non_residential_electricity_tariffs",
-        "purc_tariff_regulatory_context"
+        "purc_non_residential_electricity_tariffs"
       ],
       "error": null
     },
@@ -224,7 +226,7 @@
       "source": "purc_non_residential_electricity_tariffs",
       "query": "What tariff applies to a small business or shop?",
       "reference_answer": "Non-residential customers such as shops and small offices are billed 183.9549 GHp/kWh for the first 300 kWh per month and 224.0395 GHp/kWh for usage above 301 kWh, plus a non-residential service charge of 1242.8245 GHp/month, effective 1st July 2026. Larger businesses with higher power demand are instead billed under the Special Load Tariff.",
-      "candidate_answer": "I'm having a technical issue right now. Please call 0800-POWER (0800-76937) for immediate assistance.",
+      "candidate_answer": "# Non-Residential Tariff for Small Business/Shop\n\nFor a small business or shop, the **Non-Residential tariff** applies (effective **1st July 2026**):\n\n**Energy charges:**\n- **0–300 kWh/month:** 183.95 GHp/kWh\n- **301+ kWh/month:** 224.04 GHp/kWh\n\n**Service charge:** 1,242.82 GHp/month\n\n---\n\n**Note:** If your business has *higher power demand* (e.g., factory, large commercial premises, or medium/high-voltage connection), you may fall under the **Special Load Tariff (SLT)** instead.\n\nFor your exact tariff classification or to confirm rates for your specific billing period, contact **ECG on 0302 611 611** or check the PURC website at **purc.com.gh**.",
       "intent": "billing",
       "query_type": "static",
       "rag_sources": [
@@ -240,7 +242,7 @@
       "source": "purc_special_load_tariffs",
       "query": "How are large industrial customers billed for electricity?",
       "reference_answer": "Large industrial or high-demand customers, typically factories or premises connected at medium or high voltage, are billed under Special Load Tariff (SLT) categories rather than the standard non-residential band. For example, SLT-LV customers pay 240.2104 GHp/kWh, and SLT-HV customers pay 188.4762 GHp/kWh, each with a service charge of GHS 500 per month, effective 1st July 2026.",
-      "candidate_answer": "Large industrial customers are billed under Special Load Tariffs (SLT) categories, which include SLT-LV, SLT-MV, SLT-MV2, and SLT-HV, with varying energy charges and a monthly service charge of 50,000.0000 GHp (GHS 500/month).",
+      "candidate_answer": "**Large Industrial Customer Billing – Special Load Tariff (SLT)**\n\nIndustrial and large commercial customers are billed under **Special Load Tariff (SLT) categories** based on their voltage connection level:\n\n| Category | Energy Charge | Service Charge |\n|----------|---------------|----------------|\n| **SLT-LV** (Low Voltage, large LV customers) | 240.21 GHp/kWh | 50,000 GHp/month (GHS 500) |\n| **SLT-MV** (Medium Voltage) | 208.63 GHp/kWh | 50,000 GHp/month |\n| **SLT-MV2** | 136.65 GHp/kWh | 50,000 GHp/month |\n| **SLT-HV** (High Voltage) | 188.48 GHp/kWh | 50,000 GHp/month |\n\n**Key points:**\n- Rates are **effective 1st July 2026**\n- Bills = (kWh used × energy charge) + service charge\n- These rates apply to factories, large commercial premises, and high-demand customers\n\nFor specific tariff questions or to confirm your customer category, please contact **0302 611 611**.",
       "intent": "outage_status",
       "query_type": "dynamic",
       "rag_sources": [
@@ -254,7 +256,7 @@
       "source": "purc_net_metering_tariffs",
       "query": "How does billing work for a customer with rooftop solar under net metering?",
       "reference_answer": "A net metering customer with rooftop solar pays the Import Tariff for power drawn from ECG's grid and receives a credit at a lower Export Tariff for surplus power sent back to the grid. For example, in the 31-300 kWh band, the Import Tariff is 122.2505 GHp/kWh and the Export Tariff is 81.5004 GHp/kWh, effective 1st July 2026. The Export Tariff is intentionally set lower than the Import Tariff.",
-      "candidate_answer": "I'm having a technical issue right now. Please call 0800-POWER (0800-76937) for immediate assistance.",
+      "candidate_answer": "# Net Metering Billing Explained\n\nUnder ECG's net metering arrangement, you're billed based on the **net flow of electricity**—what you import from the grid minus what you export (send back) to it.\n\n## How It Works:\n- **When you use more than you generate:** You pay the import tariff for the net amount consumed.\n- **When you generate more than you use:** You earn an export credit at a lower rate for the surplus power you send to the grid.\n- **When balanced:** No net charge.\n\n## Current Tariffs (Effective 1st July 2026):\n\n**Lifeline Band (0–30 kWh):**\n- Import: 53.9589 GHp/kWh | Export Credit: 35.9726 GHp/kWh\n\n**Standard Band (31–300 kWh):**\n- Import: 122.2505 GHp/kWh | Export Credit: 81.5004 GHp/kWh\n\n**Note:** Tariffs are revised quarterly by PURC to reflect inflation, exchange rates, and fuel costs. Always confirm current rates via ECG's website or call **0302 611 611**.\n\nHave questions about your specific bill or meter installation?",
       "intent": "billing",
       "query_type": "static",
       "rag_sources": [
@@ -268,12 +270,12 @@
       "source": "purc_tariff_regulatory_context",
       "query": "Why do ECG's electricity tariffs change so often?",
       "reference_answer": "Electricity tariffs in Ghana are set and approved by PURC, not ECG. Besides periodic full Major Tariff Reviews, PURC applies a quarterly Automatic Adjustment (Indexation) Formula that revises tariffs to reflect changes in exchange rates, inflation, and fuel costs. Each new quarterly publication explicitly revokes and replaces the previous gazette, which is why customers should confirm the current rate for their billing period via ECG or purc.com.gh rather than relying on an undated figure.",
-      "candidate_answer": "ECG's electricity tariffs are approved by PURC and change due to periodic Major Tariff Reviews and routine Automatic Adjustments, which reflect changes in exchange rates, inflation, and fuel costs. Tariffs are typically revised every quarter. For the most current rates, please check the PURC or ECG website.",
+      "candidate_answer": "Great question! Electricity tariffs in Ghana are regulated by **PURC** (Public Utilities Regulatory Commission), not set directly by ECG. Tariffs adjust periodically to reflect:\n\n1. **Cost pressures** – fuel prices, generation costs, and operational expenses fluctuate\n2. **Regulatory decisions** – PURC reviews and approves new rates through formal gazettes (most recent: July 1, 2026)\n3. **Infrastructure investments** – maintenance, upgrades, and network expansion require funding\n4. **Currency & inflation** – Ghana's economic conditions affect pricing\n\nPURC publishes formal **Tariff Decision Papers** explaining each change. The current residential rates (as of July 2026) range from **89.93 GHp/kWh** (Lifeline band, 0–30 kWh/month) to **269.22 GHp/kWh** (301+ kWh/month), designed to keep basic electricity affordable while supporting system reliability.\n\nIf you'd like details on your specific consumption band or have concerns about rate increases, I'm happy to help!",
       "intent": "outage_status",
       "query_type": "dynamic",
       "rag_sources": [
-        "ecg_billing_and_payment",
-        "purc_how_tariffs_are_set"
+        "purc_historical_tariff_timeline",
+        "purc_residential_electricity_tariffs"
       ],
       "error": null
     },
@@ -282,7 +284,7 @@
       "source": "purc_functions",
       "query": "If ECG doesn't resolve my billing complaint, what can I do?",
       "reference_answer": "If a billing dispute or service complaint is not resolved by ECG at the District level, you can escalate it to PURC, which has the statutory power to investigate and settle disputes between customers and utility companies. Complaints can be submitted through purc.com.gh or by calling PURC's Accra office on 0302 218 300.",
-      "candidate_answer": "I'm having a technical issue right now. Please call 0800-POWER (0800-76937) for immediate assistance.",
+      "candidate_answer": "If ECG doesn't resolve your billing complaint at the District level, you can escalate it to **PURC** (Public Utilities Regulatory Commission), Ghana's independent electricity regulator.\n\n**How to escalate:**\n- **Online:** Visit **purc.com.gh** and file your complaint\n- **Phone:** Call PURC's Accra office on **0302 218 300**\n\n**What PURC does:**\n- Investigates billing disputes and overcharges\n- Has statutory power to settle disputes between customers and ECG\n- Protects your consumer rights\n\n**Before escalating to PURC, ensure you've:**\n1. Submitted your complaint to your local **ECG District Office** with your account details and issue description\n2. Given ECG a reasonable timeframe to investigate\n\nPURC is independent from ECG and will handle your case fairly. Keep copies of all correspondence with ECG for your escalation.\n\nNeed help filing your complaint with ECG first? Call **0302 611 611**.",
       "intent": "complaint",
       "query_type": "static",
       "rag_sources": [
@@ -300,402 +302,402 @@
       {
         "id": "q-1",
         "rouge1": {
-          "precision": 0.3333,
-          "recall": 0.1486,
-          "f1": 0.2056
+          "precision": 0.2602,
+          "recall": 0.4324,
+          "f1": 0.3249
         },
         "rouge2": {
-          "precision": 0.0938,
-          "recall": 0.0411,
-          "f1": 0.0571
+          "precision": 0.0738,
+          "recall": 0.1233,
+          "f1": 0.0923
         }
       },
       {
         "id": "q-2",
         "rouge1": {
-          "precision": 1.0,
-          "recall": 0.9444,
-          "f1": 0.9714
+          "precision": 0.2778,
+          "recall": 0.8333,
+          "f1": 0.4167
         },
         "rouge2": {
-          "precision": 0.9375,
-          "recall": 0.8824,
-          "f1": 0.9091
+          "precision": 0.2075,
+          "recall": 0.6471,
+          "f1": 0.3143
         }
       },
       {
         "id": "q-3",
         "rouge1": {
-          "precision": 0.3846,
-          "recall": 0.4839,
-          "f1": 0.4286
+          "precision": 0.2761,
+          "recall": 0.7258,
+          "f1": 0.4
         },
         "rouge2": {
-          "precision": 0.1429,
-          "recall": 0.1803,
-          "f1": 0.1594
+          "precision": 0.0926,
+          "recall": 0.2459,
+          "f1": 0.1345
         }
       },
       {
         "id": "q-4",
         "rouge1": {
-          "precision": 0.6154,
-          "recall": 0.7059,
-          "f1": 0.6575
+          "precision": 0.2453,
+          "recall": 0.7647,
+          "f1": 0.3714
         },
         "rouge2": {
-          "precision": 0.3684,
-          "recall": 0.4242,
-          "f1": 0.3944
+          "precision": 0.1048,
+          "recall": 0.3333,
+          "f1": 0.1594
         }
       },
       {
         "id": "q-5",
         "rouge1": {
-          "precision": 0.7759,
-          "recall": 0.4891,
-          "f1": 0.6
+          "precision": 0.4511,
+          "recall": 0.6522,
+          "f1": 0.5333
         },
         "rouge2": {
-          "precision": 0.5088,
-          "recall": 0.3187,
-          "f1": 0.3919
+          "precision": 0.2045,
+          "recall": 0.2967,
+          "f1": 0.2422
         }
       },
       {
         "id": "q-6",
         "rouge1": {
-          "precision": 0.6591,
-          "recall": 0.7632,
-          "f1": 0.7073
+          "precision": 0.2403,
+          "recall": 0.8158,
+          "f1": 0.3713
         },
         "rouge2": {
-          "precision": 0.4884,
-          "recall": 0.5676,
-          "f1": 0.525
+          "precision": 0.125,
+          "recall": 0.4324,
+          "f1": 0.1939
         }
       },
       {
         "id": "q-7",
         "rouge1": {
-          "precision": 0.7895,
-          "recall": 0.4688,
-          "f1": 0.5882
+          "precision": 0.3534,
+          "recall": 0.6406,
+          "f1": 0.4556
         },
         "rouge2": {
-          "precision": 0.3784,
-          "recall": 0.2222,
-          "f1": 0.28
+          "precision": 0.1304,
+          "recall": 0.2381,
+          "f1": 0.1685
         }
       },
       {
         "id": "q-8",
         "rouge1": {
-          "precision": 0.8065,
-          "recall": 0.3623,
-          "f1": 0.5
+          "precision": 0.4393,
+          "recall": 0.6812,
+          "f1": 0.5341
         },
         "rouge2": {
-          "precision": 0.4333,
-          "recall": 0.1912,
-          "f1": 0.2653
+          "precision": 0.2264,
+          "recall": 0.3529,
+          "f1": 0.2759
         }
       },
       {
         "id": "q-9",
         "rouge1": {
-          "precision": 1.0,
-          "recall": 0.6136,
-          "f1": 0.7606
+          "precision": 0.3197,
+          "recall": 0.8864,
+          "f1": 0.4699
         },
         "rouge2": {
-          "precision": 0.8462,
-          "recall": 0.5116,
-          "f1": 0.6377
+          "precision": 0.1736,
+          "recall": 0.4884,
+          "f1": 0.2561
         }
       },
       {
         "id": "q-10",
         "rouge1": {
-          "precision": 0.7931,
-          "recall": 0.3485,
-          "f1": 0.4842
+          "precision": 0.2987,
+          "recall": 0.697,
+          "f1": 0.4182
         },
         "rouge2": {
-          "precision": 0.4643,
-          "recall": 0.2,
-          "f1": 0.2796
+          "precision": 0.1307,
+          "recall": 0.3077,
+          "f1": 0.1835
         }
       },
       {
         "id": "q-11",
         "rouge1": {
-          "precision": 0.7,
-          "recall": 0.614,
-          "f1": 0.6542
+          "precision": 0.374,
+          "recall": 0.807,
+          "f1": 0.5111
         },
         "rouge2": {
-          "precision": 0.3469,
-          "recall": 0.3036,
-          "f1": 0.3238
+          "precision": 0.2459,
+          "recall": 0.5357,
+          "f1": 0.3371
         }
       },
       {
         "id": "q-12",
         "rouge1": {
-          "precision": 0.5488,
-          "recall": 0.6522,
-          "f1": 0.596
+          "precision": 0.32,
+          "recall": 0.6957,
+          "f1": 0.4384
         },
         "rouge2": {
-          "precision": 0.2593,
-          "recall": 0.3088,
-          "f1": 0.2819
+          "precision": 0.094,
+          "recall": 0.2059,
+          "f1": 0.129
         }
       },
       {
         "id": "q-13",
         "rouge1": {
-          "precision": 0.5833,
-          "recall": 0.1795,
-          "f1": 0.2745
+          "precision": 0.3226,
+          "recall": 0.2564,
+          "f1": 0.2857
         },
         "rouge2": {
-          "precision": 0.1818,
-          "recall": 0.0526,
-          "f1": 0.0816
+          "precision": 0.1667,
+          "recall": 0.1316,
+          "f1": 0.1471
         }
       },
       {
         "id": "q-14",
         "rouge1": {
-          "precision": 0.2188,
-          "recall": 0.0921,
-          "f1": 0.1296
+          "precision": 0.287,
+          "recall": 0.4079,
+          "f1": 0.337
         },
         "rouge2": {
-          "precision": 0.0323,
-          "recall": 0.0133,
-          "f1": 0.0189
+          "precision": 0.0748,
+          "recall": 0.1067,
+          "f1": 0.0879
         }
       },
       {
         "id": "q-15",
         "rouge1": {
-          "precision": 0.6296,
-          "recall": 0.6415,
-          "f1": 0.6355
+          "precision": 0.3182,
+          "recall": 0.7925,
+          "f1": 0.4541
         },
         "rouge2": {
-          "precision": 0.434,
-          "recall": 0.4423,
-          "f1": 0.4381
+          "precision": 0.2061,
+          "recall": 0.5192,
+          "f1": 0.2951
         }
       },
       {
         "id": "q-16",
         "rouge1": {
-          "precision": 0.1765,
-          "recall": 0.0492,
-          "f1": 0.0769
+          "precision": 0.3846,
+          "recall": 0.6557,
+          "f1": 0.4848
         },
         "rouge2": {
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0
+          "precision": 0.165,
+          "recall": 0.2833,
+          "f1": 0.2086
         }
       },
       {
         "id": "q-17",
         "rouge1": {
-          "precision": 0.641,
-          "recall": 0.3906,
-          "f1": 0.4854
+          "precision": 0.344,
+          "recall": 0.6719,
+          "f1": 0.455
         },
         "rouge2": {
-          "precision": 0.3684,
-          "recall": 0.2222,
-          "f1": 0.2772
+          "precision": 0.1694,
+          "recall": 0.3333,
+          "f1": 0.2246
         }
       },
       {
         "id": "q-18",
         "rouge1": {
-          "precision": 0.1765,
-          "recall": 0.04,
-          "f1": 0.0652
+          "precision": 0.3208,
+          "recall": 0.68,
+          "f1": 0.4359
         },
         "rouge2": {
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0
+          "precision": 0.1519,
+          "recall": 0.3243,
+          "f1": 0.2069
         }
       },
       {
         "id": "q-19",
         "rouge1": {
-          "precision": 0.75,
-          "recall": 0.4737,
-          "f1": 0.5806
+          "precision": 0.2662,
+          "recall": 0.4868,
+          "f1": 0.3442
         },
         "rouge2": {
-          "precision": 0.3191,
-          "recall": 0.2,
-          "f1": 0.2459
+          "precision": 0.058,
+          "recall": 0.1067,
+          "f1": 0.0751
         }
       },
       {
         "id": "q-20",
         "rouge1": {
-          "precision": 0.1765,
-          "recall": 0.0536,
-          "f1": 0.0822
+          "precision": 0.3235,
+          "recall": 0.7857,
+          "f1": 0.4583
         },
         "rouge2": {
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1": 0.0
+          "precision": 0.2,
+          "recall": 0.4909,
+          "f1": 0.2842
         }
       }
     ],
     "rouge1_avg": {
-      "precision": 0.5879,
-      "recall": 0.4257,
-      "f1": 0.4742
+      "precision": 0.3211,
+      "recall": 0.6684,
+      "f1": 0.425
     },
     "rouge2_avg": {
-      "precision": 0.3302,
-      "recall": 0.2541,
-      "f1": 0.2783
+      "precision": 0.1501,
+      "recall": 0.3252,
+      "f1": 0.2008
     }
   },
   "bertscore": {
     "per_case": [
       {
         "id": "q-1",
-        "precision": 0.8549,
-        "recall": 0.831,
-        "f1": 0.8428
+        "precision": 0.8249,
+        "recall": 0.858,
+        "f1": 0.8411
       },
       {
         "id": "q-2",
-        "precision": 0.9911,
-        "recall": 0.9921,
-        "f1": 0.9916
+        "precision": 0.8194,
+        "recall": 0.8868,
+        "f1": 0.8517
       },
       {
         "id": "q-3",
-        "precision": 0.8807,
-        "recall": 0.8978,
-        "f1": 0.8891
+        "precision": 0.8206,
+        "recall": 0.9082,
+        "f1": 0.8622
       },
       {
         "id": "q-4",
-        "precision": 0.9375,
-        "recall": 0.9394,
-        "f1": 0.9384
+        "precision": 0.8397,
+        "recall": 0.9211,
+        "f1": 0.8785
       },
       {
         "id": "q-5",
-        "precision": 0.9497,
-        "recall": 0.8939,
-        "f1": 0.9209
+        "precision": 0.8187,
+        "recall": 0.8784,
+        "f1": 0.8475
       },
       {
         "id": "q-6",
-        "precision": 0.9506,
-        "recall": 0.9541,
-        "f1": 0.9523
+        "precision": 0.8304,
+        "recall": 0.9282,
+        "f1": 0.8766
       },
       {
         "id": "q-7",
-        "precision": 0.9447,
-        "recall": 0.892,
-        "f1": 0.9176
+        "precision": 0.8025,
+        "recall": 0.8906,
+        "f1": 0.8443
       },
       {
         "id": "q-8",
-        "precision": 0.945,
-        "recall": 0.8897,
-        "f1": 0.9165
+        "precision": 0.8445,
+        "recall": 0.9073,
+        "f1": 0.8748
       },
       {
         "id": "q-9",
-        "precision": 0.9818,
-        "recall": 0.9338,
-        "f1": 0.9572
+        "precision": 0.8256,
+        "recall": 0.9218,
+        "f1": 0.8711
       },
       {
         "id": "q-10",
-        "precision": 0.9428,
-        "recall": 0.8794,
-        "f1": 0.91
+        "precision": 0.8049,
+        "recall": 0.8909,
+        "f1": 0.8457
       },
       {
         "id": "q-11",
-        "precision": 0.9239,
-        "recall": 0.9319,
-        "f1": 0.9279
+        "precision": 0.8296,
+        "recall": 0.9339,
+        "f1": 0.8786
       },
       {
         "id": "q-12",
-        "precision": 0.92,
-        "recall": 0.9146,
-        "f1": 0.9173
+        "precision": 0.8126,
+        "recall": 0.8871,
+        "f1": 0.8482
       },
       {
         "id": "q-13",
-        "precision": 0.9402,
-        "recall": 0.8634,
-        "f1": 0.9002
+        "precision": 0.8858,
+        "recall": 0.8681,
+        "f1": 0.8769
       },
       {
         "id": "q-14",
-        "precision": 0.829,
-        "recall": 0.8044,
-        "f1": 0.8165
+        "precision": 0.8386,
+        "recall": 0.857,
+        "f1": 0.8477
       },
       {
         "id": "q-15",
-        "precision": 0.9469,
-        "recall": 0.933,
-        "f1": 0.9399
+        "precision": 0.8415,
+        "recall": 0.9195,
+        "f1": 0.8788
       },
       {
         "id": "q-16",
-        "precision": 0.8177,
-        "recall": 0.7878,
-        "f1": 0.8025
+        "precision": 0.8309,
+        "recall": 0.8996,
+        "f1": 0.8639
       },
       {
         "id": "q-17",
-        "precision": 0.9113,
-        "recall": 0.8741,
-        "f1": 0.8923
+        "precision": 0.8328,
+        "recall": 0.8999,
+        "f1": 0.865
       },
       {
         "id": "q-18",
-        "precision": 0.8081,
-        "recall": 0.7865,
-        "f1": 0.7972
+        "precision": 0.8333,
+        "recall": 0.9028,
+        "f1": 0.8667
       },
       {
         "id": "q-19",
-        "precision": 0.9195,
-        "recall": 0.8829,
-        "f1": 0.9008
+        "precision": 0.8163,
+        "recall": 0.8753,
+        "f1": 0.8448
       },
       {
         "id": "q-20",
-        "precision": 0.8427,
-        "recall": 0.8278,
-        "f1": 0.8352
+        "precision": 0.8388,
+        "recall": 0.9344,
+        "f1": 0.884
       }
     ],
     "bertscore_avg": {
-      "precision": 0.9119,
-      "recall": 0.8855,
-      "f1": 0.8983
+      "precision": 0.8296,
+      "recall": 0.8984,
+      "f1": 0.8624
     },
     "model": "roberta-large"
   }
