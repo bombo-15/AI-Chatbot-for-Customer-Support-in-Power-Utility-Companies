@@ -1,0 +1,810 @@
+ELE 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+RESEARCH DEPARTMENT 
+ 
+ 
+ 
+A STUDY ON THE TRENDS IN 
+ELECTRICITY TARIFFS IN GHANA 
+BETWEEN 2010 AND 2020 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+December 2020 
+ 
+
+ 
+i 
+ 
+Table of Contents 
+Executive Summary .................................................................................................................. iii 
+1.0 Introduction ...................................................................................................................... 1 
+2.0 Methodology and Scope of Study ............................................................................. 1 
+3.0 Brief Historical Overview of Electricity Tariffs Reform in Ghana ........... 2 
+4.0 Electricity Tariff Analysis and Discussion .......................................................... 3 
+4.1 Structure of Ghana’s End-User Electricity Tariffs ....................................... 3 
+4.1.1 Tariff Structure ......................................................................................................... 4 
+4.1.2 Residential Tariffs - Life line Tariff.................................................................. 4 
+4.1.3 Non-Residential Tariffs .......................................................................................... 4 
+4.1.4 Special Load Tariff (SLT) ...................................................................................... 4 
+4.2 Trends in End-User Electricity Tariffs (2010 – 2020) ................................... 5 
+4.2.1 Trends in Electricity Prices based on End-User/Customer 
+Classification ........................................................................................................................ 7 
+4.2.2 Overall Trends in End-User Electricity Prices in Ghana (2010 – 
+2020) .......................................................................................................................................... 9 
+5.0 Conclusion ....................................................................................................................... 12 
+6.0 Recommendation .......................................................................................................... 13 
+ 
+  
+ 
+ii 
+ 
+List of Tables  
+Table 1: Electricity End-User Category ................................ ................................ ....... 4 
+Table 2: Number of Monthly/Yearly Tariff Reviews and Key between 2010 and 
+2020 ................................ ................................ ................................ ................................ ..... 6 
+Table 3: Direction of Tariff Changes and Key between 2010 and 2020 ................. 6 
+Table 4: Descriptive Statistics of Electricity Prices per End-User/Customer 
+Category ................................ ................................ ................................ ............................. 7 
+Table 5: Trends in End-User Electricity Tariffs based on Consumer Category 
+(2010 – 2020) ................................ ................................ ................................ ....................... 8 
+ 
+ 
+ 
+List of Figures 
+Figure 1: Total Electricity Tariff Adjustments/Reviews between 2010 and 2020 5 
+Figure 2: Trends in End-User Electricity Tariffs based on Consumer Category 
+(2010 – 2020) ................................ ................................ ................................ ....................... 7 
+Figure 3: Overall Trends in End-User Electricity Tariffs (Ghp/kWh) between 
+2010 – 2020 ................................ ................................ ................................ ......................... 9 
+ 
+ 
+ 
+  
+ 
+iii 
+ 
+Executive Summary 
+This study presents an analyse s of the trends  in electricity tariffs in Ghana 
+between 2010 and 2020. The key trends examined included an analys es of 
+electricity tariff trends for each user category; and analyse s of the overall trends 
+in end-user electricity tariffs over the study period. The study employed secondary 
+data sourced from PURC’s gazetted end-user electricity tariffs. 
+ 
+Findings from the study showed that over the ten -year period assessed,  the 
+Commission has engaged in 29 different tariff reviews, comprising 5 major and 24 
+minor reviews , using the automatic adjustment formula (AAF). These tariff 
+reviews have resulted in 11 tariff increments, 2 tariff reductions, and 16 no 
+changes in tariffs. 
+ 
+Electricity tariffs between 2010 and 2020  averaged Ghp48.2876/kwh for 
+residential customers, Ghp76.0730/kwh for non -residential customers and 
+Ghp70.4976/kwh for special load tariff (SLT) customers (LV, MV, HV, and Mines). 
+Over the period, the highest rate of tariffs recorded for each customer category 
+averaged Ghp71.34/kwh for residential customers, Ghp120.767/kwh for non -
+residential customers and Ghp132.9184/kwh for special load tariff customers. 
+These high rates of tariffs, were applied in December 2015 for both residential and 
+non-residential customers, and in October 2019 for SLT’s. The highest percentage 
+change in electricity tariffs recorded between 2010 and 2020 was an increase of 
+62.72% in October 2013, while the lowest of -22.083% was in March 2018, which 
+denoted a significant decrease in tariffs. 
+ 
+The analysis also revealed an increasing trend in electricity tariffs across all end-
+user groups, with some fluctuations, which denotes percentage changes chronicled 
+along the years. Residential tariffs have relatively lagged behind both non -
+residential tariffs and SLT’s. This has been justified based on lower consumption 
+levels of residential customers relative to both non -residential and SLTs. The 
+trends also showed that between June 2010 and October 2018, tariffs for non -
+residential customers exceeded those of SLT customers. Th is trend was however 
+reversed in July 2019 , when the Commission, in considering the pre -impact of 
+maximum demand charges, announced a major policy shift of eliminating 
+maximum demand charges in tariffs of SLTs. This move by the Commission was 
+to enhance competitiveness of Ghanaian industries 1. Prior to  this policy shift , 
+electricity tariffs of SLT’s exceeded that of non-residential customers. 
+ 
+                                                           
+1 2019-2020 Electricity and Water Major Tariff Review Decision, P.4 
+ 
+iv 
+ 
+Careful observation from the data and graphical analysis revealed that,  for all 
+election years, end-user electricity tariffs were generally stable with no significant 
+changes. The trends depicted no major tariff decisions when review periods 
+coincided with election years. Additionally, there was no quarterly adjustments to 
+tariffs during election years , although economic indicators necessary for the 
+review of tariffs may have varied. This was observed in the trends in tariffs 
+between March to December 2012, April to December 2016, and January to 
+September 2020, which were all tariff review periods, within election years.  
+ 
+Given that the study has highlighted the specific months and years in which tariff 
+decisions were made with their respective directions of change, it is important as 
+a follow-up, to identify which end-user group is being affected more by these tariff 
+changes. Thus, dat a on incomes, and electricity consumption coupled with 
+expenditure patterns of different end-user groups will constitute a necessary next 
+step to this study . This will help to  identify with precision, impacts of electricity 
+tariff adjustments on end-users, and at what point electricity tariffs would become 
+unaffordable to end users (ability and willingness to pay study). 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+1 
+ 
+1.0 Introduction 
+The developments in a country’s  electricity prices are an important parameter of 
+electricity markets. That is, the competitiveness in the industry and the increasing 
+role of electricity in general. 2 Electricity prices are also a significant part of 
+domestic expenditure, play ing an important role in industrial competitiveness, 
+and influencing energy consumption patterns. How electricity prices evolve 
+overtime therefore, will  help identify and rationalize  its significant roles, and 
+ultimately determine  its rate of changes to infor m stakeholders. In Ghana, 
+PURC’s gazetted end-user tariffs provides a solid database on electricity prices to 
+serve this purpose. 
+ 
+This study , provides a detailed snapshot  of electricity price developments in 
+Ghana between 2010 and 2020. The significance of this is to fill  the gaps in 
+monitoring and analyzing recent electricity pricing developments in Ghana. This 
+in turn is expected to provide insights to all stakeholders on the evolution of price 
+regulation in Ghana over the past ten year s. In achieving these, the  study will 
+specifically provide; 
+i. a brief historical overview of electricity pricing and reforms in Ghana, to 
+provide some background information and put into perspective tariff 
+adjustments and reviews assessed over the study period,  
+ii. the structure of Ghana’s end -user electricity tariffs with associated 
+energy consumption charges, 
+iii. electricity tariff trends of each end-user/customer category between 2010 
+and 2020, 
+iv. the overall trends in end-user electricity tariffs and how they have 
+changed over the study period; and 
+v. Highlight key issues underlying tariff trends 
+ 
+ 
+2.0 Methodology and Scope of Study 
+This study is based on an analysis and discussion of electricity tariff developments 
+in Ghana between 2010 and 2020. The use of secondary data was mainly employed 
+to achieve this overall objective. The main data source used in this study was 
+PURC’s gazetted end -user electricity tariffs from June 2010 to July 2020. The 
+tariff data frequenc y is primarily quarterly, although in some cases  (years), the 
+data frequency was biannual and triannual (see Tables 2 and 3). That is, the tariff 
+data mixes quarterly, biannual, triannual, and annual data, depending on when 
+                                                           
+2 Andrey G. Maksimov & Daria V. Shchurupova | Bernardo Spagnolo (Reviewing Editor)  (2017) Forecasting of 
+the electricity price on the day-ahead electricity market in Russia, Cogent 
+Physics, 4:1, DOI: 10.1080/23311940.2017.1316953 
+ 
+2 
+ 
+and how often tariff decisions were made in a particular year. Therefore, some 
+series in the trends will show greater stability or volatility with associated peaks 
+and troughs depending on the extent of tariff change. This is important to consider 
+in the interpretation of the trends in the graphical analysis in Section 4. 
+ 
+Other data sources consulted to enrich the study’s discussions were PURC’s press 
+releases on tariffs, tariff decision papers, and some empirical literature related to 
+tariff developments in Ghana. It is important to note that the results and analysis 
+of this study are based on average end -user electricity tariffs for the 10 -year 
+period. Hence, every tariff figure analyzed is based on the average unit (nominal) 
+price effectively paid by a customer category for a particular period and not based 
+on real values. This means that the analysis and results of this study are limited 
+by the data used and the underlying assumptions made in analyzing trends.  
+ 
+3.0 Brief Historical Overview of Electricity Tariffs Reform in Ghana 
+Electricity tariffs reform in Ghana predates some major reform initiatives in the 
+power sector. Prior to 1997, Ghana’s criteria for setting electricity tariffs was 
+unstructured and unpredictable. As a result, cost s of power utility services were 
+not adequately covered. 3 The World Bank, in 1994 , designed a tariff formula for 
+Ghana that approximates to long run marginal cost (LRMC) , which is adjusted 
+regularly to reflect fluctuations in costs (such as exchange rate and inflation). This 
+formula was implemented between 1994 and 1997, although the focus was on a 
+set rate of return for the utilities rather than LRMC.4  
+ 
+In pursuance of the agreement between the World Bank and Government  of 
+Ghana to ensure that tariffs were equivalent to LRMC, the government 
+consistently increased electricity tariffs between 1994 and 1997 without any 
+opposition, until an increase of over 300% in May 1997. 5 This provoked intense 
+nationwide protest with industry associations (like AGI and TUC) at the forefront. 
+Moreover, the LRMC formula was deemed to be difficult to sustain and convoluted, 
+given the need for more transparency in the rate-setting process. 
+   
+Following the sustained tariff increments and public outcries in 1997, a draft 
+legislation was enacted to establish an independent regulatory agency. The Public 
+Utilities Regulatory Commission (PURC) Act (Act 538) was subsequently enacted 
+in October 1997, establishing the PURC as the regulatory body to set tariffs and 
+as an arbiter of disputes between power utilities and consumers. 
+  
+                                                           
+3 (Edjekumhene et al., 2001). 
+4 ESMAP Technical Paper (2005), Ghana: Poverty and Social Impact Analysis of Electricity Tariffs  
+5 (Edjekumhene et al., 2001). 
+ 
+3 
+ 
+Consequently, there were tariff adjustments in February 1998, September 1998, 
+and May 2001. The Commission in July 2002 developed a Transitional Adjustment 
+Plan for Electricity Rate Adjustment for the period 2001 -2004. A key component 
+of the Transitional P lan involved implementation of an Automatic Adjustment 
+Formula (AAF). The main objective of the formula was to review on a quarterly 
+basis electricity tariffs to reflect changes in factors beyond the control of utility 
+companies (such as exchange rate, gas and crude oil prices, and inflation). 
+ 
+The AAF was enacted in January 2003, while the application of the first AAF took 
+effect in October 2003. PURC has since carried out minor tariff adjustments using 
+the AAF on a quarterly basis, while major tariff reviews are carried out every two 
+years. 
+4.0 Electricity Tariff Analysis and Discussion 
+This section begins with a presentation on the structure/classification of Ghana’s 
+end-users of electricity with their associated energy charge levels. Understanding 
+this structure is important as it  provides clarity on the composition of  end-users 
+in tariff structures and h ow their associated tariff charges  help to define the 
+direction and extent of change in tariffs of each end-user. Following this section is 
+a discussion on the trends in Ghana’s end-user electricity tariffs between 2010 and 
+2020 taking into account; (i) an analysis of the trends in electricity tariffs for each 
+end-user, and ( ii) an analysis of the overall  trends in end -user electricity tariffs 
+over the study period. Together with a graphical trend analysis, the tariff 
+developments are further assessed using some descriptive statistics to provide 
+simple quantitative summaries about the data sample.  
+4.1 Structure of Ghana’s End-User Electricity Tariffs  
+Ghana’s end -users of electricity are grouped into six categories. These are 
+Residential, Non-Residential, Special Load Tariff (SLT) – low voltage customers, 
+Special Load Tariff (SLT) – medium voltage customers, Special Load Tariff (SLT) 
+– high voltage customers, and Special Load Tariff (SLT) – high voltage (mines) 
+customers. The electricity consumption levels associated with each customer 
+category is presented in Table 1 below. 
+  
+ 
+4 
+ 
+Table 1: Electricity End-User Category 
+End-User Category Energy Consumption Levels (kWh) 
+Residential  0-50 
+51-300  
+301-600  
+600+ 
+Non-Residential 0-100 
+101-300 
+301-600 
+601+ 
+Special Load Tariff (SLT) – low voltage Energy charge based on kwh of electricity 
+consumed 
+Special Load Tariff (SLT) – medium 
+voltage 
+Energy charge based on kwh of electricity 
+consumed 
+Special Load Tariff (SLT) – high voltage Energy charge based on kwh of electricity 
+consumed 
+Special Load Tariff (SLT) – high voltage 
+(mines) 
+Energy charge based on  kwh of electricity 
+consumed 
+ 
+4.1.1 Tariff Structure 
+The use of  an increasing  block tariff (IBT) structure is employed for both 
+residential and non -residential electricity customers in electricity tariff  charges. 
+Residential customers pay electricity tariffs based on the amount of energy (kWh) 
+consumed. These are classified into four consumption categories as detailed in 
+Table 1 above.  
+ 
+4.1.2 Residential Tariffs - Life line Tariff 
+In August 2002, the Government of Ghana introduced a subsidy for residential 
+customers consuming -between 0-50kWh, which was directly in line with the 
+Ghana Poverty Reduction Strategy. This tariff bracket was to alleviate the burden 
+on the poorest of the poor and to ensure that low income household dwellers are 
+protected against the impact of any upward tariff adjustments.  
+ 
+4.1.3 Non-Residential Tariffs 
+This tariff bracket refers mostly to commercial entities. Tariff charges applied to 
+non-residential customers (also classified into four consumption classes) are 
+equally based on energy consumed. 
+ 
+4.1.4 Special Load Tariff (SLT) 
+Special load tariff customers who are large energy consumers are classified into 
+four categories; low voltage  (LV), medium voltage  (MV), high voltage (HV), and 
+high voltage (Mines), (HV Mines) customers. Prior to July 2019, end-user tariffs 
+for the special load tariff (SLTs) category incorporated a monthly fixed, demand 
+charge denominated in cedis/kVA/month a variable energy charge denominated in 
+cedis/kWh, and a fixed monthly service charge denominated in cedis/month. This 
+ 
+5 
+ 
+was however, reviewed in the July 2019 major tariff assessment, where, the fixed 
+monthly demand charge imposed on SLTs was embedded in the energy charge. 
+ 4.2 Trends in End-User Electricity Tariffs (2010 – 2020) 
+An assessment of electricity tariff developments in Ghana from 2010 through 2020 
+was undertaken using trend analysis. This is significant in portraying a better 
+picture of electricity pricing behavior in Ghana  over the years . Th e trend is  
+visualized using a graphical trend as  shown and discussed in sub -sections 4.3.1 
+and 4.3.2. From Figure 1, t he trend pe riod depicts a total of 29 different tariff 
+reviews, comprising 5 major tariff reviews, and 24 minor quarterly reviews (using 
+an Automatic Adjustment Formula).  
+Figure 1: Total Electricity Tariff Adjustments/Reviews between 2010 and 2020 
+ 
+Data Source: PURC end-user electricity tariff data 
+ 
+Specific months and years in which these tariff decisions were applied are 
+presented in Tables 2 and 3. It can be inferred from Table 2 that, in 2015 for 
+instance, a total of 4 tariff decisions were made, comprising 3 minor tariff 
+adjustments in January, A pril, and July through the application of AAF, and a 
+major tariff adjustment in December. 
+ 
+  
+24
+5
+0 5 10 15 20 25 30
+AAF
+Major Tariff Review
+Number of Reviews
+Tariff Review
+AAF Major Tariff Review
+ 
+6 
+ 
+Table 2: Number of Monthly/Yearly Tariff Reviews between 2010 and 2020 
+Year AAF (Quarterly Reviews) 
+(Months) 
+Major Tariff 
+Review 
+(Month) 
+No. of Tariff 
+Decisions 
+made in the 
+year 
+2010     June 1 
+2011 March September December   3 
+2012 March June September   3 
+2013     October 1 
+2014 January April  July October  4 
+2015 January April  July  December 4 
+2016  April July   2 
+2017 January April July   3 
+2018   July October March 3 
+2019    October July 2 
+2020 January April July   3 
+Total  29 
+ 
+Table 3 highlights changes in tariff decisions over the 10-year period. The shaded 
+cells in the table define the direction of change for each tariff decision. Between 
+2010 and 2020, there have been 11 tariff increments, 2 tariff reductions, and 16 
+reviews that have resulted in no change in tariff. Subsequent sections provide 
+detailed discussions on these tariff decisions over the study period. 
+ 
+Table 3: Direction of Tariff Changes between 2010 and 2020 
+Increase  11 Tariff increments 
+Decrease   2 Tariff reductions 
+No Change  16 no changes in tariffs 
+Year Months with the Direction of Change in Tariffs 
+ Jan Mar April June July Sept Oct Dec 
+2010    Increase     
+2011  Decrease    Increase  Increase 
+2012 
+ No 
+change 
+ No 
+change 
+ No 
+change 
+  
+2013       Increase  
+2014 
+Increase  Increase  No 
+change 
+ Increase  
+2015 
+No 
+change 
+ Increase  No 
+change 
+  Increase 
+2016 
+  No 
+change 
+ No 
+change 
+   
+2017 
+No 
+change 
+ No 
+change 
+ No 
+change 
+   
+2018 
+ Decrease   No 
+change 
+ No 
+change 
+ 
+2019     Increase   Increase  
+2020 
+No 
+change 
+ No 
+change 
+ No 
+change 
+   
+ 
+7 
+ 
+4.2.1 Trends in Electricity Prices based on End-User/Customer 
+Classification 
+Table 4 provides some quantitative/descriptive summaries of electricity tariffs on 
+each end-user/customer category, while Figure 2 displays graphically the trends 
+in electricity prices for each end -user category within the study period. The 
+descriptive statistics displayed in Table 4 shows that electricity tariffs averaged 
+Ghp48.2876/kWh for residential customers, Ghp76.0730/kWh for non-residential 
+customers, and Ghp70.4976/kWh for special load tariff customers (LV, MV, HV, 
+and Mines) between 2010 and 2020.  
+Over the period under consideration, the highest rate of tariffs recorded for each 
+customer category averaged Ghp71.34/kWh for residential customers, 
+Ghp120.767/kWh for non-residential customers and Ghp132.9184/kWh for special 
+load tariff customers. These high rates of tariff were applied in December 2015 for 
+both residential and non-residential customers and in October 2019 for SLT’s.  
+Table 4: Descriptive Statistics of Electricity Prices per End-User OR Customer 
+Category 
+End-User Electricity 
+Tariff Indicator 
+Residential Non-
+Residential  
+Special Load 
+Tariff 
+Mean 
+(Average)(Ghp/kWh) 
+48.28767 76.0730 70.4976 
+Standard 
+Deviation(Ghp/kWh) 
+21.2654 31.959 37.1067 
+Minimum (Ghp/kWh) 14.583 27.579 22.064 
+Maximum (Ghp/kWh) 71.34 120.767 132.9184 
+Data Source: PURC end-user electricity tariff data 
+ 
+Figure 2: Trends in End -User Electricity Tariffs based on Consumer Category 
+(2010 – 2020) 
+ 
+Data Source: PURC end-user tariff data 
+ 
+0
+20
+40
+60
+80
+100
+120
+140
+Jun-10
+Nov-10
+Apr-11
+Sep-11
+Feb-12
+Jul-12
+Dec-12
+May-13
+Oct-13
+Mar-14
+Aug-14
+Jan-15
+Jun-15
+Nov-15
+Apr-16
+Sep-16
+Feb-17
+Jul-17
+Dec-17
+May-18
+Oct-18
+Mar-19
+Aug-19
+Jan-20
+Jun-20
+Average End-User Electricity 
+Tariff (Ghp/kwh)
+Month/Year
+Residential (Ghp/kwh) Non Residential (Ghp/kwh) Special Load Tariff (Ghp/kwh)
+ 
+8 
+ 
+Table 5: Trends in End-User Electricity Tariffs based on Consumer Category 
+(2010 – 2020) 
+Year Residential 
+(Ghp/kWh) 
+Non Residential 
+(Ghp/kWh) 
+Special Load 
+Tariff (Ghp/kWh) 
+Jun-10 17.625 33.333 26.667 
+Mar-11 14.583 27.579 22.064 
+Sep-11 16.825 29.072 23.034 
+Dec-11 18.8101 31.5311 23.8054 
+Mar-12 18.8101 31.5311 23.8054 
+Jun-12 18.8101 31.5311 23.8054 
+Sep-12 18.8101 31.5311 23.8054 
+Oct-13 33.3211 56.409 42.5878 
+Jan-14 36.5632 61.8977 46.7316 
+Apr-14 40.98375 69.3812 69.9013 
+Jul-14 40.98375 69.3812 69.9013 
+Oct-14 43.66165 73.9147 55.80415 
+Jan-15 43.66165 73.9147 55.80415 
+Apr-15 44.8099 75.8586 57.2718 
+Jul-15 44.8099 75.8586 57.2718 
+Dec-15 71.3375 120.767 91.1767 
+Apr-16 71.3375 120.767 91.1767 
+Jul-16 71.3375 120.767 91.1767 
+Jan-17 71.3375 120.767 91.1767 
+Apr-17 71.3375 120.767 91.1767 
+Jul-17 71.3375 120.767 91.1767 
+Mar-18 58.8534 80.341 72.656 
+Jul-18 58.8534 80.341 72.656 
+Oct-18 58.8534 80.341 72.656 
+Jul-19 65.4267 89.3143 125.4669 
+Oct-19 69.3125 94.6187 132.9184 
+Jan-20 69.3125 94.6187 132.9184 
+Apr-20 69.3125 94.6187 132.9184 
+Jul-20 69.3125 94.6187 132.9184 
+ 
+From Figure 2 (and Table 5) above, the flattening of the trend data for residential 
+and non -residential customers between December 2015 and July 2017 is an 
+indication that these relatively high tariffs were maintained for a considerable 
+period (the discussion on Figure 3 throws more light  on this development). 
+Similarly, the trend data for SLT’s show that between October 2019 and July 2020 
+the same high rate s of tariff was maintained for that particular customer group. 
+The minimum rate of tariffs established between 2010 and 2020 across al l end-
+user groups was in March 2011.   
+ 
+9 
+ 
+ 
+Although an increasing trend in electricity tariffs is portrayed in Figure 2 for each 
+customer group, the data in Table 5 shows that residential tariffs have generally 
+lagged behind non -residential tariffs and SLT’s  (in absolute terms). This can 
+somehow be attributed to lower consumption levels of residential customers 
+relative to non-residential and SLT customers.   
+ 
+The trends also show that between June 2010 and October 2018, tariffs for non -
+residential customers exceeded those of SLT customers. This is partly because of 
+the increased cost of power supply to non-residential customers compared to SLT 
+customers. This trend was however reversed in July 2019 when the maximum 
+demand charge on industrial customers was reviewed in tariff billing to enhance 
+competitiveness of Ghanaian industries.  
+4.2.2 Overall Trends in End-User Electricity Prices in Ghana (2010 – 
+2020) 
+Figure 3 shows the overall trends in end-user electricity prices in Ghana between 
+2010 and 2020. Comparable to the trends presented in Figure 2, the overall trend 
+in end-user electricity prices have generally been upward (seen as the blue line in 
+Figure 3), with some fluctuations over the study period.  
+ 
+Figure 3: Overall Trends in End-User Electricity Tariffs (Ghp/kWh) between 
+2010 – 2020 
+ 
+Data Source: PURC end-user tariff data 
+The trend line which is a moving average (shown as the dotted black line in Figure 
+3) helps us to identify and validate this trend direction over the 10 -year period. 
+For instance, the continuous rising moving average in the trends (on end -user 
+0
+10
+20
+30
+40
+50
+60
+70
+80
+90
+Jun-10
+Nov-10
+Apr-11
+Sep-11
+Feb-12
+Jul-12
+Dec-12
+May-13
+Oct-13
+Mar-14
+Aug-14
+Jan-15
+Jun-15
+Nov-15
+Apr-16
+Sep-16
+Feb-17
+Jul-17
+Dec-17
+May-18
+Oct-18
+Mar-19
+Aug-19
+Jan-20
+Jun-20
+-30
+-20
+-10
+0
+10
+20
+30
+40
+50
+60
+70
+Average End-User Electricity Tariffs 
+(Ghp/kwh)
+Percentage Change in Tariffs (%)
+Percentage Change in Tariffs EUT (Ghp/kwh) 2 per. Mov. Avg. (EUT (Ghp/kwh))
+ 
+10 
+ 
+tariffs) between June 2010 and December 2015 indicates that electricity tariffs 
+were in a steady u pward trend over the period, hence a gradual increase in the 
+price of electricity from Ghp24.19/kWh in June 2010 to a peak of Ghp77.8109/kWh 
+in December 2015. Despite flattening of the trends between December 2015 and 
+July 2017, and a subsequent fall in el ectricity prices in March 2018, the trend 
+largely resumed an uptrend between October 2018 and July 2020. Overall, 
+electricity prices in Ghana have increased steadily between 2010 and 2020  with 
+spikes in 2013 and 2015. 
+ 
+The trends also depict fluctuations i n electricity prices, which is represented as 
+the percentage changes in tariffs (seen as the red line in Figure 3) over the 10-year 
+period. The percentage change in electricity tariffs is an indication of the rate of 
+change in ‘present’ tariff relative to end-user tariff in the previous quarter. Thus, 
+electricity tariffs imposed in October 2013 ( Ghp36.3437/kWh) represented a 
+significant positive change of 62.72% in relation to previous end -user tariff of 
+Ghp22.3349/kWh in September 2012. This was the highest percentage change in 
+electricity tariffs recorded between 2010 and 2020. The lowest percentage change 
+of -22.083% in March 2018, denotes a significant decrease in the rate of tariffs 
+recorded within the period.  
+ 
+There was no major tariff adjustment between November, 2003 and April, 2006 . 
+This was because of a stable Ghana Cedi-US$ exchange rate, good rainfall pattern, 
+which improved generation from hydro sources and relatively stable crude oil 
+prices. These developments led the Commission to discontinue application of the 
+AAF in the second quarter of 2006. Discontinuation of the formula was to offer 
+utility service providers the opportunity to submit proposals to the Commission 
+and to justify the need for any tariff adjustments. However, due to adverse changes 
+in macroeconomic indicators as well as escalating world crude oil prices in 2010, 
+the Commission announced the re-introduction of the AAF in June 2010. This took 
+place during a major tariff review, resulting in electricity price increases of 89%. 
+The re -introduction of the formula  was to reduce the financial burden on 
+consumers, associated with one -time tariff adjustments  and at the same time , 
+ensure the financial viability of utility service providers. Based on this premise , 
+the Commission applied the AAF in March 2011 , resulting in a significant dip in 
+electricity tariffs of 17.26%. 
+ 
+Average end -user electricity tariffs (AEUT) between December 2011 and 
+September 2012 consistently recorded similar values of Ghp22.3349/kWh despite 
+quarterly application of the AAF to adjust electricity prices. This average rate was 
+maintained for the most part of 2012  with no significant changes in electricity 
+tariffs. Subsequently, amajor tariff review undertaken in October 20 13, resulted 
+in a sharp increase in electricity tariffs to an average rate of  Ghp36.3437/kWh. 
+ 
+11 
+ 
+This upsurge validates the steep percentage increase in tariffs of 62.72% between 
+September 2012 and October 2013 as depicted by the red line in Figure 3.  
+ 
+The increased tariff in October 2013 was further deepened in January 2014 by an 
+increase in electricity tariffs of 9.73% (average EUT of Ghp39.879/kWh) using the 
+AAF. This increase in tariffs was predicated on shielding existing electricity tariffs 
+against depreciation of the Ghanaian cedi, inflation, and demand variation . 
+Further, minor tariff reviews in 2014 resulted in electricity tariffs increasing to an 
+average of Ghp44.7003/kWh in April 2014, representing a percentage increase of 
+12.09%. Due to challenges in electricity supply in 2014, this rate was maintained 
+for the third quarter (July 2014) AAF application. Electricity tariffs , were 
+however, increased by 6.54% (Ghp47.6237/kwh) in Octo ber 2014 to help 
+ameliorate the impact of the nation’s dependence on crude oil in the generation 
+mix. Moreover, there were significant challenges with  electricity supply 
+emanating from  the erratic nature of gas delivery from the West African Gas 
+Pipeline in Nigeria coupled with low volumes of water both in the Akosombo and 
+Kpong Hydro Electric Dams during the year.  
+ 
+To enable electricity service providers raise adequate funds for maintenance of the 
+distribution network, the Commission increased electricity  tariffs by 2. 63% 
+(Ghp48.8762/kWh) in the second quarter (April) of 2015. This rate was maintained 
+for the third quarter (July) of 2015, after which electricity prices rose sharply to 
+an average of Ghp77.8109/kWh in December 2015 after a major tariff review. This 
+represented an increase of 59.2% in electricity tariffs, which is the second highest 
+rate of change in tariffs between 2010 and 2020. This rate of increase is 
+demonstrated in Figure 3 by the steepness of the percentage change trend between 
+July 2015 and December 2015. The upsurge was predicated on the increasing 
+dependency of the country on thermal generation with significant implications on 
+the cost of electricity generation and supply by electricity utilities. 
+ 
+Minor tariff reviews undertaken between April 2016 and July 2017 resulted in a 
+general stabilization of electricity tariffs with no significant changes over that 
+period. This is confirmed in Figure 3 by a flattening of both the EUT trend line 
+and percentage change line between the period. Electricity tariff reductions across 
+all end-user groups was approved by the Commission in March 2018 after a major 
+tariff review. With this approval by the Commission, r esidential customers 
+enjoyed a 17.5% reduction, whiles non -residential customers  enjoyed a 30% 
+reduction in tariffs . The reduction  was largely occasioned by increases in gas  
+supply and the prudent management of utilities’ costs utilities, leading to drastic 
+reduction in operational costs. 
+ 
+ 
+12 
+ 
+Tariffs should have been marginally adjusted upwards  in the third quarter of 
+2018, due to exchange rate fluctuations; however, the fluctuations were spikes in 
+the cedi -to-dollar exchange rate, hence there was the need to monitor the 
+movements over subsequent quarters to establish the true trend , which will  
+inform decisions of the Commission. 
+ 
+In July 2019, the Commission approved an 11.17% increase in electricity tariffs 
+for the recovery of revenue requirement for the regulated electricity market. 
+Electricity tariffs were further increased by 5.94% in October 2019 after a minor 
+tariff adjustment. This increase was predicated on movements in key determining 
+factors for computing the AAF, namely Ghana Cedi/USDollar exchange rate, 
+inflation rate, Crude oil and natural gas prices gas and the thermal -hydro 
+generation mix. 
+Three minor quarterly reviews  (January, April, and July),  undertaken in 2020 , 
+have largely seen no changes in electricity tariffs. Ideally, tariffs for these quarters 
+should have indicated an upward adjustment based on exchange rate movements 
+and inflation. However, the low cost of hydro generation , resulted in some over -
+recoveries of the actual cost associated with generation, thereby nullifying the 
+effect of exchange rate fluctuations and inflation on tariffs. 
+5.0 Conclusion  
+This study analysed trends in the end-user electricity tariffs in Ghana between 
+2010 and 2020. Specifically, the study examined overall trends in end -user 
+electricity tariffs as well as the trends for each end -user group. The use of 
+secondary data, in particular PURC’s gazetted end -user tariffs was employed in 
+the study’s analyses. The following key results emerged from the analyses. 
+  
+The overall trend is that, end-user electricity prices have generally been upward, 
+with some fluctuations over the study period . Over the period under review , 
+twenty-nine ( 29) different tariff reviews, comprising 5 major and 24 minor 
+quarterly tariff reviews (with the application of Automatic Adjustment Formula)  
+were undertaken . These reviews have resulted in 11 tariff increments, 2 tariff 
+reductions, and 16 no changes in electricity tariffs.  
+ 
+Electricity tariffs averaged Ghp48.2876/kWh for residential customers, 
+Ghp76.0730/kWh for non-residential customers, and Ghp70.4976/kWh for special 
+load tariff customers (LV, MV, HV, and Mines). Over the same period, the highest 
+rate of tariffs recorded for each customer category shows Ghp71.34/kWh for 
+residential customers, Ghp120.767/kWh for non -residential customers and 
+Ghp132.9184/kWh for special load tariff customers. These rate s of tariffs were 
+applied in December 2015 for both residential and non-residential customers, and 
+ 
+13 
+ 
+in October 2019 for SLT’s. It can be inferred from available data and plotted trends 
+that no major tariff decisions  were taken  when review periods , coincided with 
+election years.  
+ 
+6.0 Recommendation 
+Given that this study has highlighted key issues underlying electricity tariff 
+trends in Ghana, and their respective directions of change, it is recommended that 
+as a follow-up to this study, the Commission should undertake research to identify 
+which end-user group(s) is heavily impacted by these tariff adjustments and the 
+effect it has on the identified class of customers . Subsequently, field data on 
+income levels and proportion spent on electricity , levels of electricity consumed 
+and expenditure patterns of different end-user groups will constitute a necessary 
+next step to this study. This will enable the Commission to identify with precision, 
+impact of electricity tariff adjustments on end-users, and at what point electricity 
+tariffs could become unaffordable to consumers. Results of this study will enable 
+the Commission to take necessary steps to address any negative impact of tariff 
+adjustments on consumers. 
+ 

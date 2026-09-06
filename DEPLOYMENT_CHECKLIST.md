@@ -7,7 +7,7 @@
 - [ ] Virtual environment created: `python -m venv venv`
 - [ ] Dependencies installed: `pip install -r requirements.txt`
 - [ ] `.env` file created from `.env.example`
-- [ ] GROQ_API_KEY added to `.env`
+- [ ] ANTHROPIC_API_KEY added to `.env`
 - [ ] Backend starts without errors: `uvicorn main:app --reload`
 
 ### Frontend
@@ -94,7 +94,7 @@ If issues occur, rollback steps:
 
 **Backend won't start:**
 - Check port 8000 not in use: `netstat -ano | findstr :8000`
-- Check `.env` file exists with GROQ_API_KEY
+- Check `.env` file exists with ANTHROPIC_API_KEY
 - Check database permissions
 - Review error logs
 

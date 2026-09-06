@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kanea Chatbot &mdash; LLM Migration Evaluation (Groq &rarr; OpenRouter &rarr; Claude)</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm 22mm 20mm; }
+  @media print {
+    .no-print { display: none !important; }
+    h2 { page-break-before: always; }
+    h2.no-break-before { page-break-before: avoid; }
+    .no-break { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+  }
+  :root {
+    --groq: #2a78d6; --orouter: #eb6834; --claude: #7d5ba6;
+    --gain: #1baf7a; --drop: #d64545;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5pt; line-height: 1.65;
+    color: #1a1a2e; background: #fff; max-width: 820px; margin: 0 auto; padding: 30px 40px;
+  }
+  .cover { text-align: center; padding: 60px 20px 50px; border-bottom: 3px solid #1a3a6b; margin-bottom: 40px; }
+  .cover .logo {
+    width: 80px; height: 80px; background: #1a3a6b; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 20px; color: #f5c518; font-weight: bold;
+  }
+  .cover h1 { font-size: 21pt; color: #1a3a6b; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .cover .subtitle { font-size: 12pt; color: #555; margin-bottom: 6px; }
+  .cover .tagline { font-size: 10.5pt; color: #888; font-style: italic; margin-bottom: 36px; }
+  .cover-meta {
+    display: inline-block; text-align: left; background: #f7f9ff;
+    border: 1px solid #d0d8f0; border-radius: 10px; padding: 18px 30px; font-size: 10pt; line-height: 2;
+  }
+  .cover-meta strong { color: #1a3a6b; }
+  h2 { font-size: 15pt; color: #1a3a6b; border-bottom: 2px solid #f5c518; padding-bottom: 5px; margin: 36px 0 14px; font-weight: 700; }
+  h3 { font-size: 11.5pt; color: #1a3a6b; margin: 22px 0 8px; font-weight: 600; }
+  h4 { font-size: 10.5pt; color: #2d4a8a; margin: 14px 0 5px; font-weight: 600; }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 20px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  strong { color: #1a3a6b; }
+  em { color: #555; }
+  code {
+    background: #f0f2f8; border: 1px solid #d8ddf0; border-radius: 3px; padding: 1px 5px;
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; color: #2d4a8a;
+  }
+  pre {
+    background: #10182b; color: #d7e0ff; border-radius: 8px; padding: 14px 16px;
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 8.8pt; line-height: 1.55;
+    overflow-x: auto; margin: 10px 0 16px;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 8.8pt; }
+  thead { background: #1a3a6b; color: #fff; }
+  thead th { padding: 7px 7px; text-align: left; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f5f7ff; }
+  tbody td { padding: 5px 7px; border-bottom: 1px solid #e0e4f0; vertical-align: top; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .box { border-radius: 8px; padding: 14px 18px; margin: 14px 0; font-size: 10pt; }
+  .box-blue  { background: #eef2ff; border-left: 4px solid #1a3a6b; }
+  .box-gold  { background: #fff9e6; border-left: 4px solid #f5c518; }
+  .box-green { background: #edfaf3; border-left: 4px solid #27ae60; }
+  .box-red   { background: #fff1f0; border-left: 4px solid #e74c3c; }
+  .box-purple{ background: #f5f0fa; border-left: 4px solid #7d5ba6; }
+  .box h4 { margin: 0 0 6px; font-size: 10.5pt; }
+  .badge {
+    display: inline-block; background: #e8ecff; color: #1a3a6b; border: 1px solid #b0baee;
+    border-radius: 20px; padding: 2px 9px; font-size: 8.5pt; font-weight: 600; margin: 2px 2px;
+  }
+  .badge-green { background: #e6f9f0; color: #1a7a50; border-color: #a0dfc0; }
+  .badge-red   { background: #fff1f0; color: #a02020; border-color: #edaaaa; }
+  .badge-orange{ background: #fff2e9; color: #a04a1a; border-color: #f0c0a0; }
+  .print-btn {
+    position: fixed; top: 20px; right: 20px; background: #1a3a6b; color: #fff; border: none;
+    border-radius: 8px; padding: 10px 20px; font-size: 10pt; font-weight: 600; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2); z-index: 100;
+  }
+  .print-btn:hover { background: #2d4a8a; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 5px; }
+  .toc a { color: #1a3a6b; text-decoration: none; }
+  .footer { margin-top: 48px; border-top: 1px solid #d0d8f0; padding-top: 12px; font-size: 8.5pt; color: #999; text-align: center; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 4px 0 14px; font-size: 9pt; color: #444; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .chart-wrap { margin: 8px 0 18px; }
+  .chart-caption { font-size: 8.6pt; color: #777; text-align: center; margin-top: 2px; }
+  .delta-pos { color: #1a7a50; font-weight: 700; }
+  .delta-neg { color: #a02020; font-weight: 700; }
+  .delta-zero { color: #888; }
+  .q-block { margin-bottom: 16px; padding: 10px 12px; border: 1px solid #e0e4f0; border-radius: 8px; }
+  .q-block .q-id { font-weight: 700; color: #1a3a6b; font-size: 9.5pt; }
+  .q-block .q-text { font-style: italic; color: #333; margin: 3px 0 6px; }
+  .q-block .q-ref, .q-block .q-cand { font-size: 9.2pt; margin-bottom: 4px; }
+  .q-block .q-label { display: block; color: #666; font-size: 8pt; text-transform: uppercase; letter-spacing: .03em; margin-bottom: 1px; }
+  .q-meta { font-size: 8.3pt; color: #777; margin-top: 5px; }
+  .q-cand p, .q-ref p { margin-bottom: 3px; }
+  .q-cand ul, .q-ref ul, .q-cand ol, .q-ref ol { margin: 3px 0 5px 16px; }
+  table.md-table { font-size: 8.6pt; margin: 4px 0 8px; }
+  table.md-table thead { background: #eef2ff; color: #1a3a6b; }
+  table.md-table th, table.md-table td { padding: 4px 7px; }
+  .stage-banner { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 9pt; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .stage-banner.s1 { background: linear-gradient(90deg, var(--groq), var(--orouter)); }
+  .stage-banner.s2 { background: linear-gradient(90deg, var(--orouter), var(--claude)); }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Print / Save as PDF</button>
+
+<div class="cover">
+  <div class="logo">K</div>
+  <h1>Kanea Chatbot</h1>
+  <div class="subtitle">LLM Provider Migration Evaluation &mdash; The Full Journey</div>
+  <div class="tagline">Groq (Llama) &rarr; OpenRouter (gpt-oss-20b:free) &rarr; Claude (Haiku 4.5)</div>
+  <div class="cover-meta">
+    <div><strong>System under test:</strong> Kanea AI Customer Support Chatbot (ECG/PURC domain)</div>
+    <div><strong>Stage 1:</strong> commit <code>5c21d7e</code>, 23 Aug 2026 &mdash; Groq &rarr; OpenRouter</div>
+    <div><strong>Stage 2:</strong> 26 Aug 2026 (this session) &mdash; OpenRouter &rarr; Claude Haiku 4.5</div>
+    <div><strong>Metrics:</strong> ROUGE-1, ROUGE-2, BERTScore (roberta-large), reliability, response length</div>
+    <div><strong>Test set:</strong> 20 gold Q&amp;A pairs (<code>backend/eval/test_response_quality.json</code>), unchanged across all three runs</div>
+  </div>
+</div>
+
+<div class="toc no-break">
+  <h2 class="no-break-before">Contents</h2>
+  <ol>
+    <li><a href="#summary">Executive Summary</a></li>
+    <li><a href="#background">Background &mdash; Two Migrations</a></li>
+    <li><a href="#method">Methodology</a></li>
+    <li><a href="#journey">The Full Journey &mdash; All Three Stages</a></li>
+    <li><a href="#stage1">Stage 1 Detail: Groq &rarr; OpenRouter</a></li>
+    <li><a href="#stage2">Stage 2 Detail: OpenRouter &rarr; Claude</a></li>
+    <li><a href="#casestudies">Case Studies</a></li>
+    <li><a href="#discussion">Discussion &amp; Recommendations</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+  </ol>
+</div>
+
+<h2 id="summary" class="no-break-before">1. Executive Summary</h2>
+<p>This chatbot's LLM backend changed twice in one week. On 23 Aug 2026, <strong>Groq</strong> (a Llama-family model)
+was replaced with <strong>OpenRouter</strong>'s free-tier <code>openai/gpt-oss-20b:free</code>, mainly to escape Groq's
+tight rate caps. On 26 Aug 2026, that was replaced again with <strong>Claude Haiku 4.5</strong> via the official Anthropic
+SDK, mainly for better instruction-following and factual precision. Re-running the same 20-case evaluation after each
+change gives a clear, if not entirely flattering, picture:</p>
+
+<div class="box box-green">
+  <h4>&#10003; Reliability improved at every step</h4>
+  <p>Fallback rate ("I'm having a technical issue"): <strong>Groq 15% (3/20) &rarr; OpenRouter 5% (1/20) &rarr; Claude 0% (0/20)</strong>
+  in its final, shipped configuration. Claude also fixed OpenRouter's one regression (q-19) and recovered a fact
+  OpenRouter had given up on (q-1).</p>
+</div>
+<div class="box box-red">
+  <h4>&#10007; Text-overlap quality never recovered to the Groq baseline</h4>
+  <p>BERTScore F1: <strong>0.898 (Groq) &rarr; 0.861 (OpenRouter) &rarr; 0.862 (Claude)</strong>. ROUGE-1 F1:
+  <strong>0.474 &rarr; 0.451 &rarr; 0.425</strong>. Claude essentially matches OpenRouter on these metrics &mdash;
+  slightly better on ROUGE-2 and BERTScore, slightly worse on ROUGE-1 &mdash; but both sit clearly below Groq.</p>
+</div>
+<div class="box box-purple">
+  <h4>&#9432; A prediction that didn't pan out: Claude got <em>more</em> verbose, not less</h4>
+  <p>Going into Stage 2, the expectation (based on Claude's reputation for stronger instruction-following) was that
+  switching to Claude would fix OpenRouter's verbosity problem. It didn't &mdash; it made it worse. Average response
+  length: <strong>Groq 36 words &rarr; OpenRouter 74 words &rarr; Claude 122 words</strong>, against a 56-word
+  reference average. Claude answers are clean, accurate, and well-structured (markdown headers, tables, bullet
+  lists) &mdash; but that structure is exactly what keeps diluting n-gram-overlap scores like ROUGE. This is the
+  single most actionable finding in this report: the system prompt's existing "under 120 words" instruction is
+  being followed loosely at best, and needs tightening regardless of provider.</p>
+</div>
+<div class="box box-gold">
+  <h4>&#9432; A reliability scare that turned out to be this sandbox, not Claude</h4>
+  <p>The first two live Claude eval runs hit unexplained fallbacks (15% and 20%). Because the original error handler
+  swallowed exceptions silently, the cause wasn't visible &mdash; so logging was added, which revealed
+  <code>APITimeoutError</code> (a dropped connection, not a rate limit or model error) on a different, unrelated
+  query each time. That pointed to network flakiness in this local dev sandbox rather than a Claude reliability
+  problem. Bumping the SDK's retry budget from 1 to 2 attempts resolved it: the next run was a clean 0/20 fallbacks,
+  and that fix is now shipped in <code>chatbot.py</code>.</p>
+</div>
+
+<h2 id="background">2. Background &mdash; Two Migrations</h2>
+<h3>Stage 1 &mdash; 23 Aug 2026, commit <code>5c21d7e</code></h3>
+<p>"Migrate LLM provider from Groq to OpenRouter, improve retry/escalation logic": switched the LLM call to
+OpenRouter's free-tier <code>openai/gpt-oss-20b:free</code> model (1,000 requests/day vs. Groq's tighter
+tokens-per-minute caps), added retry-with-backoff for transient failures, and fixed a bug where technical/rate-limit
+failures were silently triggering <code>[ESCALATE_TO_AGENT]</code>.</p>
+<h3>Stage 2 &mdash; 26 Aug 2026, this session</h3>
+<p>Replaced the raw OpenRouter HTTP call with the official <code>anthropic</code> Python SDK, model
+<code>claude-haiku-4-5</code>, motivated by two OpenRouter-era findings from Stage 1: verbose, markdown-heavy answers,
+and a subtle unit-labelling error (GHp vs. GH&#8373; on a tariff figure). Also required setting up billing on
+Anthropic's Console, since &mdash; unlike Groq and OpenRouter's free-tier models &mdash; the Claude API has no
+standing free tier.</p>
+
+<h2 id="method">3. Methodology</h2>
+<p>Identical across all three runs: the same 20 hand-written gold Q&amp;A pairs in
+<code>backend/eval/test_response_quality.json</code>, each run live through <code>chatbot.get_bot_response()</code>
+(no mocking), scored with <code>rouge-score</code> (ROUGE-1, ROUGE-2) and <code>bert-score</code> (model
+<code>roberta-large</code>). Only the LLM provider changed between runs &mdash; same test cases, same scoring code,
+same knowledge base. Reproduce any stage with:</p>
+<pre><code># Current (Claude):
+cd backend &amp;&amp; python eval/evaluate_response_quality.py
+
+# Stage 1 states, for reference:
+git show 5c21d7e~1:backend/eval/results_response_quality.json   # Groq
+git show 5c21d7e:backend/eval/results_response_quality.json     # OpenRouter</code></pre>
+
+<h2 id="journey">4. The Full Journey &mdash; All Three Stages</h2>
+<div class="legend">
+  <div class="legend-item"><span class="legend-swatch" style="background:var(--groq)"></span>Groq</div>
+  <div class="legend-item"><span class="legend-swatch" style="background:var(--orouter)"></span>OpenRouter</div>
+  <div class="legend-item"><span class="legend-swatch" style="background:var(--claude)"></span>Claude</div>
+</div>
+
+<h3>4.1 Aggregate quality metrics</h3>
+<div class="chart-wrap no-break"><svg viewBox="0 0 680 270" width="100%" role="img" aria-label="grouped bar chart">
+<line x1="46" y1="226.0" x2="664" y2="226.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="229.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">0.00</text>
+<line x1="46" y1="184.0" x2="664" y2="184.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="187.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">0.20</text>
+<line x1="46" y1="142.0" x2="664" y2="142.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="145.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">0.40</text>
+<line x1="46" y1="100.0" x2="664" y2="100.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="103.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">0.60</text>
+<line x1="46" y1="58.0" x2="664" y2="58.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="61.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">0.80</text>
+<line x1="46" y1="16.0" x2="664" y2="16.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="19.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">1.00</text>
+<line x1="46" y1="226" x2="664" y2="226" stroke="#6b7280" stroke-width="1.2"/>
+<rect x="60.0" y="126.4" width="55.3" height="99.6" rx="3" fill="#2a78d6"/>
+<text x="87.7" y="121.4" text-anchor="middle" font-size="8.6" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0.474</text>
+<rect x="121.3" y="131.2" width="55.3" height="94.8" rx="3" fill="#eb6834"/>
+<text x="149.0" y="126.2" text-anchor="middle" font-size="8.6" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0.451</text>
+<rect x="182.7" y="136.8" width="55.3" height="89.2" rx="3" fill="#7d5ba6"/>
+<text x="210.3" y="131.8" text-anchor="middle" font-size="8.6" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0.425</text>
+<text x="149.0" y="242.0" text-anchor="middle" font-size="8.8" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">ROUGE-1 F1</text>
+<rect x="266.0" y="167.6" width="55.3" height="58.4" rx="3" fill="#2a78d6"/>
+<text x="293.7" y="162.6" text-anchor="middle" font-size="8.6" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0.278</text>
+<rect x="327.3" y="184.7" width="55.3" height="41.3" rx="3" fill="#eb6834"/>
+<text x="355.0" y="179.7" text-anchor="middle" font-size="8.6" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0.197</text>
+<rect x="388.7" y="183.8" width="55.3" height="42.2" rx="3" fill="#7d5ba6"/>
+<text x="416.3" y="178.8" text-anchor="middle" font-size="8.6" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0.201</text>
+<text x="355.0" y="242.0" text-anchor="middle" font-size="8.8" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">ROUGE-2 F1</text>
+<rect x="472.0" y="37.4" width="55.3" height="188.6" rx="3" fill="#2a78d6"/>
+<text x="499.7" y="32.4" text-anchor="middle" font-size="8.6" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0.898</text>
+<rect x="533.3" y="45.1" width="55.3" height="180.9" rx="3" fill="#eb6834"/>
+<text x="561.0" y="40.1" text-anchor="middle" font-size="8.6" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0.861</text>
+<rect x="594.7" y="44.9" width="55.3" height="181.1" rx="3" fill="#7d5ba6"/>
+<text x="622.3" y="39.9" text-anchor="middle" font-size="8.6" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0.862</text>
+<text x="561.0" y="242.0" text-anchor="middle" font-size="8.8" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">BERTScore F1</text>
+</svg></div>
+<p class="chart-caption">F1 scores averaged over all 20 test cases, one bar per provider per metric.</p>
+
+<h3>4.2 Reliability</h3>
+<div class="chart-wrap no-break"><svg viewBox="0 0 680 200" width="100%" role="img" aria-label="bar chart">
+<line x1="46" y1="166.0" x2="664" y2="166.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="169.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">0</text>
+<line x1="46" y1="128.5" x2="664" y2="128.5" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="131.5" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">5</text>
+<line x1="46" y1="91.0" x2="664" y2="91.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="94.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">10</text>
+<line x1="46" y1="53.5" x2="664" y2="53.5" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="56.5" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">15</text>
+<line x1="46" y1="16.0" x2="664" y2="16.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="19.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">20</text>
+<line x1="46" y1="166" x2="664" y2="166" stroke="#6b7280" stroke-width="1.2"/>
+<rect x="97.5" y="53.5" width="103.0" height="112.5" rx="3" fill="#2a78d6"/>
+<text x="149.0" y="47.5" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">15%</text>
+<text x="149.0" y="184.0" text-anchor="middle" font-size="9" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">Groq</text>
+<rect x="303.5" y="128.5" width="103.0" height="37.5" rx="3" fill="#eb6834"/>
+<text x="355.0" y="122.5" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">5%</text>
+<text x="355.0" y="184.0" text-anchor="middle" font-size="9" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">OpenRouter</text>
+<rect x="509.5" y="166.0" width="103.0" height="0.0" rx="3" fill="#7d5ba6"/>
+<text x="561.0" y="160.0" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">0%</text>
+<text x="561.0" y="184.0" text-anchor="middle" font-size="9" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">Claude</text>
+</svg></div>
+<p class="chart-caption">Share of the 20 live calls that hit the generic fallback message.</p>
+
+<h3>4.3 Response verbosity</h3>
+<div class="chart-wrap no-break"><svg viewBox="0 0 680 200" width="100%" role="img" aria-label="bar chart">
+<line x1="46" y1="166.0" x2="664" y2="166.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="169.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">0</text>
+<line x1="46" y1="128.5" x2="664" y2="128.5" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="131.5" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">35</text>
+<line x1="46" y1="91.0" x2="664" y2="91.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="94.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">70</text>
+<line x1="46" y1="53.5" x2="664" y2="53.5" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="56.5" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">105</text>
+<line x1="46" y1="16.0" x2="664" y2="16.0" stroke="#e6e9f2" stroke-width="1"/>
+<text x="38" y="19.0" text-anchor="end" font-size="8.6" fill="#6b7280" font-family="Segoe UI, Arial">140</text>
+<line x1="46" y1="166" x2="664" y2="166" stroke="#6b7280" stroke-width="1.2"/>
+<rect x="84.6" y="105.6" width="77.2" height="60.4" rx="3" fill="#9aa3b5"/>
+<text x="123.2" y="99.6" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">56 words</text>
+<text x="123.2" y="184.0" text-anchor="middle" font-size="9" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">Reference</text>
+<rect x="239.1" y="127.1" width="77.2" height="38.9" rx="3" fill="#2a78d6"/>
+<text x="277.8" y="121.1" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">36 words</text>
+<text x="277.8" y="184.0" text-anchor="middle" font-size="9" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">Groq</text>
+<rect x="393.6" y="86.6" width="77.2" height="79.4" rx="3" fill="#eb6834"/>
+<text x="432.2" y="80.6" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">74 words</text>
+<text x="432.2" y="184.0" text-anchor="middle" font-size="9" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">OpenRouter</text>
+<rect x="548.1" y="35.6" width="77.2" height="130.4" rx="3" fill="#7d5ba6"/>
+<text x="586.8" y="29.6" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1a1a2e" font-family="Segoe UI, Arial">122 words</text>
+<text x="586.8" y="184.0" text-anchor="middle" font-size="9" fill="#1a1a2e" font-family="Segoe UI, Arial" font-weight="600">Claude</text>
+</svg></div>
+<p class="chart-caption">Mean response length in words, vs. the 56-word gold-reference average.</p>
+
+<table class="no-break">
+  <thead><tr><th>Metric</th><th class="num">Groq</th><th class="num">OpenRouter</th><th class="num">Claude</th></tr></thead>
+  <tbody>
+    <tr><td>ROUGE-1 F1</td><td class="num">0.4742</td><td class="num">0.4513</td><td class="num">0.4250</td></tr>
+    <tr><td>ROUGE-2 F1</td><td class="num">0.2783</td><td class="num">0.1969</td><td class="num">0.2008</td></tr>
+    <tr><td>BERTScore F1</td><td class="num">0.8983</td><td class="num">0.8613</td><td class="num">0.8624</td></tr>
+    <tr><td>Fallback rate</td><td class="num">15%</td><td class="num">5%</td><td class="num">0%</td></tr>
+    <tr><td>Avg. response length</td><td class="num">36w</td><td class="num">74w</td><td class="num">122w</td></tr>
+  </tbody>
+</table>
+
+<h2 id="stage1"><span class="stage-banner s1">STAGE 1</span><br>5. Stage 1 Detail: Groq &rarr; OpenRouter</h2>
+<div class="legend">
+  <div class="legend-item"><span class="legend-swatch" style="background:var(--groq)"></span>Before (Groq)</div>
+  <div class="legend-item"><span class="legend-swatch" style="background:var(--orouter)"></span>After (OpenRouter)</div>
+</div>
+<p>Full detail on this stage &mdash; including the apples-to-apples (fallback-excluded) aggregate comparison &mdash;
+is in the original <em>Response-Quality Evaluation</em> companion report. Summarised here: quality fell on every
+metric even excluding fallback cases on both sides (BERTScore F1 0.914 &rarr; 0.866, n=16), traced to OpenRouter's
+much more verbose answer style. Per-case detail:</p>
+
+<h3>5.1 Per-case comparison (BERTScore F1)</h3>
+<div class="chart-wrap no-break"><svg viewBox="0 0 680 376" width="100%" role="img" aria-label="before after dumbbell chart">
+<line x1="210.0" y1="10" x2="210.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="210.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.75</text>
+<line x1="296.0" y1="10" x2="296.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="296.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.80</text>
+<line x1="382.0" y1="10" x2="382.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="382.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.85</text>
+<line x1="468.0" y1="10" x2="468.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="468.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.90</text>
+<line x1="554.0" y1="10" x2="554.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="554.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.95</text>
+<line x1="640.0" y1="10" x2="640.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="640.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">1.00</text>
+<text x="200.0" y="21.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-1 · ecg_company_overview</text>
+<line x1="369.6" y1="18.5" x2="322.5" y2="18.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="369.6" cy="18.5" r="4" fill="#2a78d6"/>
+<circle cx="322.5" cy="18.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="38.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-2 · ecg_service_areas</text>
+<line x1="625.6" y1="35.5" x2="378.0" y2="35.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="625.6" cy="35.5" r="4" fill="#2a78d6"/>
+<circle cx="378.0" cy="35.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="55.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-3 · ecg_billing_and_paymen</text>
+<line x1="449.3" y1="52.5" x2="363.6" y2="52.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="449.3" cy="52.5" r="4" fill="#2a78d6"/>
+<circle cx="363.6" cy="52.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="72.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-4 · ecg_prepaid_meters</text>
+<line x1="534.0" y1="69.5" x2="488.5" y2="69.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="534.0" cy="69.5" r="4" fill="#2a78d6"/>
+<circle cx="488.5" cy="69.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="89.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-5 · ecg_new_connection</text>
+<line x1="503.9" y1="86.5" x2="421.7" y2="86.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="503.9" cy="86.5" r="4" fill="#2a78d6"/>
+<circle cx="421.7" cy="86.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="106.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-6 · ecg_disconnection_reco</text>
+<line x1="558.0" y1="103.5" x2="447.0" y2="103.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="558.0" cy="103.5" r="4" fill="#2a78d6"/>
+<circle cx="447.0" cy="103.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="123.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-7 · ecg_illegal_connection</text>
+<line x1="498.3" y1="120.5" x2="422.9" y2="120.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="498.3" cy="120.5" r="4" fill="#2a78d6"/>
+<circle cx="422.9" cy="120.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="140.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-8 · ecg_safety_guidelines</text>
+<line x1="496.4" y1="137.5" x2="433.8" y2="137.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="496.4" cy="137.5" r="4" fill="#2a78d6"/>
+<circle cx="433.8" cy="137.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="157.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-9 · ecg_fault_reporting</text>
+<line x1="566.4" y1="154.5" x2="422.1" y2="154.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="566.4" cy="154.5" r="4" fill="#2a78d6"/>
+<circle cx="422.1" cy="154.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="174.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-10 · ecg_outage_causes</text>
+<line x1="485.2" y1="171.5" x2="419.8" y2="171.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="485.2" cy="171.5" r="4" fill="#2a78d6"/>
+<circle cx="419.8" cy="171.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="191.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-11 · ecg_street_lighting</text>
+<line x1="516.0" y1="188.5" x2="435.1" y2="188.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="516.0" cy="188.5" r="4" fill="#2a78d6"/>
+<circle cx="435.1" cy="188.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="208.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-12 · purc_overview</text>
+<line x1="497.8" y1="205.5" x2="451.3" y2="205.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="497.8" cy="205.5" r="4" fill="#2a78d6"/>
+<circle cx="451.3" cy="205.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="225.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-13 · ecg_contact_directory</text>
+<line x1="468.3" y1="222.5" x2="406.4" y2="222.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="468.3" cy="222.5" r="4" fill="#2a78d6"/>
+<circle cx="406.4" cy="222.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="242.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-14 · purc_residential_elect</text>
+<line x1="324.4" y1="239.5" x2="319.9" y2="239.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="324.4" cy="239.5" r="4" fill="#2a78d6"/>
+<circle cx="319.9" cy="239.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="259.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-15 · purc_residential_elect</text>
+<line x1="536.6" y1="256.5" x2="408.0" y2="256.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="536.6" cy="256.5" r="4" fill="#2a78d6"/>
+<circle cx="408.0" cy="256.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="276.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-16 · purc_non_residential_e</text>
+<line x1="300.3" y1="273.5" x2="375.3" y2="273.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="300.3" cy="273.5" r="4" fill="#2a78d6"/>
+<circle cx="375.3" cy="273.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="293.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-17 · purc_special_load_tari</text>
+<line x1="454.8" y1="290.5" x2="407.1" y2="290.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="454.8" cy="290.5" r="4" fill="#2a78d6"/>
+<circle cx="407.1" cy="290.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="310.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-18 · purc_net_metering_tari</text>
+<line x1="291.2" y1="307.5" x2="354.0" y2="307.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="291.2" cy="307.5" r="4" fill="#2a78d6"/>
+<circle cx="354.0" cy="307.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="327.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-19 · purc_tariff_regulatory</text>
+<line x1="469.4" y1="324.5" x2="307.5" y2="324.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="469.4" cy="324.5" r="4" fill="#2a78d6"/>
+<circle cx="307.5" cy="324.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="344.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-20 · purc_functions</text>
+<line x1="356.5" y1="341.5" x2="444.1" y2="341.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="356.5" cy="341.5" r="4" fill="#2a78d6"/>
+<circle cx="444.1" cy="341.5" r="4" fill="#eb6834"/>
+</svg></div>
+<p class="chart-caption">17 of 20 cases declined, 3 improved, 0 unchanged.</p>
+
+<table>
+  <thead>
+    <tr><th rowspan="2">ID</th><th rowspan="2">Source section</th>
+      <th colspan="3">BERTScore F1</th><th colspan="3">ROUGE-1 F1</th><th rowspan="2">Notes</th></tr>
+    <tr><th class="num">Groq</th><th class="num">OpenRouter</th><th class="num">&Delta;</th>
+      <th class="num">Groq</th><th class="num">OpenRouter</th><th class="num">&Delta;</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>q-1</td>
+      <td>ecg_company_overview</td>
+      <td class="num">0.843</td>
+      <td class="num">0.815</td>
+      <td class="num"><span class="delta-neg">-0.027</span></td>
+      <td class="num">0.206</td>
+      <td class="num">0.098</td>
+      <td class="num"><span class="delta-neg">-0.108</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-2</td>
+      <td>ecg_service_areas</td>
+      <td class="num">0.992</td>
+      <td class="num">0.848</td>
+      <td class="num"><span class="delta-neg">-0.144</span></td>
+      <td class="num">0.971</td>
+      <td class="num">0.653</td>
+      <td class="num"><span class="delta-neg">-0.318</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-3</td>
+      <td>ecg_billing_and_payment</td>
+      <td class="num">0.889</td>
+      <td class="num">0.839</td>
+      <td class="num"><span class="delta-neg">-0.050</span></td>
+      <td class="num">0.429</td>
+      <td class="num">0.294</td>
+      <td class="num"><span class="delta-neg">-0.134</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-4</td>
+      <td>ecg_prepaid_meters</td>
+      <td class="num">0.938</td>
+      <td class="num">0.912</td>
+      <td class="num"><span class="delta-neg">-0.026</span></td>
+      <td class="num">0.657</td>
+      <td class="num">0.551</td>
+      <td class="num"><span class="delta-neg">-0.106</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-5</td>
+      <td>ecg_new_connection</td>
+      <td class="num">0.921</td>
+      <td class="num">0.873</td>
+      <td class="num"><span class="delta-neg">-0.048</span></td>
+      <td class="num">0.600</td>
+      <td class="num">0.643</td>
+      <td class="num"><span class="delta-pos">+0.043</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-6</td>
+      <td>ecg_disconnection_reconnection</td>
+      <td class="num">0.952</td>
+      <td class="num">0.888</td>
+      <td class="num"><span class="delta-neg">-0.065</span></td>
+      <td class="num">0.707</td>
+      <td class="num">0.479</td>
+      <td class="num"><span class="delta-neg">-0.228</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-7</td>
+      <td>ecg_illegal_connections</td>
+      <td class="num">0.918</td>
+      <td class="num">0.874</td>
+      <td class="num"><span class="delta-neg">-0.044</span></td>
+      <td class="num">0.588</td>
+      <td class="num">0.475</td>
+      <td class="num"><span class="delta-neg">-0.113</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-8</td>
+      <td>ecg_safety_guidelines</td>
+      <td class="num">0.916</td>
+      <td class="num">0.880</td>
+      <td class="num"><span class="delta-neg">-0.036</span></td>
+      <td class="num">0.500</td>
+      <td class="num">0.480</td>
+      <td class="num"><span class="delta-neg">-0.020</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-9</td>
+      <td>ecg_fault_reporting</td>
+      <td class="num">0.957</td>
+      <td class="num">0.873</td>
+      <td class="num"><span class="delta-neg">-0.084</span></td>
+      <td class="num">0.761</td>
+      <td class="num">0.576</td>
+      <td class="num"><span class="delta-neg">-0.184</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-10</td>
+      <td>ecg_outage_causes</td>
+      <td class="num">0.910</td>
+      <td class="num">0.872</td>
+      <td class="num"><span class="delta-neg">-0.038</span></td>
+      <td class="num">0.484</td>
+      <td class="num">0.591</td>
+      <td class="num"><span class="delta-pos">+0.107</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-11</td>
+      <td>ecg_street_lighting</td>
+      <td class="num">0.928</td>
+      <td class="num">0.881</td>
+      <td class="num"><span class="delta-neg">-0.047</span></td>
+      <td class="num">0.654</td>
+      <td class="num">0.585</td>
+      <td class="num"><span class="delta-neg">-0.069</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-12</td>
+      <td>purc_overview</td>
+      <td class="num">0.917</td>
+      <td class="num">0.890</td>
+      <td class="num"><span class="delta-neg">-0.027</span></td>
+      <td class="num">0.596</td>
+      <td class="num">0.547</td>
+      <td class="num"><span class="delta-neg">-0.049</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-13</td>
+      <td>ecg_contact_directory</td>
+      <td class="num">0.900</td>
+      <td class="num">0.864</td>
+      <td class="num"><span class="delta-neg">-0.036</span></td>
+      <td class="num">0.275</td>
+      <td class="num">0.298</td>
+      <td class="num"><span class="delta-pos">+0.024</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-14</td>
+      <td>purc_residential_electricity_tariffs</td>
+      <td class="num">0.817</td>
+      <td class="num">0.814</td>
+      <td class="num"><span class="delta-neg">-0.003</span></td>
+      <td class="num">0.130</td>
+      <td class="num">0.209</td>
+      <td class="num"><span class="delta-pos">+0.079</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-15</td>
+      <td>purc_residential_electricity_tariffs</td>
+      <td class="num">0.940</td>
+      <td class="num">0.865</td>
+      <td class="num"><span class="delta-neg">-0.075</span></td>
+      <td class="num">0.635</td>
+      <td class="num">0.547</td>
+      <td class="num"><span class="delta-neg">-0.089</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-16</td>
+      <td>purc_non_residential_electricity_tariffs</td>
+      <td class="num">0.802</td>
+      <td class="num">0.846</td>
+      <td class="num"><span class="delta-pos">+0.044</span></td>
+      <td class="num">0.077</td>
+      <td class="num">0.441</td>
+      <td class="num"><span class="delta-pos">+0.364</span></td>
+      <td><span class="badge badge-green">fallback fixed</span></td>
+    </tr>
+
+    <tr>
+      <td>q-17</td>
+      <td>purc_special_load_tariffs</td>
+      <td class="num">0.892</td>
+      <td class="num">0.865</td>
+      <td class="num"><span class="delta-neg">-0.028</span></td>
+      <td class="num">0.485</td>
+      <td class="num">0.528</td>
+      <td class="num"><span class="delta-pos">+0.043</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-18</td>
+      <td>purc_net_metering_tariffs</td>
+      <td class="num">0.797</td>
+      <td class="num">0.834</td>
+      <td class="num"><span class="delta-pos">+0.036</span></td>
+      <td class="num">0.065</td>
+      <td class="num">0.468</td>
+      <td class="num"><span class="delta-pos">+0.403</span></td>
+      <td><span class="badge badge-green">fallback fixed</span> <span class="badge badge-orange">unit mislabel (GH₵ vs GHp)</span></td>
+    </tr>
+
+    <tr>
+      <td>q-19</td>
+      <td>purc_tariff_regulatory_context</td>
+      <td class="num">0.901</td>
+      <td class="num">0.807</td>
+      <td class="num"><span class="delta-neg">-0.094</span></td>
+      <td class="num">0.581</td>
+      <td class="num">0.043</td>
+      <td class="num"><span class="delta-neg">-0.538</span></td>
+      <td><span class="badge badge-red">NEW fallback</span></td>
+    </tr>
+
+    <tr>
+      <td>q-20</td>
+      <td>purc_functions</td>
+      <td class="num">0.835</td>
+      <td class="num">0.886</td>
+      <td class="num"><span class="delta-pos">+0.051</span></td>
+      <td class="num">0.082</td>
+      <td class="num">0.519</td>
+      <td class="num"><span class="delta-pos">+0.437</span></td>
+      <td><span class="badge badge-green">fallback fixed</span></td>
+    </tr></tbody>
+</table>
+
+<h2 id="stage2"><span class="stage-banner s2">STAGE 2</span><br>6. Stage 2 Detail: OpenRouter &rarr; Claude</h2>
+<div class="legend">
+  <div class="legend-item"><span class="legend-swatch" style="background:var(--orouter)"></span>Before (OpenRouter)</div>
+  <div class="legend-item"><span class="legend-swatch" style="background:var(--claude)"></span>After (Claude)</div>
+</div>
+
+<h3>6.1 The reliability diagnostic (methodology note)</h3>
+<p>The first live Claude run scored 17/20 (3 fallbacks: q-8, q-10, q-16). Because <code>chatbot.py</code>'s error
+handler caught and discarded the exception with no logging, the cause was invisible. A one-line log statement was
+added (<code>print(f"[chatbot] Claude API call failed ({type(e).__name__}): {e}")</code>), and the eval was
+re-run: 16/20 this time (4 different fallbacks: q-9, q-12, q-18, q-20), all logged as
+<code>anthropic.APITimeoutError</code> &mdash; a dropped connection, not a rate limit, not an auth or content issue.
+Different, unrelated queries failing each run is the signature of network flakiness rather than a systematic
+problem, and is plausibly specific to this local sandboxed dev environment rather than Claude's API. Raising
+<code>MAX_RETRIES</code> from 1 to 2 in <code>chatbot.py</code> and re-running produced a clean <strong>20/20</strong>,
+which is the run reported everywhere else in this document. The lesson generalises past this one bug: a silently
+swallowed exception is not a fixed exception, just an invisible one.</p>
+
+<h3>6.2 Per-case comparison (BERTScore F1)</h3>
+<div class="chart-wrap no-break"><svg viewBox="0 0 680 376" width="100%" role="img" aria-label="before after dumbbell chart">
+<line x1="210.0" y1="10" x2="210.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="210.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.75</text>
+<line x1="296.0" y1="10" x2="296.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="296.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.80</text>
+<line x1="382.0" y1="10" x2="382.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="382.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.85</text>
+<line x1="468.0" y1="10" x2="468.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="468.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.90</text>
+<line x1="554.0" y1="10" x2="554.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="554.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">0.95</text>
+<line x1="640.0" y1="10" x2="640.0" y2="350" stroke="#e6e9f2" stroke-width="1"/>
+<text x="640.0" y="366.0" text-anchor="middle" font-size="8.2" fill="#6b7280" font-family="Segoe UI, Arial">1.00</text>
+<text x="200.0" y="21.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-1 · ecg_company_overview</text>
+<line x1="322.5" y1="18.5" x2="366.7" y2="18.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="322.5" cy="18.5" r="4" fill="#2a78d6"/>
+<circle cx="366.7" cy="18.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="38.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-2 · ecg_service_areas</text>
+<line x1="378.0" y1="35.5" x2="384.9" y2="35.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="378.0" cy="35.5" r="4" fill="#2a78d6"/>
+<circle cx="384.9" cy="35.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="55.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-3 · ecg_billing_and_paymen</text>
+<line x1="363.6" y1="52.5" x2="403.0" y2="52.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="363.6" cy="52.5" r="4" fill="#2a78d6"/>
+<circle cx="403.0" cy="52.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="72.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-4 · ecg_prepaid_meters</text>
+<line x1="488.5" y1="69.5" x2="431.0" y2="69.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="488.5" cy="69.5" r="4" fill="#2a78d6"/>
+<circle cx="431.0" cy="69.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="89.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-5 · ecg_new_connection</text>
+<line x1="421.7" y1="86.5" x2="377.7" y2="86.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="421.7" cy="86.5" r="4" fill="#2a78d6"/>
+<circle cx="377.7" cy="86.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="106.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-6 · ecg_disconnection_reco</text>
+<line x1="447.0" y1="103.5" x2="427.8" y2="103.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="447.0" cy="103.5" r="4" fill="#2a78d6"/>
+<circle cx="427.8" cy="103.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="123.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-7 · ecg_illegal_connection</text>
+<line x1="422.9" y1="120.5" x2="372.2" y2="120.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="422.9" cy="120.5" r="4" fill="#2a78d6"/>
+<circle cx="372.2" cy="120.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="140.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-8 · ecg_safety_guidelines</text>
+<line x1="433.8" y1="137.5" x2="424.7" y2="137.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="433.8" cy="137.5" r="4" fill="#2a78d6"/>
+<circle cx="424.7" cy="137.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="157.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-9 · ecg_fault_reporting</text>
+<line x1="422.1" y1="154.5" x2="418.3" y2="154.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="422.1" cy="154.5" r="4" fill="#2a78d6"/>
+<circle cx="418.3" cy="154.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="174.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-10 · ecg_outage_causes</text>
+<line x1="419.8" y1="171.5" x2="374.6" y2="171.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="419.8" cy="171.5" r="4" fill="#2a78d6"/>
+<circle cx="374.6" cy="171.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="191.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-11 · ecg_street_lighting</text>
+<line x1="435.1" y1="188.5" x2="431.2" y2="188.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="435.1" cy="188.5" r="4" fill="#2a78d6"/>
+<circle cx="431.2" cy="188.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="208.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-12 · purc_overview</text>
+<line x1="451.3" y1="205.5" x2="378.9" y2="205.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="451.3" cy="205.5" r="4" fill="#2a78d6"/>
+<circle cx="378.9" cy="205.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="225.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-13 · ecg_contact_directory</text>
+<line x1="406.4" y1="222.5" x2="428.3" y2="222.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="406.4" cy="222.5" r="4" fill="#2a78d6"/>
+<circle cx="428.3" cy="222.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="242.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-14 · purc_residential_elect</text>
+<line x1="319.9" y1="239.5" x2="378.0" y2="239.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="319.9" cy="239.5" r="4" fill="#2a78d6"/>
+<circle cx="378.0" cy="239.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="259.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-15 · purc_residential_elect</text>
+<line x1="408.0" y1="256.5" x2="431.5" y2="256.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="408.0" cy="256.5" r="4" fill="#2a78d6"/>
+<circle cx="431.5" cy="256.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="276.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-16 · purc_non_residential_e</text>
+<line x1="375.3" y1="273.5" x2="405.9" y2="273.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="375.3" cy="273.5" r="4" fill="#2a78d6"/>
+<circle cx="405.9" cy="273.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="293.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-17 · purc_special_load_tari</text>
+<line x1="407.1" y1="290.5" x2="407.8" y2="290.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="407.1" cy="290.5" r="4" fill="#2a78d6"/>
+<circle cx="407.8" cy="290.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="310.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-18 · purc_net_metering_tari</text>
+<line x1="354.0" y1="307.5" x2="410.7" y2="307.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="354.0" cy="307.5" r="4" fill="#2a78d6"/>
+<circle cx="410.7" cy="307.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="327.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-19 · purc_tariff_regulatory</text>
+<line x1="307.5" y1="324.5" x2="373.1" y2="324.5" stroke="#1baf7a" stroke-width="2" opacity="0.55"/>
+<circle cx="307.5" cy="324.5" r="4" fill="#2a78d6"/>
+<circle cx="373.1" cy="324.5" r="4" fill="#eb6834"/>
+<text x="200.0" y="344.5" text-anchor="end" font-size="8.3" fill="#1a1a2e" font-family="Segoe UI, Arial">q-20 · purc_functions</text>
+<line x1="444.1" y1="341.5" x2="440.5" y2="341.5" stroke="#d64545" stroke-width="2" opacity="0.55"/>
+<circle cx="444.1" cy="341.5" r="4" fill="#2a78d6"/>
+<circle cx="440.5" cy="341.5" r="4" fill="#eb6834"/>
+</svg></div>
+<p class="chart-caption">10 of 20 cases declined, 10 improved, 0 unchanged &mdash;
+an almost even split, unlike Stage 1's lopsided decline.</p>
+
+<table>
+  <thead>
+    <tr><th rowspan="2">ID</th><th rowspan="2">Source section</th>
+      <th colspan="3">BERTScore F1</th><th colspan="3">ROUGE-1 F1</th><th rowspan="2">Notes</th></tr>
+    <tr><th class="num">OpenRouter</th><th class="num">Claude</th><th class="num">&Delta;</th>
+      <th class="num">OpenRouter</th><th class="num">Claude</th><th class="num">&Delta;</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>q-1</td>
+      <td>ecg_company_overview</td>
+      <td class="num">0.815</td>
+      <td class="num">0.841</td>
+      <td class="num"><span class="delta-pos">+0.026</span></td>
+      <td class="num">0.098</td>
+      <td class="num">0.325</td>
+      <td class="num"><span class="delta-pos">+0.227</span></td>
+      <td><span class="badge badge-green">RAG fact now used</span></td>
+    </tr>
+
+    <tr>
+      <td>q-2</td>
+      <td>ecg_service_areas</td>
+      <td class="num">0.848</td>
+      <td class="num">0.852</td>
+      <td class="num"><span class="delta-pos">+0.004</span></td>
+      <td class="num">0.653</td>
+      <td class="num">0.417</td>
+      <td class="num"><span class="delta-neg">-0.236</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-3</td>
+      <td>ecg_billing_and_payment</td>
+      <td class="num">0.839</td>
+      <td class="num">0.862</td>
+      <td class="num"><span class="delta-pos">+0.023</span></td>
+      <td class="num">0.294</td>
+      <td class="num">0.400</td>
+      <td class="num"><span class="delta-pos">+0.106</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-4</td>
+      <td>ecg_prepaid_meters</td>
+      <td class="num">0.912</td>
+      <td class="num">0.878</td>
+      <td class="num"><span class="delta-neg">-0.033</span></td>
+      <td class="num">0.551</td>
+      <td class="num">0.371</td>
+      <td class="num"><span class="delta-neg">-0.180</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-5</td>
+      <td>ecg_new_connection</td>
+      <td class="num">0.873</td>
+      <td class="num">0.848</td>
+      <td class="num"><span class="delta-neg">-0.026</span></td>
+      <td class="num">0.643</td>
+      <td class="num">0.533</td>
+      <td class="num"><span class="delta-neg">-0.110</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-6</td>
+      <td>ecg_disconnection_reconnection</td>
+      <td class="num">0.888</td>
+      <td class="num">0.877</td>
+      <td class="num"><span class="delta-neg">-0.011</span></td>
+      <td class="num">0.479</td>
+      <td class="num">0.371</td>
+      <td class="num"><span class="delta-neg">-0.108</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-7</td>
+      <td>ecg_illegal_connections</td>
+      <td class="num">0.874</td>
+      <td class="num">0.844</td>
+      <td class="num"><span class="delta-neg">-0.029</span></td>
+      <td class="num">0.475</td>
+      <td class="num">0.456</td>
+      <td class="num"><span class="delta-neg">-0.019</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-8</td>
+      <td>ecg_safety_guidelines</td>
+      <td class="num">0.880</td>
+      <td class="num">0.875</td>
+      <td class="num"><span class="delta-neg">-0.005</span></td>
+      <td class="num">0.480</td>
+      <td class="num">0.534</td>
+      <td class="num"><span class="delta-pos">+0.054</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-9</td>
+      <td>ecg_fault_reporting</td>
+      <td class="num">0.873</td>
+      <td class="num">0.871</td>
+      <td class="num"><span class="delta-neg">-0.002</span></td>
+      <td class="num">0.576</td>
+      <td class="num">0.470</td>
+      <td class="num"><span class="delta-neg">-0.106</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-10</td>
+      <td>ecg_outage_causes</td>
+      <td class="num">0.872</td>
+      <td class="num">0.846</td>
+      <td class="num"><span class="delta-neg">-0.026</span></td>
+      <td class="num">0.591</td>
+      <td class="num">0.418</td>
+      <td class="num"><span class="delta-neg">-0.173</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-11</td>
+      <td>ecg_street_lighting</td>
+      <td class="num">0.881</td>
+      <td class="num">0.879</td>
+      <td class="num"><span class="delta-neg">-0.002</span></td>
+      <td class="num">0.585</td>
+      <td class="num">0.511</td>
+      <td class="num"><span class="delta-neg">-0.074</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-12</td>
+      <td>purc_overview</td>
+      <td class="num">0.890</td>
+      <td class="num">0.848</td>
+      <td class="num"><span class="delta-neg">-0.042</span></td>
+      <td class="num">0.547</td>
+      <td class="num">0.438</td>
+      <td class="num"><span class="delta-neg">-0.108</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-13</td>
+      <td>ecg_contact_directory</td>
+      <td class="num">0.864</td>
+      <td class="num">0.877</td>
+      <td class="num"><span class="delta-pos">+0.013</span></td>
+      <td class="num">0.298</td>
+      <td class="num">0.286</td>
+      <td class="num"><span class="delta-neg">-0.013</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-14</td>
+      <td>purc_residential_electricity_tariffs</td>
+      <td class="num">0.814</td>
+      <td class="num">0.848</td>
+      <td class="num"><span class="delta-pos">+0.034</span></td>
+      <td class="num">0.209</td>
+      <td class="num">0.337</td>
+      <td class="num"><span class="delta-pos">+0.128</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-15</td>
+      <td>purc_residential_electricity_tariffs</td>
+      <td class="num">0.865</td>
+      <td class="num">0.879</td>
+      <td class="num"><span class="delta-pos">+0.014</span></td>
+      <td class="num">0.547</td>
+      <td class="num">0.454</td>
+      <td class="num"><span class="delta-neg">-0.093</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-16</td>
+      <td>purc_non_residential_electricity_tariffs</td>
+      <td class="num">0.846</td>
+      <td class="num">0.864</td>
+      <td class="num"><span class="delta-pos">+0.018</span></td>
+      <td class="num">0.441</td>
+      <td class="num">0.485</td>
+      <td class="num"><span class="delta-pos">+0.044</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-17</td>
+      <td>purc_special_load_tariffs</td>
+      <td class="num">0.865</td>
+      <td class="num">0.865</td>
+      <td class="num"><span class="delta-pos">+0.000</span></td>
+      <td class="num">0.528</td>
+      <td class="num">0.455</td>
+      <td class="num"><span class="delta-neg">-0.073</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>q-18</td>
+      <td>purc_net_metering_tariffs</td>
+      <td class="num">0.834</td>
+      <td class="num">0.867</td>
+      <td class="num"><span class="delta-pos">+0.033</span></td>
+      <td class="num">0.468</td>
+      <td class="num">0.436</td>
+      <td class="num"><span class="delta-neg">-0.032</span></td>
+      <td><span class="badge badge-green">unit label fixed</span></td>
+    </tr>
+
+    <tr>
+      <td>q-19</td>
+      <td>purc_tariff_regulatory_context</td>
+      <td class="num">0.807</td>
+      <td class="num">0.845</td>
+      <td class="num"><span class="delta-pos">+0.038</span></td>
+      <td class="num">0.043</td>
+      <td class="num">0.344</td>
+      <td class="num"><span class="delta-pos">+0.301</span></td>
+      <td><span class="badge badge-green">fallback fixed</span></td>
+    </tr>
+
+    <tr>
+      <td>q-20</td>
+      <td>purc_functions</td>
+      <td class="num">0.886</td>
+      <td class="num">0.884</td>
+      <td class="num"><span class="delta-neg">-0.002</span></td>
+      <td class="num">0.519</td>
+      <td class="num">0.458</td>
+      <td class="num"><span class="delta-neg">-0.061</span></td>
+      <td></td>
+    </tr></tbody>
+</table>
+
+<h2 id="casestudies">7. Case Studies</h2>
+
+<h3>7.1 Stage 1 &mdash; Groq &rarr; OpenRouter</h3>
+<h4>Biggest quality drop on a case both models got right</h4>
+
+    <div class="q-block no-break">
+      <div class="q-id">q-2 <span class="badge badge-red">Biggest BERTScore drop</span></div>
+      <div class="q-text">&ldquo;Which districts are part of the Tema region?&rdquo; <span class="q-meta">(source: ecg_service_areas &middot; intent: general &middot; routed: static)</span></div>
+      <div class="q-ref"><span class="q-label">Reference (gold)</span><p>The Tema Region covers districts including Ada, Afienya, Ashaiman, Juapong, Krobo, Nungua, Prampram, Tema North, and Tema South.</p></div>
+      <div class="q-cand"><span class="q-label">Before — Groq</span><p>The Tema Region districts include: Ada, Afienya, Ashaiman, Juapong, Krobo, Nungua, Prampram, Tema North, and Tema South.</p></div>
+      <div class="q-cand"><span class="q-label">After — OpenRouter</span><p>The Tema Region includes the following districts:</p>
+<ul>
+<li>Ada</li>
+<li>Afienya</li>
+<li>Ashaiman</li>
+<li>Juapong</li>
+<li>Krobo</li>
+<li>Nungua</li>
+<li>Prampram</li>
+<li>Tema North</li>
+<li>Tema South</li>
+</ul>
+<p>If you need further details or assistance, feel free to let me know!</p></div>
+    </div>
+<h4>The regression OpenRouter introduced</h4>
+
+    <div class="q-block no-break">
+      <div class="q-id">q-19 <span class="badge badge-red">Regression — was fine, now fails</span></div>
+      <div class="q-text">&ldquo;Why do ECG&#x27;s electricity tariffs change so often?&rdquo; <span class="q-meta">(source: purc_tariff_regulatory_context &middot; intent: outage_status &middot; routed: dynamic)</span></div>
+      <div class="q-ref"><span class="q-label">Reference (gold)</span><p>Electricity tariffs in Ghana are set and approved by PURC, not ECG. Besides periodic full Major Tariff Reviews, PURC applies a quarterly Automatic Adjustment (Indexation) Formula that revises tariffs to reflect changes in exchange rates, inflation, and fuel costs. Each new quarterly publication explicitly revokes and replaces the previous gazette, which is why customers should confirm the current rate for their billing period via ECG or purc.com.gh rather than relying on an undated figure.</p></div>
+      <div class="q-cand"><span class="q-label">Before — Groq</span><p>ECG&#x27;s electricity tariffs are approved by PURC and change due to periodic Major Tariff Reviews and routine Automatic Adjustments, which reflect changes in exchange rates, inflation, and fuel costs. Tariffs are typically revised every quarter. For the most current rates, please check the PURC or ECG website.</p></div>
+      <div class="q-cand"><span class="q-label">After — OpenRouter</span><p>I&#x27;m having a technical issue right now. Please call 0800-POWER (0800-76937) for immediate assistance.</p></div>
+    </div>
+<h4>A fallback fixed, with a strong structured answer</h4>
+
+    <div class="q-block no-break">
+      <div class="q-id">q-20 <span class="badge badge-green">Fallback fixed</span></div>
+      <div class="q-text">&ldquo;If ECG doesn&#x27;t resolve my billing complaint, what can I do?&rdquo; <span class="q-meta">(source: purc_functions &middot; intent: complaint &middot; routed: static)</span></div>
+      <div class="q-ref"><span class="q-label">Reference (gold)</span><p>If a billing dispute or service complaint is not resolved by ECG at the District level, you can escalate it to PURC, which has the statutory power to investigate and settle disputes between customers and utility companies. Complaints can be submitted through purc.com.gh or by calling PURC&#x27;s Accra office on 0302 218 300.</p></div>
+      <div class="q-cand"><span class="q-label">Before — Groq</span><p>I&#x27;m having a technical issue right now. Please call 0800-POWER (0800-76937) for immediate assistance.</p></div>
+      <div class="q-cand"><span class="q-label">After — OpenRouter</span><p>If ECG’s District Office can’t resolve your billing dispute, you should take the matter to the Public Utilities Regulatory Commission (PURC).</p>
+<ol>
+<li><strong>File a complaint with PURC</strong> – visit purc.com.gh or call the Accra office at <strong>0302 218 300</strong>.</li>
+<li><strong>Provide all relevant documents</strong> (meter readings, bills, correspondence with ECG, etc.) so PURC can investigate.</li>
+<li>PURC has the statutory authority to review the tariff, investigate overcharges, and settle disputes between customers and utilities.</li>
+</ol>
+<p>If you need further assistance, you can also call ECG’s general support line at <strong>0302 611 611</strong> for guidance on the complaint‑filing process.</p></div>
+    </div>
+<h4>A fallback fixed, but with a subtle unit error</h4>
+
+    <div class="q-block no-break">
+      <div class="q-id">q-18 <span class="badge badge-orange">Fallback fixed, unit mislabelled</span></div>
+      <div class="q-text">&ldquo;How does billing work for a customer with rooftop solar under net metering?&rdquo; <span class="q-meta">(source: purc_net_metering_tariffs &middot; intent: billing &middot; routed: static)</span></div>
+      <div class="q-ref"><span class="q-label">Reference (gold)</span><p>A net metering customer with rooftop solar pays the Import Tariff for power drawn from ECG&#x27;s grid and receives a credit at a lower Export Tariff for surplus power sent back to the grid. For example, in the 31-300 kWh band, the Import Tariff is 122.2505 GHp/kWh and the Export Tariff is 81.5004 GHp/kWh, effective 1st July 2026. The Export Tariff is intentionally set lower than the Import Tariff.</p></div>
+      <div class="q-cand"><span class="q-label">Before — Groq</span><p>I&#x27;m having a technical issue right now. Please call 0800-POWER (0800-76937) for immediate assistance.</p></div>
+      <div class="q-cand"><span class="q-label">After — OpenRouter</span><p>Under ECG’s net‑metering scheme, a rooftop‑solar customer is billed only for the net import of electricity (Import &gt; Export).</p>
+<ul>
+<li><strong>Import tariff</strong> (power you draw from the grid)</li>
+<li>0‑30 kWh Lifeline band: <strong>53.9589 GH₵/kWh</strong></li>
+<li>31‑300 kWh band: <strong>122.2505 GH₵/kWh</strong></li>
+<li>301+ kWh band: (rate not listed here – check ECG for the latest figure)</li>
+<li><strong>Export tariff</strong> (credit for power you feed back)</li>
+<li>0‑30 kWh band: <strong>35.9726 GH₵/kWh</strong></li>
+<li>31‑300 kWh band: <strong>81.5004 GH₵/kWh</strong></li>
+</ul>
+<p>These rates are effective from <strong>1 July 2026</strong> and may be adjusted quarterly by PURC. For the most current rates or detailed billing statements, contact ECG at <strong>0302 611 611</strong>.</p></div>
+    </div>
+
+<h3>7.2 Stage 2 &mdash; OpenRouter &rarr; Claude</h3>
+<h4>A RAG fact OpenRouter gave up on, that Claude actually used</h4>
+
+    <div class="q-block no-break">
+      <div class="q-id">q-1 <span class="badge badge-green">RAG fact now actually used</span></div>
+      <div class="q-text">&ldquo;What is ECG and when was it established?&rdquo; <span class="q-meta">(source: ecg_company_overview &middot; intent: general &middot; routed: static)</span></div>
+      <div class="q-ref"><span class="q-label">Reference (gold)</span><p>ECG (Electricity Company of Ghana) is a limited liability company wholly owned by the Government of Ghana. Ghana&#x27;s first government-sponsored public electricity supply began in 1914, and ECG remains the primary electricity distributor across southern Ghana, serving residential, commercial, and industrial customers. Its mission is to provide quality, reliable, and safe electricity services to support Ghana&#x27;s economic growth, guided by the ENERGY core values: Excellence, Nurturing, Ethical, Reliability, Growth, and You.</p></div>
+      <div class="q-cand"><span class="q-label">OpenRouter</span><p>I’m sorry, but that information isn’t in our knowledge base. For details on ECG’s history and establishment, please contact ECG directly at 0302 611 611.</p></div>
+      <div class="q-cand"><span class="q-label">Claude</span><p><strong>About ECG</strong></p>
+<p><strong>ECG (Electricity Company of Ghana)</strong> is Ghana&#x27;s primary electricity distribution utility. It is responsible for distributing electricity to customers across most of Ghana&#x27;s regions.</p>
+<p>However, I don&#x27;t have the specific establishment date in my current knowledge base.</p>
+<p><strong>What I can tell you:</strong></p>
+<ul>
+<li>ECG operates under regulation by <strong>PURC</strong> (Public Utilities Regulatory Commission), Ghana&#x27;s independent electricity regulator established in October 1997.</li>
+<li>PURC sets and approves the electricity tariffs (rates) that ECG is allowed to charge.</li>
+<li>ECG manages customer services, billing, meter installation, and power distribution.</li>
+</ul>
+<p><strong>For detailed company history or founding information</strong>, please contact ECG directly:</p>
+<p>📞 <strong>0302 611 611</strong> (ECG Customer Service)</p>
+<p>Is there something specific about ECG&#x27;s services, billing, or tariffs I can help you with?</p></div>
+    </div>
+<h4>The worst verbosity overshoot (170 words for a two-sentence reference)</h4>
+
+    <div class="q-block no-break">
+      <div class="q-id">q-12 <span class="badge badge-orange">Worst verbosity overshoot (170 words)</span></div>
+      <div class="q-text">&ldquo;What is PURC and how is it different from ECG?&rdquo; <span class="q-meta">(source: purc_overview &middot; intent: general &middot; routed: static)</span></div>
+      <div class="q-ref"><span class="q-label">Reference (gold)</span><p>PURC (the Public Utilities Regulatory Commission) is the independent government regulator of electricity and water utilities in Ghana, established in October 1997 under Act 538. PURC is not ECG. It is the body that sets and approves the tariffs ECG is allowed to charge, monitors service standards, and handles complaints when a utility does not resolve a customer&#x27;s issue, including billing disputes escalated from ECG&#x27;s District level.</p></div>
+      <div class="q-cand"><span class="q-label">OpenRouter</span><p>PURC (Public Utilities Regulatory Commission) is Ghana’s independent regulator that sets, approves, and monitors electricity tariffs and service standards. It is not a utility company; it oversees ECG (Electricity Company of Ghana) and other utilities to protect consumer interests, enforce service quality, and handle complaints that ECG cannot resolve. ECG, on the other hand, is the licensed electricity distribution company that actually delivers power to customers, bills them, and maintains the network. In short, PURC regulates ECG, while ECG provides the service. (Sources: purc_website:purc_overview, purc_website:purc_functions)</p></div>
+      <div class="q-cand"><span class="q-label">Claude</span><p><strong>PURC vs. ECG – Key Differences</strong></p>
+<p><strong>PURC</strong> (Public Utilities Regulatory Commission) is Ghana&#x27;s <strong>independent government regulator</strong>, established in 1997. It does NOT supply electricity.</p>
+<p><strong>ECG</strong> (Electricity Company of Ghana) is the <strong>utility company</strong> that generates, distributes, and bills you for electricity.</p>
+<p><strong>What Each Does:</strong></p>
+<table class="md-table"><thead><tr>
+<th><strong>PURC</strong></th><th><strong>ECG</strong></th>
+</tr></thead><tbody>
+<tr><td>Sets and approves electricity tariffs (rates)</td><td>Supplies and bills you for power</td></tr>
+<tr><td>Monitors service standards</td><td>Handles meter readings, bills, connections</td></tr>
+<tr><td>Investigates complaints escalated beyond ECG</td><td>Resolves billing &amp; service issues at district level</td></tr>
+<tr><td>Protects consumer &amp; provider interests</td><td>Operates the network</td></tr>
+</tbody></table>
+<p><strong>When to Contact Each:</strong></p>
+<ul>
+<li><strong>ECG (0302 611 611):</strong> Billing questions, meter issues, outages, new connections</li>
+<li><strong>PURC:</strong> If ECG doesn&#x27;t resolve your complaint after you&#x27;ve reported it to them → escalate to PURC at <strong>0302 218 300</strong> or <strong>purc.com.gh</strong></li>
+</ul>
+<p>Think of it this way: <strong>ECG serves you electricity; PURC makes sure ECG plays fair.</strong></p>
+<p>Need help with a specific billing or service issue?</p></div>
+    </div>
+<h4>OpenRouter's unit-label bug, fixed by Claude</h4>
+
+    <div class="q-block no-break">
+      <div class="q-id">q-18 <span class="badge badge-green">Unit-label bug fixed (GHp, not GH₵)</span></div>
+      <div class="q-text">&ldquo;How does billing work for a customer with rooftop solar under net metering?&rdquo; <span class="q-meta">(source: purc_net_metering_tariffs &middot; intent: billing &middot; routed: static)</span></div>
+      <div class="q-ref"><span class="q-label">Reference (gold)</span><p>A net metering customer with rooftop solar pays the Import Tariff for power drawn from ECG&#x27;s grid and receives a credit at a lower Export Tariff for surplus power sent back to the grid. For example, in the 31-300 kWh band, the Import Tariff is 122.2505 GHp/kWh and the Export Tariff is 81.5004 GHp/kWh, effective 1st July 2026. The Export Tariff is intentionally set lower than the Import Tariff.</p></div>
+      <div class="q-cand"><span class="q-label">OpenRouter</span><p>Under ECG’s net‑metering scheme, a rooftop‑solar customer is billed only for the net import of electricity (Import &gt; Export).</p>
+<ul>
+<li><strong>Import tariff</strong> (power you draw from the grid)</li>
+<li>0‑30 kWh Lifeline band: <strong>53.9589 GH₵/kWh</strong></li>
+<li>31‑300 kWh band: <strong>122.2505 GH₵/kWh</strong></li>
+<li>301+ kWh band: (rate not listed here – check ECG for the latest figure)</li>
+<li><strong>Export tariff</strong> (credit for power you feed back)</li>
+<li>0‑30 kWh band: <strong>35.9726 GH₵/kWh</strong></li>
+<li>31‑300 kWh band: <strong>81.5004 GH₵/kWh</strong></li>
+</ul>
+<p>These rates are effective from <strong>1 July 2026</strong> and may be adjusted quarterly by PURC. For the most current rates or detailed billing statements, contact ECG at <strong>0302 611 611</strong>.</p></div>
+      <div class="q-cand"><span class="q-label">Claude</span><p><strong>Net Metering Billing Explained</strong></p>
+<p>Under ECG&#x27;s net metering arrangement, you&#x27;re billed based on the <strong>net flow of electricity</strong>—what you import from the grid minus what you export (send back) to it.</p>
+<p><strong>How It Works:</strong></p>
+<ul>
+<li><strong>When you use more than you generate:</strong> You pay the import tariff for the net amount consumed.</li>
+<li><strong>When you generate more than you use:</strong> You earn an export credit at a lower rate for the surplus power you send to the grid.</li>
+<li><strong>When balanced:</strong> No net charge.</li>
+</ul>
+<p><strong>Current Tariffs (Effective 1st July 2026):</strong></p>
+<p><strong>Lifeline Band (0–30 kWh):</strong></p>
+<ul>
+<li>Import: 53.9589 GHp/kWh | Export Credit: 35.9726 GHp/kWh</li>
+</ul>
+<p><strong>Standard Band (31–300 kWh):</strong></p>
+<ul>
+<li>Import: 122.2505 GHp/kWh | Export Credit: 81.5004 GHp/kWh</li>
+</ul>
+<p><strong>Note:</strong> Tariffs are revised quarterly by PURC to reflect inflation, exchange rates, and fuel costs. Always confirm current rates via ECG&#x27;s website or call <strong>0302 611 611</strong>.</p>
+<p>Have questions about your specific bill or meter installation?</p></div>
+    </div>
+<div class="box box-green" style="margin-top:-8px;">
+  <p>Compare the OpenRouter answer's <strong>GH&#8373;/kWh</strong> (Ghana Cedis &mdash; a 100&times; unit error) against
+  Claude's correct <strong>GHp/kWh</strong> (Ghana Pesewas) on the exact same numeric values. This was the specific
+  accuracy risk flagged in the Stage 1 report as a reason to consider switching providers, and it did not recur
+  anywhere in Claude's 20 answers.</p>
+</div>
+<h4>OpenRouter's q-19 regression, fixed by Claude</h4>
+
+    <div class="q-block no-break">
+      <div class="q-id">q-19 <span class="badge badge-green">OpenRouter's regression, fixed</span></div>
+      <div class="q-text">&ldquo;Why do ECG&#x27;s electricity tariffs change so often?&rdquo; <span class="q-meta">(source: purc_tariff_regulatory_context &middot; intent: outage_status &middot; routed: dynamic)</span></div>
+      <div class="q-ref"><span class="q-label">Reference (gold)</span><p>Electricity tariffs in Ghana are set and approved by PURC, not ECG. Besides periodic full Major Tariff Reviews, PURC applies a quarterly Automatic Adjustment (Indexation) Formula that revises tariffs to reflect changes in exchange rates, inflation, and fuel costs. Each new quarterly publication explicitly revokes and replaces the previous gazette, which is why customers should confirm the current rate for their billing period via ECG or purc.com.gh rather than relying on an undated figure.</p></div>
+      <div class="q-cand"><span class="q-label">OpenRouter</span><p>I&#x27;m having a technical issue right now. Please call 0800-POWER (0800-76937) for immediate assistance.</p></div>
+      <div class="q-cand"><span class="q-label">Claude</span><p>Great question! Electricity tariffs in Ghana are regulated by <strong>PURC</strong> (Public Utilities Regulatory Commission), not set directly by ECG. Tariffs adjust periodically to reflect:</p>
+<ol>
+<li><strong>Cost pressures</strong> – fuel prices, generation costs, and operational expenses fluctuate</li>
+<li><strong>Regulatory decisions</strong> – PURC reviews and approves new rates through formal gazettes (most recent: July 1, 2026)</li>
+<li><strong>Infrastructure investments</strong> – maintenance, upgrades, and network expansion require funding</li>
+<li><strong>Currency &amp; inflation</strong> – Ghana&#x27;s economic conditions affect pricing</li>
+</ol>
+<p>PURC publishes formal <strong>Tariff Decision Papers</strong> explaining each change. The current residential rates (as of July 2026) range from <strong>89.93 GHp/kWh</strong> (Lifeline band, 0–30 kWh/month) to <strong>269.22 GHp/kWh</strong> (301+ kWh/month), designed to keep basic electricity affordable while supporting system reliability.</p>
+<p>If you&#x27;d like details on your specific consumption band or have concerns about rate increases, I&#x27;m happy to help!</p></div>
+    </div>
+
+<h2 id="discussion">8. Discussion &amp; Recommendations</h2>
+<div class="box box-blue">
+  <h4>Was the second migration worth it?</h4>
+  <p>Yes, on balance, but not for the reason expected going in. Claude did <em>not</em> fix the verbosity problem
+  found in Stage 1 &mdash; it made it measurably worse (74 &rarr; 122 words). What it did deliver: perfect reliability
+  once properly configured (0/20 vs. OpenRouter's 1/20 and Groq's 3/20), a fixed regression, a recovered fact, and no
+  recurrence of the unit-mislabelling bug across all 20 cases. The raw ROUGE/BERTScore numbers are a wash against
+  OpenRouter and still below the original Groq baseline.</p>
+</div>
+<ol>
+  <li><strong>Tighten the system prompt for conciseness &mdash; now the top priority.</strong> The existing instruction
+  ("under 120 words unless detail is essential") is not landing. Given Claude's strong instruction-following
+  reputation didn't fix this on its own, the next step is testing an explicit, stronger constraint (e.g. a hard
+  sentence-count cap, "no headers, no closing questions, no bold unless quoting a figure") and re-measuring with this
+  same harness &mdash; don't assume a prompt change will work; verify it the same way this report verified the
+  provider change.</li>
+  <li><strong>Keep <code>MAX_RETRIES = 2</code>.</strong> This is now load-bearing, not cosmetic &mdash; it was the
+  difference between 0/20 and 15-20/20 fallbacks in this environment. Re-verify it under production network
+  conditions (e.g. on Render) rather than assuming this sandbox's flakiness generalises.</li>
+  <li><strong>Never let an exception handler swallow silently again.</strong> The one-line fix in &sect;6.1 turned an
+  unexplained, unreproducible failure into a two-minute root cause. Apply the same pattern anywhere else in the
+  codebase that catches a broad exception type without logging it.</li>
+  <li><strong>Re-run this harness after any future provider or prompt change.</strong> Three runs in one document is
+  what made the verbosity trend and the reliability regression visible in the first place &mdash; a single before/after
+  snapshot would have missed both.</li>
+</ol>
+
+<h2 id="conclusion">9. Conclusion</h2>
+<p>Across two migrations, Kanea's chatbot became strictly more reliable (85% &rarr; 95% &rarr; 100% real-answer rate on
+this 20-case sample) while its ROUGE/BERTScore quality metrics never returned to the original Groq baseline, settling
+instead on a plateau shared by both post-Groq providers. The dominant explanation held up under a second test: answer
+verbosity, not correctness, drives most of the metric gap, and it got worse, not better, with the switch to Claude.
+Two concrete engineering wins came out of the evaluation process itself rather than the model choice: a silent-failure
+logging gap that was hiding a real (if environment-specific) reliability issue, and confirmation that OpenRouter's
+unit-mislabelling bug does not recur under Claude. The system prompt, not the provider, is now the clearest lever left
+for closing the remaining quality gap.</p>
+
+<div class="footer">
+  Kanea Chatbot &mdash; LLM Migration Evaluation Report (3-stage) &middot; Generated from
+  <code>backend/eval/results_response_quality.json</code> (Claude, this session), commit <code>5c21d7e</code>
+  (OpenRouter) and commit <code>5c21d7e~1</code> (Groq)
+</div>
+
+</body>
+</html>

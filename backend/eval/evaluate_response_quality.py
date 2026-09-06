@@ -2,13 +2,13 @@
 Response-quality evaluation for the Kanea chatbot: ROUGE-1, ROUGE-2, and BERTScore.
 
 Unlike evaluate.py (which scores the deterministic keyword/routing/retrieval
-layers offline), this script scores the *generated text* of the final Groq
-LLM response against a hand-written gold reference answer, for a set of 20
-static (RAG-answerable) queries grounded in the ECG + PURC knowledge base
-(backend/eval/test_response_quality.json).
+layers offline), this script scores the *generated text* of the final
+Claude API response against a hand-written gold reference answer, for a
+set of 20 static (RAG-answerable) queries grounded in the ECG + PURC
+knowledge base (backend/eval/test_response_quality.json).
 
 Requires:
-  - GROQ_API_KEY set in backend/.env (makes real network calls to Groq)
+  - ANTHROPIC_API_KEY set in backend/.env (makes real network calls to the Claude API)
   - rouge-score and bert-score installed (pip install rouge-score bert-score)
 
 Run from anywhere:
@@ -31,15 +31,15 @@ os.chdir(BACKEND_DIR)          # so database.py's relative "chatbot.db" resolves
 sys.path.insert(0, str(BACKEND_DIR))
 
 from dotenv import load_dotenv  # noqa: E402
-load_dotenv(BACKEND_DIR / ".env")  # chatbot.py reads GROQ_API_KEY at import time, so this must run first
+load_dotenv(BACKEND_DIR / ".env")  # chatbot.py reads ANTHROPIC_API_KEY at import time, so this must run first
 
 import chatbot            # noqa: E402
 import database as db      # noqa: E402
 
-if not chatbot.GROQ_API_KEY:
+if not chatbot.ANTHROPIC_API_KEY:
     sys.exit(
-        "GROQ_API_KEY is not set (checked backend/.env). Response-quality evaluation needs "
-        "the real Groq-backed pipeline, not the no-key fallback message, so it cannot proceed."
+        "ANTHROPIC_API_KEY is not set (checked backend/.env). Response-quality evaluation needs "
+        "the real Claude-backed pipeline, not the no-key fallback message, so it cannot proceed."
     )
 
 from rouge_score import rouge_scorer   # noqa: E402
@@ -88,7 +88,7 @@ async def generate_candidates(cases: list[dict]) -> list[dict]:
             "error": error,
         })
         chatbot.clear_session(session_id)
-        time.sleep(0.5)  # be polite to the Groq API rate limit
+        time.sleep(0.5)  # be polite to the Claude API rate limit
     return results
 
 
@@ -187,7 +187,7 @@ def print_report(results: list[dict], rouge_results: dict, bert_results: dict) -
 def main() -> None:
     cases = load_cases("test_response_quality.json")
 
-    print(f"Generating {len(cases)} live responses from the real Kanea/Groq pipeline...")
+    print(f"Generating {len(cases)} live responses from the real Kanea/Claude pipeline...")
     results = asyncio.run(generate_candidates(cases))
 
     print("\nScoring with ROUGE-1 / ROUGE-2...")

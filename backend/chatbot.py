@@ -4,21 +4,31 @@ AI chatbot engine for PowerGrid Customer Support (Kanea).
 Decision logic:
   Step 1 — Classify intent (keyword NLP pre-filter)
   Step 2 — Route query type: STATIC → RAG knowledge base | DYNAMIC → live outage data
-  Step 3 — Build context-aware system prompt and generate response via Groq LLM
+  Step 3 — Build context-aware system prompt and generate response via the Claude API
 """
 
 import os
-import httpx
+import anthropic
 
 import knowledge_base
 import database as db
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL   = "llama-3.3-70b-versatile"
-GROQ_URL     = "https://api.groq.com/openai/v1/chat/completions"
+# Claude API (Anthropic). Requires billing at console.anthropic.com — no
+# perpetual free tier — but Haiku 4.5 is cheap enough that this chatbot's
+# volume costs cents, not dollars. Chosen over the prior OpenRouter free
+# model for its stronger instruction-following (concise answers, no
+# unit/number relabeling) — see Kanea_LLM_Migration_Evaluation_Report.pdf.
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+ANTHROPIC_MODEL   = "claude-haiku-4-5"
 
 MAX_HISTORY = 4
 MAX_TOKENS  = 600
+
+# Retry budget for transient Claude API failures (429 rate limit / 5xx
+# upstream overload / network hiccup). Kept small — this blocks a live chat
+# reply. The SDK itself performs the retries (with backoff, honoring any
+# Retry-After header) — this just caps how many it's allowed.
+MAX_RETRIES = 2   # 1 initial try + 2 SDK-managed retries
 
 # ─── Intent taxonomy ─────────────────────────────────────────────────────────
 
@@ -284,11 +294,11 @@ async def get_bot_response(
         history[:] = history[-(MAX_HISTORY * 2):]
 
     # ── No API key fallback ───────────────────────────────────────────────────
-    if not GROQ_API_KEY:
+    if not ANTHROPIC_API_KEY:
         reply = (
             "The AI service is not configured yet. "
-            "Please set GROQ_API_KEY in your .env file. "
-            "Get a FREE key at https://console.groq.com"
+            "Please set ANTHROPIC_API_KEY in your .env file. "
+            "Get a key at https://console.anthropic.com/settings/keys"
         )
         history.append({"role": "assistant", "content": reply})
         return {
@@ -296,39 +306,41 @@ async def get_bot_response(
             "quick_replies": quick_replies, "escalate": False, "rag_sources": [],
         }
 
-    # ── Call Groq API ─────────────────────────────────────────────────────────
+    # ── Call the Claude API ────────────────────────────────────────────────────
     system_prompt = _build_system_prompt(outages, rag_context, query_type)
 
-    payload = {
-        "model": GROQ_MODEL,
-        "max_tokens": MAX_TOKENS,
-        "temperature": 0.4,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            *history,
-        ],
-    }
+    technical_issue = False
+    raw_reply = ""
 
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.post(
-                GROQ_URL,
-                headers={
-                    "Authorization": f"Bearer {GROQ_API_KEY}",
-                    "Content-Type": "application/json",
-                },
-                json=payload,
-            )
-            resp.raise_for_status()
-            raw_reply: str = resp.json()["choices"][0]["message"]["content"]
+        client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY, max_retries=MAX_RETRIES)
+        response = await client.messages.create(
+            model=ANTHROPIC_MODEL,
+            max_tokens=MAX_TOKENS,
+            system=system_prompt,
+            messages=history,
+        )
+        raw_reply = next((b.text for b in response.content if b.type == "text"), "")
+    except anthropic.APIError as e:
+        # Covers everything the SDK raises here: RateLimitError / APIStatusError
+        # (bad request, auth, invalid model, upstream 5xx, ...) and
+        # APIConnectionError — the SDK already retried transient failures
+        # (MAX_RETRIES) before raising, so any of these is a genuine failure.
+        # All of them get the same friendly fallback below rather than a
+        # stack trace, since none are something the customer caused — but log
+        # the real cause so it's diagnosable instead of silently swallowed.
+        print(f"[chatbot] Claude API call failed ({type(e).__name__}): {e}")
 
-    except Exception:
+    if not raw_reply:
+        # Technical/rate-limit failure — NOT the same as the customer needing a
+        # human agent, so this must not silently set [ESCALATE_TO_AGENT].
+        technical_issue = True
         raw_reply = (
             "I'm having a technical issue right now. "
-            "Please call 0800-POWER (0800-76937) for immediate assistance.\n[ESCALATE_TO_AGENT]"
+            "Please call 0800-POWER (0800-76937) for immediate assistance."
         )
 
-    escalate = force_escalate or "[ESCALATE_TO_AGENT]" in raw_reply
+    escalate = force_escalate or (not technical_issue and "[ESCALATE_TO_AGENT]" in raw_reply)
     clean_reply = raw_reply.replace("[ESCALATE_TO_AGENT]", "").strip()
     history.append({"role": "assistant", "content": clean_reply})
 
