@@ -55,6 +55,11 @@ _admin_tokens: set[str] = set()
 _bearer_scheme = HTTPBearer(auto_error=False)
 
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+if ADMIN_PASSWORD:
+    # Strip whitespace/newlines — dashboard env-var UIs (Render included) can
+    # silently append a trailing newline when a value is entered, which is
+    # invisible in the field but breaks an exact string comparison at login.
+    ADMIN_PASSWORD = ADMIN_PASSWORD.strip()
 if not ADMIN_PASSWORD:
     # No hardcoded fallback — a fixed default that ships in public source code
     # is not a secret. Generate a random one for this run instead, and log it
@@ -63,13 +68,6 @@ if not ADMIN_PASSWORD:
     ADMIN_PASSWORD = secrets.token_urlsafe(18)
     print(f"[startup] ADMIN_PASSWORD not set — generated a random password for "
           f"this run: {ADMIN_PASSWORD}")
-else:
-    # Temporary diagnostic — never print the actual secret, but confirm what
-    # this specific running process actually received: length, and the first/
-    # last character, so a dashboard-vs-runtime mismatch is unambiguous. Safe
-    # to remove once the login issue is confirmed fixed.
-    print(f"[startup] ADMIN_PASSWORD loaded from environment: length={len(ADMIN_PASSWORD)}, "
-          f"first_char={ADMIN_PASSWORD[0]!r}, last_char={ADMIN_PASSWORD[-1]!r}")
 
 
 def require_admin(credentials: HTTPAuthorizationCredentials = Depends(_bearer_scheme)):
@@ -186,7 +184,7 @@ def extract_customer_name(text: str) -> str | None:
 
 @app.post("/admin/login")
 def admin_login(req: AdminLoginRequest):
-    if req.password != ADMIN_PASSWORD:
+    if req.password.strip() != ADMIN_PASSWORD:
         raise HTTPException(status_code=401, detail="Incorrect password")
     token = secrets.token_hex(32)
     _admin_tokens.add(token)
