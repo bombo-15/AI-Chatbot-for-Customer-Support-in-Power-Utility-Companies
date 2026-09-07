@@ -63,6 +63,13 @@ if not ADMIN_PASSWORD:
     ADMIN_PASSWORD = secrets.token_urlsafe(18)
     print(f"[startup] ADMIN_PASSWORD not set — generated a random password for "
           f"this run: {ADMIN_PASSWORD}")
+else:
+    # Temporary diagnostic — never print the actual secret, but confirm what
+    # this specific running process actually received: length, and the first/
+    # last character, so a dashboard-vs-runtime mismatch is unambiguous. Safe
+    # to remove once the login issue is confirmed fixed.
+    print(f"[startup] ADMIN_PASSWORD loaded from environment: length={len(ADMIN_PASSWORD)}, "
+          f"first_char={ADMIN_PASSWORD[0]!r}, last_char={ADMIN_PASSWORD[-1]!r}")
 
 
 def require_admin(credentials: HTTPAuthorizationCredentials = Depends(_bearer_scheme)):
