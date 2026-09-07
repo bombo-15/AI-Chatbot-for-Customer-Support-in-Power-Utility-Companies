@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://kanea-backend-4ujf.onrender.com/:path*" }
+  ]
+}
