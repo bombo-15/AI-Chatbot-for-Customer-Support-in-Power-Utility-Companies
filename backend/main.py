@@ -54,7 +54,15 @@ limiter = Limiter(key_func=get_remote_address)
 _admin_tokens: set[str] = set()
 _bearer_scheme = HTTPBearer(auto_error=False)
 
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "OdaXltwpVGiOmBh2l6xcMCEQ")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+if not ADMIN_PASSWORD:
+    # No hardcoded fallback — a fixed default that ships in public source code
+    # is not a secret. Generate a random one for this run instead, and log it
+    # so whoever started the process (with no ADMIN_PASSWORD configured) can
+    # still find it and log in.
+    ADMIN_PASSWORD = secrets.token_urlsafe(18)
+    print(f"[startup] ADMIN_PASSWORD not set — generated a random password for "
+          f"this run: {ADMIN_PASSWORD}")
 
 
 def require_admin(credentials: HTTPAuthorizationCredentials = Depends(_bearer_scheme)):
