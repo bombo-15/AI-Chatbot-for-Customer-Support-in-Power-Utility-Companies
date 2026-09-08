@@ -2,7 +2,7 @@
 Offline evaluation harness for the Kanea chatbot.
 
 Measures the pieces of the pipeline that can be scored without calling the
-Groq API:
+Anthropic API:
   1. Intent classification (classify_intent)          -> accuracy, per-class P/R/F1, confusion matrix
   2. End-to-end query routing (classify_query_type)     -> routing accuracy (using the *predicted* intent, so
                                                             intent-classifier mistakes propagate, same as production)

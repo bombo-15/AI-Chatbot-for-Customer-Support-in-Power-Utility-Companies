@@ -337,7 +337,7 @@ async def get_bot_response(
         technical_issue = True
         raw_reply = (
             "I'm having a technical issue right now. "
-            "Please call 0800-POWER (0800-76937) for immediate assistance."
+            "Please call  +233(0302)611 611 for immediate assistance."
         )
 
     escalate = force_escalate or (not technical_issue and "[ESCALATE_TO_AGENT]" in raw_reply)
