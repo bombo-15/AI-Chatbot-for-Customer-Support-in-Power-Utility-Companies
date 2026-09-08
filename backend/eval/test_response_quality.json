@@ -45,7 +45,7 @@
     "id": "q-8",
     "source": "ecg_safety_guidelines",
     "query": "What should I do if I see a fallen or sagging power line?",
-    "reference_answer": "Stay well away from a sagging or fallen power line. Do not touch the wire or anything it is in contact with, such as metal fences or standing water, and do not attempt to move it, since even a fallen tree touching a line can conduct high voltage. Call ECG immediately on 0302 611 611, or the emergency line 0800-POWER (0800-76937), and do not approach the area."
+    "reference_answer": "Stay well away from a sagging or fallen power line. Do not touch the wire or anything it is in contact with, such as metal fences or standing water, and do not attempt to move it, since even a fallen tree touching a line can conduct high voltage. Call ECG immediately on 0302 611 611, and do not approach the area."
   },
   {
     "id": "q-9",
@@ -75,7 +75,7 @@
     "id": "q-13",
     "source": "ecg_contact_directory",
     "query": "What is ECG's main customer service phone number?",
-    "reference_answer": "ECG's main call centre can be reached on 0302 611 611 or 0551 444 011, available 24 hours for fault reporting and emergencies. For electrical hazards or fallen wires, call the dedicated emergency line 0800-POWER (0800-76937)."
+    "reference_answer": "ECG's main call centre can be reached on 0302 611 611 or 0551 444 011, available 24 hours for fault reporting and emergencies. For electrical hazards or fallen wires, call the same emergency line, 0302 611 611."
   },
   {
     "id": "q-14",

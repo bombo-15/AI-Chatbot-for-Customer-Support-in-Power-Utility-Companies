@@ -114,7 +114,7 @@ itself wasn't touched; see Section 8 for why.
 ## 3. Danger / escalation-trigger detection (safety-critical)
 
 **What it measures:** `is_danger_message()` (`backend/chatbot.py:129`), which
-gates the "stay away, call 0800-POWER, `[ESCALATE_TO_AGENT]`" safety path,
+gates the "stay away, call 0302 611 611, `[ESCALATE_TO_AGENT]`" safety path,
 scored against 5 gold-positive cases (fallen pole, sparking transformer,
 smoking meter box, snapped wire, burning smell) mixed into the 70-case set.
 A second, compound metric — **escalation trigger** — scores
